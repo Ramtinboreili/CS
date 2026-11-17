@@ -1,0 +1,258 @@
+@@ a2-1|body#0
+1. The array
+@@ a2-1|body#1
+An array is a sequence of equally sized elements stored in a <b>contiguous block of memory</b>. If the start address is $base$ and each element has size $s$, the address of element $i$ is $base+i\cdot s$: one multiplication and one addition, independent of $n$. This is the reason for <b>$O(1)$ random access</b>.
+@@ a2-1|body#2
+But inserting or deleting in the middle of an array must shift the later elements: $O(n)$. A static array's size is fixed at creation. A <b>dynamic array</b> (like <code>list</code> in Python, <code>vector</code> in C++ and <code>ArrayList</code> in Java) makes appending at the end amortized $O(1)$ through geometric capacity growth (previous lesson).
+@@ a2-1|body#3
+2. The linked list
+@@ a2-1|body#4
+Each element is an independent <b>node</b> holding data and a pointer to the next node; nodes can be anywhere in memory.
+@@ a2-1|body#5
+O(n) time, O(1) memory
+@@ a2-1|body#6
+In a <b>doubly linked list</b> each node also has a pointer to the previous node; traversal in both directions and deleting a known node in $O(1)$ become possible, at the cost of more memory. The <b>circular</b> variant links the end of the list back to the start.
+@@ a2-1|body#7
+Linked list: insert, delete and search (counting steps)
+@@ a2-1|body#8
+3. Comparison
+@@ a2-1|body#9
+Operation
+@@ a2-1|body#10
+Array
+@@ a2-1|body#11
+Dynamic array
+@@ a2-1|body#12
+Access by index
+@@ a2-1|body#13
+Insert/delete at the start
+@@ a2-1|body#14
+Insert at the end
+@@ a2-1|body#15
+$O(1)$ amortized
+@@ a2-1|body#16
+$O(n)$ (with tail: $O(1)$)
+@@ a2-1|body#17
+$O(1)$ with tail
+@@ a2-1|body#18
+Insert/delete given the node
+@@ a2-1|body#19
+Delete $O(n)$ (needs the previous node)
+@@ a2-1|body#20
+Search by value
+@@ a2-1|body#21
+Memory overhead
+@@ a2-1|body#22
+Low
+@@ a2-1|body#23
+Low up to 2×
+@@ a2-1|body#24
+Next pointer
+@@ a2-1|body#25
+Two pointers
+@@ a2-1|body#26
+4. Cache locality: why the array wins in practice
+@@ a2-1|body#27
+The processor reads data in 64-byte <b>cache lines</b>. Scanning an array gets neighbouring elements in one cache line (spatial locality) and the CPU prefetcher reads ahead. Linked-list nodes are scattered and every hop to the next node may be a cache miss (hundreds of cycles). For this reason, in many applications even middle insertions into a dynamic array are faster than in a linked list unless $n$ is very large.
+@@ a2-1|body#28
+<b class="t">Where is a linked list really useful?</b>Implementing queues and deques, the free list in allocators, an LRU cache (doubly linked list + hash map), and structures that need merging/splitting lists without copying.
+@@ a2-1|obj:0#0
+Describe the array in memory as a contiguous block and give the reason for $O(1)$ access.
+@@ a2-1|obj:1#0
+Compare the cost of insert, delete and search in an array and in a linked list.
+@@ a2-1|obj:2#0
+Know the difference between singly and doubly linked lists and understand the effect of cache locality.
+@@ a2-1|mis:0#0
+"Insertion into a linked list is always $O(1)$." ← Only if you already have the insertion point (node). Finding the position is $O(n)$.
+@@ a2-1|mis:1#0
+"A linked list is faster than an array because it has no shifting." ← Because of cache misses and many allocations it is often slower.
+@@ a2-1|mis:2#0
+"Indexing Python lists is $O(n)$." ← A Python <code>list</code> is a dynamic array, not a linked list; access is $O(1)$.
+@@ a2-1|sum:0#0
+Array: $O(1)$ access, $O(n)$ middle insert/delete, contiguous block, cache-friendly.
+@@ a2-1|sum:1#0
+Linked list: $O(1)$ insert/delete given the node, $O(n)$ access and search.
+@@ a2-1|sum:2#0
+A dynamic array has amortized $O(1)$ append.
+@@ a2-1|sum:3#0
+Hardware constants (cache) can cancel an asymptotic advantage.
+@@ a2-1|ex:0:q#0
+Which operation on a singly linked list without a tail pointer is $O(1)$?
+@@ a2-1|ex:0:e#0
+Inserting at the head only changes head. The others need traversal.
+@@ a2-1|ex:0:o:0#0
+Insert at the end
+@@ a2-1|ex:0:o:1#0
+Insert at the start
+@@ a2-1|ex:0:o:2#0
+Access the k-th element
+@@ a2-1|ex:0:o:3#0
+Delete the last node
+@@ a2-1|ex:1:q#0
+In a static array, accessing the $i$-th element does not depend on $i$ and is $O(1)$.
+@@ a2-1|ex:1:e#0
+The address is computed as $base+i\cdot s$.
+@@ a2-1|ex:2:q#0
+To insert one element at position 0 of an array with 1000 elements, at least how many elements must be shifted one place to the right?
+@@ a2-1|ex:2:e#0
+All 1000 existing elements must move one place to make room for the new one.
+@@ a2-1|ex:3:q#0
+What is the cost of deleting a given node $x$ (with a pointer to the node itself) from a doubly linked list?
+@@ a2-1|ex:3:e#0
+With the prev and next pointers we can connect the neighbours directly: <code>x.prev.next=x.next; x.next.prev=x.prev</code>.
+@@ a2-1|ex:4:q#0
+A linear traversal of 10 million numbers is $O(n)$ in both an array and a linked list. Why can the real time differ by tens of times?
+@@ a2-1|ex:4:a#0
+The array reads neighbouring elements in contiguous cache lines and the prefetcher loads ahead; almost all accesses are cache hits. In a linked list each node may be elsewhere in memory, the data dependency (the current node must be read to hop to the next) blocks prefetching and the pipeline, and many accesses are cache misses (hundreds of cycles). Asymptotic complexity does not see hardware constants.
+@@ a2-2|body#0
+ADT and implementation
+@@ a2-2|body#1
+An <b>abstract data type (ADT)</b> specifies only the operations and behaviour, not how it is stored. Stack, queue and deque are three ADTs, each implementable with a dynamic array, a circular array or a linked list.
+@@ a2-2|body#2
+Stack — "last in, first out" (LIFO)
+@@ a2-2|body#3
+Operations: <code>push</code>, <code>pop</code>, <code>peek</code>, <code>isEmpty</code>; all $O(1)$ (amortized in a dynamic array). Like a pile of stacked dishes. Uses: the language <b>call stack</b>, undo/redo, evaluating postfix expressions, matching parentheses and non-recursive DFS.
+@@ a2-2|body#4
+O(n) time, O(n) memory
+@@ a2-2|body#5
+Queue — "first in, first out" (FIFO)
+@@ a2-2|body#6
+Operations: <code>enqueue</code> (at the end), <code>dequeue</code> (from the front). If we build a queue with a plain array and remove from the front, the cost is $O(n)$; the solution is a <b>circular buffer</b> with two indices <code>head</code> and <code>tail</code> and modular arithmetic. Uses: BFS, process scheduling (round robin), network buffers, message queues (Kafka/RabbitMQ).
+@@ a2-2|body#7
+Deque — the double-ended queue
+@@ a2-2|body#8
+Insert and delete at both ends in $O(1)$. An important pattern is the <b>monotonic deque</b> for "maximum in a sliding window" in $O(n)$: we keep indices whose values decrease from front to back; an element smaller than the new one is removed from the back because it can never be the answer.
+@@ a2-2|body#9
+Stack / queue / deque simulator
+@@ a2-2|body#10
+<b class="t">Stack and recursion</b>Every function call pushes a "frame" onto the call stack. Any recursive algorithm can be made non-recursive with an explicit stack; and very deep recursion causes a <i>stack overflow</i>.
+@@ a2-2|obj:0#0
+Know the difference between an abstract data type (ADT) and an implementation.
+@@ a2-2|obj:1#0
+Implement stack, queue and deque with an array or a linked list.
+@@ a2-2|obj:2#0
+Solve the classic applications (parentheses, call stack, BFS, sliding window).
+@@ a2-2|mis:0#0
+"Implement a queue with <code>list.pop(0)</code> in Python." ← It is $O(n)$; use <code>collections.deque</code>.
+@@ a2-2|mis:1#0
+"Stack and queue are independent data structures." ← They are ADTs; their underlying storage is an array or a list.
+@@ a2-2|mis:2#0
+Forgetting to check underflow/overflow in a fixed-capacity implementation.
+@@ a2-2|sum:0#0
+Stack (LIFO) and queue (FIFO) are ADTs and their main operations are $O(1)$.
+@@ a2-2|sum:1#0
+A circular buffer implements a queue without shifting.
+@@ a2-2|sum:2#0
+A deque offers both ends and the monotonic deque solves sliding-window problems in $O(n)$.
+@@ a2-2|ex:0:q#0
+In what order does a program return from its functions (the call stack)?
+@@ a2-2|ex:0:e#0
+The last function called returns first: LIFO.
+@@ a2-2|ex:0:o:2#0
+Random
+@@ a2-2|ex:0:o:3#0
+Priority
+@@ a2-2|ex:1:q#0
+Evaluate the following postfix expression: <code>5 1 2 + 4 * + 3 -</code>
+@@ a2-2|ex:1:e#0
+$1+2=3$; $3\cdot4=12$; $5+12=17$; $17-3=14$. With a stack: operands are pushed and each operator pops the top two elements.
+@@ a2-2|ex:2:q#0
+In a circular queue of capacity $n$, if we continue after 5 dequeues and 5 enqueues, we need to shift elements.
+@@ a2-2|ex:2:e#0
+A circular buffer only updates the indices modulo the capacity and never shifts anything.
+@@ a2-2|ex:3:q#0
+Which structure is used to solve "the maximum of every window of size $k$" in $O(n)$ time?
+@@ a2-2|ex:3:e#0
+Each index enters and leaves at most once ⇒ $O(n)$. A heap would give $O(n\log n)$.
+@@ a2-2|ex:3:o:0#0
+A plain stack
+@@ a2-2|ex:4:q#0
+Show how to implement a queue with two stacks and give the amortized cost of each operation.
+@@ a2-2|ex:4:a#0
+Two stacks, in and out. enqueue: push onto in ($O(1)$). dequeue: if out is empty, pop all elements of in one by one and push them onto out (the order reverses and the front of the queue ends up on top of out), then pop from out. Each element moves to out at most once, so the total cost of $n$ operations is $O(n)$ and the amortized cost per operation is $O(1)$ (by the aggregate or potential method).
+@@ a2-3|body#0
+The idea
+@@ a2-3|body#1
+A <b>hash table</b> is a mapping from keys to values that performs lookup/insert/delete in $O(1)$ on average by converting the key into an array index. A <b>hash function</b> $h:\text{Keys}\to\{0,\dots,m-1\}$ maps a key to one of $m$ slots. Since the key domain is much larger than $m$, by the <b>pigeonhole principle</b> collisions are unavoidable.
+@@ a2-3|body#2
+A good hash function
+@@ a2-3|body#3
+<b>Deterministic:</b> a key always gives the same output.
+@@ a2-3|body#4
+<b>Uniform distribution:</b> it spreads keys roughly equally over the slots.
+@@ a2-3|body#5
+<b>Fast:</b> cheap to compute.
+@@ a2-3|body#6
+String example: $h(s)=\left(\sum_{i} s_i\cdot 31^{\,len-1-i}\right)\bmod m$ (a polynomial with a prime base). Note: a hash-table hash function differs from a <i>cryptographic</i> hash function (SHA-256); the former needs speed and good spreading, the latter resistance to deliberate collisions.
+@@ a2-3|body#7
+Resolving collisions
+@@ a2-3|body#8
+1. Separate chaining
+@@ a2-3|body#9
+Each slot is a list (chain) of the keys that land in it. The search cost is $\Theta(1+\alpha)$ where $\alpha=n/m$ is the <b>load factor</b>. If the hash is "simple uniform" and $\alpha=O(1)$ the average time is $O(1)$; but in the worst case (all keys in one slot) it becomes $O(n)$ (Java 8+ turns long chains into balanced trees).
+@@ a2-3|body#10
+2. Open addressing
+@@ a2-3|body#11
+All keys live inside the array itself. On a collision a probe sequence looks for an empty slot: <b>linear probing</b> ($h+i$), <b>quadratic</b> ($h+i^2$) and <b>double hashing</b> ($h_1+i\,h_2$). Linear probing is cache-friendly but suffers <b>primary clustering</b>: contiguous clusters grow and search time explodes as $\alpha$ approaches 1 (on average ≈ $\frac12(1+\frac1{(1-\alpha)^2})$ for an unsuccessful search). Deletion must use a <b>tombstone</b>, otherwise the probe chain of other keys breaks.
+@@ a2-3|body#12
+Hash-table simulator (chaining and linear probing)
+@@ a2-3|body#13
+Rehash and amortized analysis
+@@ a2-3|body#14
+When $\alpha$ exceeds a threshold (say 0.75 in Java, 2/3 in Python), a table of double the size is built and all keys are rehashed (because $m$ changed). This operation costs $O(n)$ but, like the dynamic array, it adds up to amortized $O(1)$ per insertion.
+@@ a2-3|body#15
+Applications and limits
+@@ a2-3|body#16
+Dictionary/map (<code>dict</code>, <code>HashMap</code>), set (<code>set</code>), frequency counting, removing duplicates, memoization, caches.
+@@ a2-3|body#17
+In databases: the <b>hash join</b> and the <b>hash index</b> (for equality, but not ranges).
+@@ a2-3|body#18
+Limit: key order is not preserved, range/min search is impossible, and keys must be <i>immutable</i> with consistent <code>equals/hash</code>.
+@@ a2-3|obj:0#0
+Describe the inner mechanism of a hash table and the role of the hash function.
+@@ a2-3|obj:1#0
+Compare chaining and open addressing and explain clustering.
+@@ a2-3|obj:2#0
+Analyse the effect of the load factor and rehashing on performance.
+@@ a2-3|mis:0#0
+"Lookup in a hash table is always $O(1)$." ← On average, assuming a good hash; the worst case is $O(n)$.
+@@ a2-3|mis:1#0
+"A hash table is sorted." ← The order is meaningless (Python ≥ 3.7 keeps insertion order for <code>dict</code> but that has nothing to do with the keys being sorted).
+@@ a2-3|mis:2#0
+"When deleting a key in open addressing, just empty the slot." ← A tombstone must be left.
+@@ a2-3|sum:0#0
+A hash table makes lookup/insert/delete $O(1)$ on average using a hash function; the worst case is $O(n)$.
+@@ a2-3|sum:1#0
+Collisions are unavoidable; chaining and open addressing are the two main remedies.
+@@ a2-3|sum:2#0
+The load factor $\alpha$ and rehashing control performance; rehashing is amortized $O(1)$.
+@@ a2-3|sum:3#0
+A hash table has no order and no range search.
+@@ a2-3|ex:0:q#0
+How is the load factor of a hash table defined?
+@@ a2-3|ex:0:e#0
+$\alpha=n/m$: the number of keys divided by the number of slots.
+@@ a2-3|ex:1:q#0
+With $h(k)=k\bmod 7$ and linear probing, we insert the keys 15, 22 and 8 in this order into an empty table. At which index does key 8 end up?
+@@ a2-3|ex:1:e#0
+$15\bmod7=1$ ⇒ slot 1. $22\bmod7=1$ collides ⇒ slot 2. $8\bmod7=1$ collides with 1 and 2 ⇒ slot 3.
+@@ a2-3|ex:2:q#0
+In open addressing with linear probing, deleting a key by emptying its slot is always safe.
+@@ a2-3|ex:2:e#0
+If another key that collided was placed after it, searching for that key reaches an empty slot and wrongly says "not found". Tombstones are used.
+@@ a2-3|ex:3:q#0
+What is the main advantage of chaining over open addressing?
+@@ a2-3|ex:3:e#0
+In chaining the load factor can exceed 1 and it only slows down linearly; open addressing becomes very slow or full as $\alpha\to1$.
+@@ a2-3|ex:3:o:0#0
+Better cache locality
+@@ a2-3|ex:3:o:1#0
+More stable performance when $\alpha>1$
+@@ a2-3|ex:3:o:2#0
+Less memory
+@@ a2-3|ex:3:o:3#0
+No need for a hash function
+@@ a2-3|ex:4:q#0
+Why is the hash-table size usually chosen as a prime or a power of 2 combined with bit mixing? And what happens if the keys are multiples of $m$ with $h=k\bmod m$?
+@@ a2-3|ex:4:a#0
+If $m$ shares a factor with the key pattern (say keys are multiples of 10 and $m=100$) only some of the slots are used and collisions pile up. Primes share fewer factors with common patterns. A power of 2 makes the computation fast with a bitwise AND but sees only the low bits of the key; so the hash function must mix the bits well (mixing/finalizer).

@@ -1,0 +1,296 @@
+@@ a4-1|body#0
+1. Searching
+@@ a4-1|body#1
+<b>Linear search</b> on unsorted data is $O(n)$. If the array is <b>sorted</b>, <b>binary search</b> discards half the range with every comparison: $T(n)=T(n/2)+O(1)\Rightarrow O(\log n)$.
+@@ a4-1|body#2
+invariant: if t is in a, it is in a[lo..hi]
+@@ a4-1|body#3
+2    # not (lo+hi)//2 ; avoids overflow in languages with fixed-width integers
+@@ a4-1|body#4
+Binary search step by step
+@@ a4-1|body#5
+Common mistakes: <code>lo &lt; hi</code> instead of <code>lo &lt;= hi</code> (missing the last element), updating <code>lo = mid</code> (infinite loop), forgetting that the input must be sorted. Generalizations: lower_bound/upper_bound and "binary search on the answer" (for example the smallest capacity that satisfies a condition).
+@@ a4-1|body#6
+2. Sorting
+@@ a4-1|body#7
+Important properties: <b>stable</b> means equal elements keep their original relative order (needed for multi-key sorting); <b>in-place</b> means $O(1)$ or $O(\log n)$ auxiliary memory.
+@@ a4-1|body#8
+Algorithm
+@@ a4-1|body#9
+Memory
+@@ a4-1|body#10
+Stable?
+@@ a4-1|body#11
+Note
+@@ a4-1|body#12
+Yes
+@@ a4-1|body#13
+Educational; with an early-exit flag
+@@ a4-1|body#14
+No
+@@ a4-1|body#15
+Fewest swaps ($n-1$)
+@@ a4-1|body#16
+Yes
+@@ a4-1|body#17
+Great for small or nearly sorted data
+@@ a4-1|body#18
+Yes
+@@ a4-1|body#19
+Divide and conquer; suited to linked lists and external data
+@@ a4-1|body#20
+No
+@@ a4-1|body#21
+Fast in practice; the pivot choice matters
+@@ a4-1|body#22
+No
+@@ a4-1|body#23
+Guaranteed worst case, but poor cache behaviour
+@@ a4-1|body#24
+Splits the array in half, sorts each half recursively and merges the two sorted halves in $O(n)$: $T(n)=2T(n/2)+\Theta(n)\Rightarrow\Theta(n\log n)$ in all cases.
+@@ a4-1|body#25
+&lt;= for stability
+@@ a4-1|body#26
+Chooses a <b>pivot</b>, partitions the array into "smaller" and "larger" and sorts the two parts recursively. If the pivot is always near the median $T(n)=2T(n/2)+\Theta(n)$ and the cost is $\Theta(n\log n)$; if it is always the smallest/largest (for example a sorted array with the last element as pivot) $T(n)=T(n-1)+\Theta(n)=\Theta(n^2)$. With a random pivot or median-of-three the expected time is $O(n\log n)$.
+@@ a4-1|body#27
+Sorting animation; change the algorithm and the data type and compare the number of comparisons
+@@ a4-1|body#28
+3. The lower bound for comparison sorting
+@@ a4-1|body#29
+Every comparison-based algorithm can be modelled by a binary <b>decision tree</b> in which each leaf is one of the $n!$ possible permutations. A binary tree with $n!$ leaves has height at least $\log_2(n!)$ and by Stirling's approximation $\log_2(n!)=\Theta(n\log n)$. So no comparison-based algorithm can do better than $\Omega(n\log n)$ in the worst case. Algorithms like <b>counting sort</b> and <b>radix sort</b> escape this bound by using the structure of the keys (integers in a small range): counting sort runs in $O(n+k)$.
+@@ a4-1|body#30
+<b class="t">In practice</b>Standard libraries usually use hybrid algorithms: Timsort (Python/Java for objects: a combination of merge and insertion sort that detects sorted runs) and Introsort (C++: quicksort that switches to heap sort when the depth gets large). You do not need to write your own sort except for learning.
+@@ a4-1|obj:0#0
+Implement binary search correctly with a loop invariant and know its common mistakes.
+@@ a4-1|obj:1#0
+Compare merge sort, quicksort and heap sort (time, memory, stability).
+@@ a4-1|obj:2#0
+Explain the $\Omega(n\log n)$ lower bound of comparison sorting.
+@@ a4-1|mis:0#0
+"Quicksort is always $O(n\log n)$." ← On average; the worst case is $O(n^2)$.
+@@ a4-1|mis:1#0
+"Merge sort is in place." ← The usual version needs $O(n)$ auxiliary memory.
+@@ a4-1|mis:2#0
+"Binary search also works on an unsorted array." ← No; sortedness is a precondition.
+@@ a4-1|mis:3#0
+"A stable sort means faster." ← Stability is a property of order, not speed.
+@@ a4-1|sum:0#0
+Binary search on sorted data is $O(\log n)$; the loop invariant and overflow avoidance matter.
+@@ a4-1|sum:1#0
+Merge sort is stable and $\Theta(n\log n)$ with $O(n)$ memory; quicksort is fastest in practice but has a worst case of $O(n^2)$; heap sort is in place with a worst-case guarantee.
+@@ a4-1|sum:2#0
+Comparison sorting cannot beat $\Omega(n\log n)$.
+@@ a4-1|ex:0:q#0
+What is the maximum number of comparisons of binary search on a sorted array of 15 elements?
+@@ a4-1|ex:1:q#0
+Which sorting algorithm is $O(n\log n)$ even in the worst case and in place?
+@@ a4-1|ex:1:e#0
+Heap sort has a worst case of $O(n\log n)$ and $O(1)$ auxiliary memory. Merge sort needs $O(n)$ memory and quicksort has a worst case of $O(n^2)$.
+@@ a4-1|ex:2:q#0
+Insertion sort on an already sorted array is $O(n)$.
+@@ a4-1|ex:2:e#0
+Each element is compared only with the previous one and nothing moves: $n-1$ comparisons.
+@@ a4-1|ex:3:q#0
+How does quicksort with pivot = the last element behave on a sorted ascending array?
+@@ a4-1|ex:3:e#0
+The pivot is always the largest; the partition is unbalanced ($n-1$ and 0) ⇒ $T(n)=T(n-1)+n=\Theta(n^2)$.
+@@ a4-1|ex:4:q#0
+Why can't we build a "comparison" sorting algorithm with $O(n)$ worst-case comparisons? (decision-tree argument)
+@@ a4-1|ex:4:a#0
+To identify one of the $n!$ input permutations the algorithm needs at least $n!$ distinct leaves in its decision tree. A binary tree with $L$ leaves has height at least $\log_2 L$, so the worst-case comparisons are $\ge\log_2(n!)$. By Stirling $\ln n!\approx n\ln n-n$ ⇒ $\log_2 n!=\Theta(n\log n)$. Therefore the bound is $\Omega(n\log n)$ and $O(n)$ is impossible.
+@@ a4-2|body#0
+The concept
+@@ a4-2|body#1
+Graph traversal means visiting, in an orderly way, all vertices reachable from a start vertex. To avoid looping forever in cycles we keep a <b>visited</b> set. The difference between BFS and DFS is only the data structure of the "frontier": a <b>queue (FIFO)</b> or a <b>stack (LIFO)</b>.
+@@ a4-2|body#2
+BFS — breadth-first search
+@@ a4-2|body#3
+mark when entering the queue
+@@ a4-2|body#4
+time O(V+E), memory O(V)
+@@ a4-2|body#5
+BFS sees vertices in order of their distance (number of edges) from the source, so on an <b>unweighted graph</b> it gives the shortest path. Why it is correct: the queue always holds vertices at distance $d$ before those at $d+1$ (an invariant).
+@@ a4-2|body#6
+DFS — depth-first search
+@@ a4-2|body#7
+post-order: u is finished
+@@ a4-2|body#8
+DFS goes as deep as possible and then returns (backtracks). By recording the entry/exit time of each vertex, edge types (tree, back, forward, cross) are classified; a <b>back edge</b> means a cycle. The reverse of DFS post-order on a DAG is a <b>topological order</b>.
+@@ a4-2|body#9
+BFS and DFS animation (change the start vertex)
+@@ a4-2|body#10
+Complexity
+@@ a4-2|body#11
+Each vertex is examined once and each edge (twice in an undirected graph) once: time $\Theta(V+E)$ with an adjacency list (and $\Theta(V^2)$ with an adjacency matrix). BFS memory is up to $O(V)$ (the width of the graph), DFS memory up to $O(V)$ (the depth).
+@@ a4-2|body#12
+Structure
+@@ a4-2|body#13
+Queue
+@@ a4-2|body#14
+Stack/recursion
+@@ a4-2|body#15
+Shortest path (unweighted)
+@@ a4-2|body#16
+✅ guaranteed
+@@ a4-2|body#17
+Cycle detection, topological sort, SCC
+@@ a4-2|body#18
+Hard
+@@ a4-2|body#19
+✅ natural
+@@ a4-2|body#20
+Memory on a wide graph
+@@ a4-2|body#21
+High
+@@ a4-2|body#22
+Low
+@@ a4-2|body#23
+Memory on a deep graph
+@@ a4-2|body#24
+Low
+@@ a4-2|body#25
+High (stack overflow risk)
+@@ a4-2|body#26
+Applications
+@@ a4-2|body#27
+Connected components, checking bipartiteness (BFS with two colours).
+@@ a4-2|body#28
+Solving puzzles and flood fill (BFS on a grid).
+@@ a4-2|body#29
+Topological sort for scheduling dependencies (builds, course prerequisites).
+@@ a4-2|body#30
+Web crawlers (BFS), deadlock detection in the wait-for graph (DFS).
+@@ a4-2|obj:0#0
+Implement BFS and DFS with a queue and a stack and compare their behaviour.
+@@ a4-2|obj:1#0
+Explain the $O(V+E)$ complexity.
+@@ a4-2|obj:2#0
+Apply BFS for shortest paths in unweighted graphs and DFS for cycle detection and topological sort.
+@@ a4-2|mis:0#0
+"BFS on a weighted graph gives the shortest path." ← Only when all weights are equal; otherwise use Dijkstra.
+@@ a4-2|mis:1#0
+Marking visited when "dequeuing" (not when enqueuing) causes many repeated entries and wrong distances.
+@@ a4-2|mis:2#0
+"The DFS visit order is unique." ← It depends on the order of the neighbours.
+@@ a4-2|sum:0#0
+BFS (queue) and DFS (stack) are both $\Theta(V+E)$ with an adjacency list.
+@@ a4-2|sum:1#0
+BFS gives unweighted shortest paths; DFS suits cycles, topological sort and SCC.
+@@ a4-2|sum:2#0
+The visited mark must be set when a vertex is added to the frontier (BFS).
+@@ a4-2|ex:0:q#0
+Which auxiliary data structure does BFS use?
+@@ a4-2|ex:0:e#0
+BFS uses a FIFO queue.
+@@ a4-2|ex:1:q#0
+In an undirected graph with 100 vertices and 300 edges (adjacency list), at most how many times does BFS "examine a neighbour"? (each edge from both sides)
+@@ a4-2|ex:1:e#0
+The sum of the adjacency-list lengths $=2|E|=600$.
+@@ a4-2|ex:2:q#0
+In a directed graph, a back edge in DFS indicates a cycle.
+@@ a4-2|ex:2:e#0
+A back edge goes to an ancestor of the current vertex on the stack and forms a cycle.
+@@ a4-2|ex:3:q#0
+Which do you choose to find the shortest path (by number of edges) in a grid maze?
+@@ a4-2|ex:3:e#0
+BFS visits vertices in order of distance.
+@@ a4-2|ex:4:q#0
+Describe the topological-sort algorithm with DFS and say what happens if the graph has a cycle.
+@@ a4-2|ex:4:a#0
+Run DFS from every unvisited vertex; append each vertex to a list when its processing finishes (post-order). The reverse of the list is a topological order because for an edge $u\to v$, $v$ always finishes before $u$. If DFS reaches a vertex that is on the current stack (grey) a back edge has been found, the graph has a cycle and no topological order exists.
+@@ a4-3|body#0
+All the algorithms in this section rely on the <b>relax</b> operation: if reaching $v$ through $u$ is cheaper, we improve the recorded distance:
+@@ a4-3|body#1
+The difference between the algorithms is the "order" and "number of times" of relaxing.
+@@ a4-3|body#2
+Dijkstra — single source, non-negative weights
+@@ a4-3|body#3
+A <b>greedy algorithm</b>: it always takes the closest unfinalized vertex, finalizes it and relaxes its edges. Why it is correct: with non-negative weights the shortest path to the vertex that currently has the smallest $d$ cannot be shorter than a path through another unfinalized vertex. With a negative edge this argument breaks.
+@@ a4-3|body#4
+stale entry (lazy deletion)
+@@ a4-3|body#5
+Complexity: $O(V^2)$ with an array; $O((V+E)\log V)$ with a binary heap; $O(E+V\log V)$ with a Fibonacci heap. The choice of the priority-queue data structure changes the algorithm's complexity.
+@@ a4-3|body#6
+Bellman–Ford — negative edges and negative-cycle detection
+@@ a4-3|body#7
+It relaxes all edges $V-1$ times. Since a shortest simple path has at most $V-1$ edges, the distances are final after $V-1$ rounds. If an improvement still occurs in round $V$, a reachable <b>negative cycle</b> exists and the shortest path is undefined (it can be decreased to $-\infty$). Complexity $O(VE)$.
+@@ a4-3|body#8
+Dijkstra and Bellman–Ford on the sample graph (Bellman–Ford on a directed graph with a negative weight)
+@@ a4-3|body#9
+Floyd–Warshall — all pairs
+@@ a4-3|body#10
+A <b>dynamic-programming</b> algorithm: let $D^{(k)}_{ij}$ be the shortest path $i\to j$ whose intermediate vertices come only from $\{1..k\}$. Then:
+@@ a4-3|body#11
+That is, either the path does not pass through $k$, or it passes through $k$ and splits into two smaller subproblems. Three nested loops: $\Theta(V^3)$ time and $\Theta(V^2)$ memory (updated in place). Negative weights are allowed (without negative cycles; if $D_{ii}<0$ there is a negative cycle).
+@@ a4-3|body#12
+Floyd–Warshall: the distance matrix at each step k
+@@ a4-3|body#13
+Algorithm
+@@ a4-3|body#14
+Problem type
+@@ a4-3|body#15
+Negative weights?
+@@ a4-3|body#16
+Time
+@@ a4-3|body#17
+Used for
+@@ a4-3|body#18
+Single source, unweighted
+@@ a4-3|body#19
+Simple networks, mazes
+@@ a4-3|body#20
+Single source
+@@ a4-3|body#21
+Map routing, OSPF
+@@ a4-3|body#22
+Single source
+@@ a4-3|body#23
+✅ (detects negative cycles)
+@@ a4-3|body#24
+RIP, currency arbitrage
+@@ a4-3|body#25
+All pairs
+@@ a4-3|body#26
+Small dense graphs, transitive closure
+@@ a4-3|obj:0#0
+Explain the idea of relaxation and compare the three algorithms by use and complexity.
+@@ a4-3|obj:1#0
+State why Dijkstra needs non-negative weights.
+@@ a4-3|obj:2#0
+Detect a negative cycle with Bellman–Ford and analyse Floyd–Warshall as DP.
+@@ a4-3|mis:0#0
+"Dijkstra also works with negative edges." ← No; a finalized vertex may improve later.
+@@ a4-3|mis:1#0
+"Bellman–Ford is just slower than Dijkstra." ← Its advantage is supporting negative edges and detecting negative cycles.
+@@ a4-3|mis:2#0
+Without a negative cycle, and without defining it, people confuse "distance −∞" with an ordinary distance.
+@@ a4-3|sum:0#0
+Relaxation is the core of all shortest-path algorithms.
+@@ a4-3|sum:1#0
+Dijkstra (greedy, non-negative weights, $O((V+E)\log V)$), Bellman–Ford (negative weights and negative cycles, $O(VE)$), Floyd–Warshall (all pairs, DP, $O(V^3)$).
+@@ a4-3|sum:2#0
+The choice of priority-queue data structure sets Dijkstra's complexity.
+@@ a4-3|ex:0:q#0
+Which algorithm correctly handles an edge with a negative weight (without a negative cycle)?
+@@ a4-3|ex:0:e#0
+Bellman–Ford with repeated relaxation; Dijkstra assumes non-negative weights.
+@@ a4-3|ex:0:o:2#0
+BFS on a weighted graph
+@@ a4-3|ex:0:o:3#0
+None of them
+@@ a4-3|ex:1:q#0
+What is the maximum number of relaxation rounds Bellman–Ford needs for $V=6$ vertices (not counting the extra negative-cycle-detection round)?
+@@ a4-3|ex:1:e#0
+$V-1=5$ rounds are enough.
+@@ a4-3|ex:2:q#0
+Dijkstra with a binary heap is faster than the array implementation on a sparse graph.
+@@ a4-3|ex:2:e#0
+$O((V+E)\log V)$ versus $O(V^2)$; when $E\ll V^2$ the heap wins.
+@@ a4-3|ex:3:q#0
+The memory complexity of Floyd–Warshall (with in-place updates):
+@@ a4-3|ex:3:e#0
+One $V\times V$ matrix is enough because $D^{(k)}$ can be written over $D^{(k-1)}$.
+@@ a4-3|ex:4:q#0
+Build a counterexample with one negative edge on which Dijkstra gives a wrong answer.
+@@ a4-3|ex:4:a#0
+Graph: $A\to B$ with weight 2, $A\to C$ with weight 5, $C\to B$ with weight $-4$. Starting from $A$: Dijkstra first finalizes $B$ with distance 2 (the minimum of $\{2,5\}$) and never changes it; but the real path $A\to C\to B$ costs $5-4=1$. Dijkstra's answer (2) is wrong; Bellman–Ford correctly gives 1.

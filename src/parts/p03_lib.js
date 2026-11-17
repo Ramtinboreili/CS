@@ -8,33 +8,33 @@ L.randn=function(r){let u=0,v=0;while(!u)u=r();while(!v)v=r();return Math.sqrt(-
 /* ---- sorting frames: {a,cmp:[i,j],swp:[i,j],sorted:Set-like array,pivot,range,d,c,w} ---- */
 L.sortFrames=function(arr,algo){const a=arr.slice(),F=[];let c=0,w=0;const n=a.length;let sorted=[];
  const push=(d,o)=>F.push(Object.assign({a:a.slice(),d,c,w,sorted:sorted.slice()},o||{}));
- push('آرایه اولیه');
- if(algo==='bubble'){for(let i=0;i<n-1;i++){let sw=false;for(let j=0;j<n-1-i;j++){c++;push(`مقایسه a[${j}]=${a[j]} و a[${j+1}]=${a[j+1]}`,{cmp:[j,j+1]});
-   if(a[j]>a[j+1]){[a[j],a[j+1]]=[a[j+1],a[j]];w++;sw=true;push('جابه‌جایی چون بزرگ‌تر قبل از کوچک‌تر بود',{swp:[j,j+1]})}}
+ push(t2('آرایه اولیه','initial array'));
+ if(algo==='bubble'){for(let i=0;i<n-1;i++){let sw=false;for(let j=0;j<n-1-i;j++){c++;push(t2(`مقایسه a[${j}]=${a[j]} و a[${j+1}]=${a[j+1]}`,`compare a[${j}]=${a[j]} and a[${j+1}]=${a[j+1]}`),{cmp:[j,j+1]});
+   if(a[j]>a[j+1]){[a[j],a[j+1]]=[a[j+1],a[j]];w++;sw=true;push(t2('جابه‌جایی چون بزرگ‌تر قبل از کوچک‌تر بود','swap because the larger comes before the smaller'),{swp:[j,j+1]})}}
    sorted.push(n-1-i);if(!sw){for(let k=0;k<n-1-i;k++)sorted.push(k);break}}sorted=[...Array(n).keys()]}
- else if(algo==='insertion'){sorted=[0];for(let i=1;i<n;i++){let j=i;push(`کلید a[${i}]=${a[i]} را در بخش مرتب جا می‌دهیم`,{cmp:[i,i]});
-   while(j>0){c++;push(`مقایسه ${a[j-1]} و ${a[j]}`,{cmp:[j-1,j]});if(a[j-1]>a[j]){[a[j-1],a[j]]=[a[j],a[j-1]];w++;push('جابه‌جایی به چپ',{swp:[j-1,j]});j--}else break}
+ else if(algo==='insertion'){sorted=[0];for(let i=1;i<n;i++){let j=i;push(t2(`کلید a[${i}]=${a[i]} را در بخش مرتب جا می‌دهیم`,`insert key a[${i}]=${a[i]} into the sorted part`),{cmp:[i,i]});
+   while(j>0){c++;push(t2(`مقایسه ${a[j-1]} و ${a[j]}`,`compare ${a[j-1]} and ${a[j]}`),{cmp:[j-1,j]});if(a[j-1]>a[j]){[a[j-1],a[j]]=[a[j],a[j-1]];w++;push(t2('جابه‌جایی به چپ','shift left'),{swp:[j-1,j]});j--}else break}
    sorted=[...Array(i+1).keys()]}}
- else if(algo==='selection'){for(let i=0;i<n-1;i++){let m=i;for(let j=i+1;j<n;j++){c++;push(`دنبال کمینه: مقایسه a[${j}]=${a[j]} با کمینه فعلی ${a[m]}`,{cmp:[m,j]});if(a[j]<a[m])m=j}
-   if(m!==i){[a[i],a[m]]=[a[m],a[i]];w++;push(`کمینه (${a[i]}) را به موقعیت ${i} می‌بریم`,{swp:[i,m]})}sorted.push(i)}sorted=[...Array(n).keys()]}
+ else if(algo==='selection'){for(let i=0;i<n-1;i++){let m=i;for(let j=i+1;j<n;j++){c++;push(t2(`دنبال کمینه: مقایسه a[${j}]=${a[j]} با کمینه فعلی ${a[m]}`,`looking for the minimum: compare a[${j}]=${a[j]} with the current minimum ${a[m]}`),{cmp:[m,j]});if(a[j]<a[m])m=j}
+   if(m!==i){[a[i],a[m]]=[a[m],a[i]];w++;push(t2(`کمینه (${a[i]}) را به موقعیت ${i} می‌بریم`,`move the minimum (${a[i]}) to position ${i}`),{swp:[i,m]})}sorted.push(i)}sorted=[...Array(n).keys()]}
  else if(algo==='merge'){const aux=a.slice();
    (function ms(lo,hi){if(hi-lo<1)return;const mid=(lo+hi)>>1;ms(lo,mid);ms(mid+1,hi);
-    for(let k=lo;k<=hi;k++)aux[k]=a[k];let i=lo,j=mid+1;push(`ادغام دو نیمه مرتب [${lo}..${mid}] و [${mid+1}..${hi}]`,{range:[lo,hi]});
-    for(let k=lo;k<=hi;k++){if(i>mid)a[k]=aux[j++];else if(j>hi)a[k]=aux[i++];else{c++;a[k]=aux[j]<aux[i]?aux[j++]:aux[i++]}w++;push(`نوشتن ${a[k]} در موقعیت ${k}`,{range:[lo,hi],swp:[k,k]})}})(0,n-1);sorted=[...Array(n).keys()]}
- else if(algo==='quick'){(function qs(lo,hi){if(lo>=hi){if(lo===hi)sorted.push(lo);return}const p=a[hi];let i=lo;push(`pivot = ${p} (آخرین عنصر بازه [${lo}..${hi}])`,{pivot:hi,range:[lo,hi]});
-    for(let j=lo;j<hi;j++){c++;push(`مقایسه a[${j}]=${a[j]} با pivot=${p}`,{cmp:[j,hi],pivot:hi,range:[lo,hi]});if(a[j]<p){if(i!==j){[a[i],a[j]]=[a[j],a[i]];w++;push('انتقال عنصر کوچک‌تر به سمت چپ',{swp:[i,j],pivot:hi,range:[lo,hi]})}i++}}
-    [a[i],a[hi]]=[a[hi],a[i]];w++;sorted.push(i);push(`pivot در جایگاه نهایی ${i} قرار گرفت`,{swp:[i,hi],range:[lo,hi]});qs(lo,i-1);qs(i+1,hi)})(0,n-1);sorted=[...Array(n).keys()]}
- else if(algo==='heap'){const sift=(i,m)=>{for(;;){let l=2*i+1,r=l+1,b=i;if(l<m){c++;if(a[l]>a[b])b=l}if(r<m){c++;if(a[r]>a[b])b=r}if(b===i)return;[a[i],a[b]]=[a[b],a[i]];w++;push(`sift-down: جابه‌جایی ${i} و ${b}`,{swp:[i,b]});i=b}};
-   for(let i=(n>>1)-1;i>=0;i--)sift(i,n);push('ساخت Max-Heap کامل شد');
-   for(let e=n-1;e>0;e--){[a[0],a[e]]=[a[e],a[0]];w++;sorted.push(e);push(`بیشینه (${a[e]}) به انتهای آرایه رفت`,{swp:[0,e]});sift(0,e)}sorted=[...Array(n).keys()]}
- push('پایان — آرایه مرتب است');return F};
+    for(let k=lo;k<=hi;k++)aux[k]=a[k];let i=lo,j=mid+1;push(t2(`ادغام دو نیمه مرتب [${lo}..${mid}] و [${mid+1}..${hi}]`,`merge the two sorted halves [${lo}..${mid}] and [${mid+1}..${hi}]`),{range:[lo,hi]});
+    for(let k=lo;k<=hi;k++){if(i>mid)a[k]=aux[j++];else if(j>hi)a[k]=aux[i++];else{c++;a[k]=aux[j]<aux[i]?aux[j++]:aux[i++]}w++;push(t2(`نوشتن ${a[k]} در موقعیت ${k}`,`write ${a[k]} at position ${k}`),{range:[lo,hi],swp:[k,k]})}})(0,n-1);sorted=[...Array(n).keys()]}
+ else if(algo==='quick'){(function qs(lo,hi){if(lo>=hi){if(lo===hi)sorted.push(lo);return}const p=a[hi];let i=lo;push(t2(`pivot = ${p} (آخرین عنصر بازه [${lo}..${hi}])`,`pivot = ${p} (last element of the range [${lo}..${hi}])`),{pivot:hi,range:[lo,hi]});
+    for(let j=lo;j<hi;j++){c++;push(t2(`مقایسه a[${j}]=${a[j]} با pivot=${p}`,`compare a[${j}]=${a[j]} with pivot=${p}`),{cmp:[j,hi],pivot:hi,range:[lo,hi]});if(a[j]<p){if(i!==j){[a[i],a[j]]=[a[j],a[i]];w++;push(t2('انتقال عنصر کوچک‌تر به سمت چپ','move the smaller element to the left'),{swp:[i,j],pivot:hi,range:[lo,hi]})}i++}}
+    [a[i],a[hi]]=[a[hi],a[i]];w++;sorted.push(i);push(t2(`pivot در جایگاه نهایی ${i} قرار گرفت`,`pivot reached its final position ${i}`),{swp:[i,hi],range:[lo,hi]});qs(lo,i-1);qs(i+1,hi)})(0,n-1);sorted=[...Array(n).keys()]}
+ else if(algo==='heap'){const sift=(i,m)=>{for(;;){let l=2*i+1,r=l+1,b=i;if(l<m){c++;if(a[l]>a[b])b=l}if(r<m){c++;if(a[r]>a[b])b=r}if(b===i)return;[a[i],a[b]]=[a[b],a[i]];w++;push(t2(`sift-down: جابه‌جایی ${i} و ${b}`,`sift-down: swap ${i} and ${b}`),{swp:[i,b]});i=b}};
+   for(let i=(n>>1)-1;i>=0;i--)sift(i,n);push(t2('ساخت Max-Heap کامل شد','Max-Heap built'));
+   for(let e=n-1;e>0;e--){[a[0],a[e]]=[a[e],a[0]];w++;sorted.push(e);push(t2(`بیشینه (${a[e]}) به انتهای آرایه رفت`,`the maximum (${a[e]}) moves to the end of the array`),{swp:[0,e]});sift(0,e)}sorted=[...Array(n).keys()]}
+ push(t2('پایان — آرایه مرتب است','done — the array is sorted'));return F};
 
 /* ---- binary search frames ---- */
-L.bsearch=function(a,t){const F=[];let lo=0,hi=a.length-1,s=0;F.push({lo,hi,mid:-1,d:`بازه جست‌وجو [${lo}..${hi}] — هدف: ${t}`});
- while(lo<=hi){const mid=(lo+hi)>>1;s++;F.push({lo,hi,mid,d:`گام ${s}: mid=⌊(${lo}+${hi})/2⌋=${mid}، a[mid]=${a[mid]}`});
-  if(a[mid]===t){F.push({lo,hi,mid,found:mid,d:`پیدا شد! اندیس ${mid} با ${s} مقایسه`});return F}
-  if(a[mid]<t){lo=mid+1;F.push({lo,hi,mid:-1,d:`${a[mid]} < ${t} ← نیمه چپ حذف می‌شود: lo=${lo}`})}else{hi=mid-1;F.push({lo,hi,mid:-1,d:`${a[mid]} > ${t} ← نیمه راست حذف می‌شود: hi=${hi}`})}}
- F.push({lo,hi,mid:-1,notfound:true,d:`lo>hi ⇒ مقدار ${t} در آرایه نیست (${s} مقایسه)`});return F};
+L.bsearch=function(a,t){const F=[];let lo=0,hi=a.length-1,s=0;F.push({lo,hi,mid:-1,d:t2(`بازه جست‌وجو [${lo}..${hi}] — هدف: ${t}`,`search range [${lo}..${hi}] — target: ${t}`)});
+ while(lo<=hi){const mid=(lo+hi)>>1;s++;F.push({lo,hi,mid,d:t2(`گام ${s}: mid=⌊(${lo}+${hi})/2⌋=${mid}، a[mid]=${a[mid]}`,`step ${s}: mid=⌊(${lo}+${hi})/2⌋=${mid}, a[mid]=${a[mid]}`)});
+  if(a[mid]===t){F.push({lo,hi,mid,found:mid,d:t2(`پیدا شد! اندیس ${mid} با ${s} مقایسه`,`found! index ${mid} after ${s} comparisons`)});return F}
+  if(a[mid]<t){lo=mid+1;F.push({lo,hi,mid:-1,d:t2(`${a[mid]} < ${t} ← نیمه چپ حذف می‌شود: lo=${lo}`,`${a[mid]} < ${t} ← discard the left half: lo=${lo}`)})}else{hi=mid-1;F.push({lo,hi,mid:-1,d:t2(`${a[mid]} > ${t} ← نیمه راست حذف می‌شود: hi=${hi}`,`${a[mid]} > ${t} ← discard the right half: hi=${hi}`)})}}
+ F.push({lo,hi,mid:-1,notfound:true,d:t2(`lo>hi ⇒ مقدار ${t} در آرایه نیست (${s} مقایسه)`,`lo>hi ⇒ the value ${t} is not in the array (${s} comparisons)`)});return F};
 
 /* ---- BST / AVL ---- */
 const H=n=>n?n.h:0,upd=n=>{n.h=1+Math.max(H(n.l),H(n.r))};
@@ -49,10 +49,10 @@ L.search=function(root,k){const p=[];let n=root;while(n){p.push(n.k);if(k===n.k)
 const rotR=y=>{const x=y.l;y.l=x.r;x.r=y;upd(y);upd(x);return x};
 const rotL=x=>{const y=x.r;x.r=y.l;y.l=x;upd(x);upd(y);return y};
 L.avlInsert=function(root,k,log){const ins=n=>{if(!n)return{k,h:1};if(k<n.k)n.l=ins(n.l);else if(k>n.k)n.r=ins(n.r);else return n;upd(n);const b=bf(n);
-  if(b>1&&k<n.l.k){log.push(`عدم تعادل در ${n.k} (حالت LL) ← چرخش راست`);return rotR(n)}
-  if(b<-1&&k>n.r.k){log.push(`عدم تعادل در ${n.k} (حالت RR) ← چرخش چپ`);return rotL(n)}
-  if(b>1&&k>n.l.k){log.push(`عدم تعادل در ${n.k} (حالت LR) ← چرخش چپ روی ${n.l.k} سپس چرخش راست`);n.l=rotL(n.l);return rotR(n)}
-  if(b<-1&&k<n.r.k){log.push(`عدم تعادل در ${n.k} (حالت RL) ← چرخش راست روی ${n.r.k} سپس چرخش چپ`);n.r=rotR(n.r);return rotL(n)}
+  if(b>1&&k<n.l.k){log.push(t2(`عدم تعادل در ${n.k} (حالت LL) ← چرخش راست`,`imbalance at ${n.k} (case LL) ← right rotation`));return rotR(n)}
+  if(b<-1&&k>n.r.k){log.push(t2(`عدم تعادل در ${n.k} (حالت RR) ← چرخش چپ`,`imbalance at ${n.k} (case RR) ← left rotation`));return rotL(n)}
+  if(b>1&&k>n.l.k){log.push(t2(`عدم تعادل در ${n.k} (حالت LR) ← چرخش چپ روی ${n.l.k} سپس چرخش راست`,`imbalance at ${n.k} (case LR) ← left rotation on ${n.l.k}, then right rotation`));n.l=rotL(n.l);return rotR(n)}
+  if(b<-1&&k<n.r.k){log.push(t2(`عدم تعادل در ${n.k} (حالت RL) ← چرخش راست روی ${n.r.k} سپس چرخش چپ`,`imbalance at ${n.k} (case RL) ← right rotation on ${n.r.k}, then left rotation`));n.r=rotR(n.r);return rotL(n)}
   return n};return ins(root)};
 L.layout=function(root){const pos=[];let x=0;const go=(n,d,par)=>{if(!n)return;go(n.l,d+1,n);const me={k:n.k,x:x++,y:d,n,par:par?par.k:null};pos.push(me);go(n.r,d+1,n)};go(root,0,null);return pos};
 L.order=function(root,type){const o=[];const go=n=>{if(!n)return;if(type==='pre')o.push(n.k);go(n.l);if(type==='in')o.push(n.k);go(n.r);if(type==='post')o.push(n.k)};
@@ -69,33 +69,33 @@ L.G1={dir:false,n:[{id:'A',x:70,y:130},{id:'B',x:200,y:50},{id:'C',x:200,y:210},
  e:[{a:'A',b:'B',w:4},{a:'A',b:'C',w:2},{a:'B',b:'C',w:1},{a:'B',b:'D',w:5},{a:'C',b:'E',w:8},{a:'D',b:'E',w:2},{a:'D',b:'F',w:6},{a:'E',b:'F',w:3}]};
 L.G2={dir:true,n:L.G1.n,e:[{a:'A',b:'B',w:4},{a:'A',b:'C',w:5},{a:'B',b:'D',w:-3},{a:'C',b:'B',w:-2},{a:'C',b:'E',w:3},{a:'D',b:'F',w:2},{a:'E',b:'D',w:4},{a:'E',b:'F',w:-1}]};
 L.adj=function(g){const m={};g.n.forEach(x=>m[x.id]=[]);g.e.forEach(e=>{m[e.a].push({to:e.b,w:e.w});if(!g.dir)m[e.b].push({to:e.a,w:e.w})});for(const k in m)m[k].sort((p,q)=>p.to<q.to?-1:1);return m};
-L.bfs=function(g,s){const m=L.adj(g),F=[],seen=new Set([s]),q=[s],ord=[],tree=[];F.push({q:[...q],seen:[...seen],cur:null,ord:[...ord],tree:[...tree],d:`شروع از ${s}: درون صف می‌گذاریم و علامت می‌زنیم`});
- while(q.length){const u=q.shift();ord.push(u);F.push({q:[...q],seen:[...seen],cur:u,ord:[...ord],tree:[...tree],d:`از صف ${u} را خارج می‌کنیم و همسایه‌ها را بررسی می‌کنیم`});
-  for(const{to}of m[u]){if(!seen.has(to)){seen.add(to);q.push(to);tree.push([u,to]);F.push({q:[...q],seen:[...seen],cur:u,ord:[...ord],tree:[...tree],d:`${to} دیده‌نشده بود ← علامت و وارد صف شد (از طریق ${u})`})}}}
- F.push({q:[],seen:[...seen],cur:null,ord:[...ord],tree:[...tree],d:'پایان BFS — ترتیب بازدید: '+ord.join(' → ')});return F};
+L.bfs=function(g,s){const m=L.adj(g),F=[],seen=new Set([s]),q=[s],ord=[],tree=[];F.push({q:[...q],seen:[...seen],cur:null,ord:[...ord],tree:[...tree],d:t2(`شروع از ${s}: درون صف می‌گذاریم و علامت می‌زنیم`,`start at ${s}: enqueue it and mark it`)});
+ while(q.length){const u=q.shift();ord.push(u);F.push({q:[...q],seen:[...seen],cur:u,ord:[...ord],tree:[...tree],d:t2(`از صف ${u} را خارج می‌کنیم و همسایه‌ها را بررسی می‌کنیم`,`dequeue ${u} and examine its neighbours`)});
+  for(const{to}of m[u]){if(!seen.has(to)){seen.add(to);q.push(to);tree.push([u,to]);F.push({q:[...q],seen:[...seen],cur:u,ord:[...ord],tree:[...tree],d:t2(`${to} دیده‌نشده بود ← علامت و وارد صف شد (از طریق ${u})`,`${to} was unseen ← mark and enqueue it (via ${u})`)})}}}
+ F.push({q:[],seen:[...seen],cur:null,ord:[...ord],tree:[...tree],d:t2('پایان BFS — ترتیب بازدید: ','BFS finished — visit order: ')+ord.join(' → ')});return F};
 L.dfs=function(g,s){const m=L.adj(g),F=[],seen=new Set(),st=[],ord=[],tree=[];
  const snap=(cur,d)=>F.push({q:[...st],seen:[...seen],cur,ord:[...ord],tree:[...tree],d});
- const go=(u,p)=>{seen.add(u);ord.push(u);st.push(u);if(p)tree.push([p,u]);snap(u,`ورود به ${u} (روی پشته فراخوانی)`);
-  for(const{to}of m[u]){if(!seen.has(to)){snap(u,`از ${u} به همسایه دیده‌نشده ${to} می‌رویم (عمیق‌تر)`);go(to,u)}}
-  st.pop();snap(u,`همه همسایه‌های ${u} تمام شد ← backtrack`)};go(s,null);
- F.push({q:[],seen:[...seen],cur:null,ord:[...ord],tree:[...tree],d:'پایان DFS — ترتیب بازدید: '+ord.join(' → ')});return F};
+ const go=(u,p)=>{seen.add(u);ord.push(u);st.push(u);if(p)tree.push([p,u]);snap(u,t2(`ورود به ${u} (روی پشته فراخوانی)`,`enter ${u} (on the call stack)`));
+  for(const{to}of m[u]){if(!seen.has(to)){snap(u,t2(`از ${u} به همسایه دیده‌نشده ${to} می‌رویم (عمیق‌تر)`,`from ${u} go to the unseen neighbour ${to} (deeper)`));go(to,u)}}
+  st.pop();snap(u,t2(`همه همسایه‌های ${u} تمام شد ← backtrack`,`all neighbours of ${u} are done ← backtrack`))};go(s,null);
+ F.push({q:[],seen:[...seen],cur:null,ord:[...ord],tree:[...tree],d:t2('پایان DFS — ترتیب بازدید: ','DFS finished — visit order: ')+ord.join(' → ')});return F};
 L.dijkstra=function(g,s){const m=L.adj(g),dist={},prev={},done=new Set(),F=[];g.n.forEach(x=>dist[x.id]=Infinity);dist[s]=0;
- const snap=(cur,d,rel)=>F.push({dist:Object.assign({},dist),prev:Object.assign({},prev),done:[...done],cur,rel:rel||null,d});snap(null,`dist[${s}]=0 و بقیه ∞`);
+ const snap=(cur,d,rel)=>F.push({dist:Object.assign({},dist),prev:Object.assign({},prev),done:[...done],cur,rel:rel||null,d});snap(null,t2(`dist[${s}]=0 و بقیه ∞`,`dist[${s}]=0 and all others ∞`));
  while(true){let u=null;for(const x of g.n)if(!done.has(x.id)&&dist[x.id]<Infinity&&(u===null||dist[x.id]<dist[u]))u=x.id;if(u===null)break;
-  done.add(u);snap(u,`کم‌هزینه‌ترین رأس تثبیت‌نشده: ${u} با فاصله ${dist[u]} ← تثبیت می‌شود`);
-  for(const{to,w}of m[u]){if(done.has(to))continue;if(dist[u]+w<dist[to]){dist[to]=dist[u]+w;prev[to]=u;snap(u,`Relax(${u}→${to}): فاصله ${to} به ${dist[to]} بهبود یافت`,[u,to])}else snap(u,`Relax(${u}→${to}) بهبودی نداشت (${dist[u]}+${w} ≥ ${dist[to]})`,[u,to])}}
- snap(null,'پایان — کوتاه‌ترین فاصله‌ها به‌دست آمد');return F};
+  done.add(u);snap(u,t2(`کم‌هزینه‌ترین رأس تثبیت‌نشده: ${u} با فاصله ${dist[u]} ← تثبیت می‌شود`,`cheapest unfinalized vertex: ${u} with distance ${dist[u]} ← finalize it`));
+  for(const{to,w}of m[u]){if(done.has(to))continue;if(dist[u]+w<dist[to]){dist[to]=dist[u]+w;prev[to]=u;snap(u,t2(`Relax(${u}→${to}): فاصله ${to} به ${dist[to]} بهبود یافت`,`Relax(${u}→${to}): the distance of ${to} improved to ${dist[to]}`),[u,to])}else snap(u,t2(`Relax(${u}→${to}) بهبودی نداشت (${dist[u]}+${w} ≥ ${dist[to]})`,`Relax(${u}→${to}) gave no improvement (${dist[u]}+${w} ≥ ${dist[to]})`),[u,to])}}
+ snap(null,t2('پایان — کوتاه‌ترین فاصله‌ها به‌دست آمد','done — the shortest distances are found'));return F};
 L.bellman=function(g,s){const dist={},prev={},F=[];g.n.forEach(x=>dist[x.id]=Infinity);dist[s]=0;const snap=(d,rel,pass)=>F.push({dist:Object.assign({},dist),prev:Object.assign({},prev),rel,pass,d});
  snap(`dist[${s}]=0`,null,0);const V=g.n.length;let neg=false;
  for(let i=1;i<=V;i++){let ch=false;for(const e of g.e){const arcs=g.dir?[[e.a,e.b]]:[[e.a,e.b],[e.b,e.a]];for(const[u,v]of arcs){if(dist[u]<Infinity&&dist[u]+e.w<dist[v]){dist[v]=dist[u]+e.w;prev[v]=u;ch=true;
-     if(i===V){neg=true}snap(`دور ${i}: Relax(${u}→${v}, w=${e.w}) ⇒ dist[${v}]=${dist[v]}`,[u,v],i)}}}
-  if(!ch){snap(`دور ${i}: هیچ تغییری نبود ⇒ توقف زودهنگام`,null,i);break}}
- if(neg)snap('در دور V هنوز بهبود رخ داد ⇒ دور منفی وجود دارد!',null,V);else snap('پایان — دور منفی قابل‌دسترس وجود ندارد',null,V);return F};
+     if(i===V){neg=true}snap(t2(`دور ${i}: Relax(${u}→${v}, w=${e.w}) ⇒ dist[${v}]=${dist[v]}`,`round ${i}: Relax(${u}→${v}, w=${e.w}) ⇒ dist[${v}]=${dist[v]}`),[u,v],i)}}}
+  if(!ch){snap(t2(`دور ${i}: هیچ تغییری نبود ⇒ توقف زودهنگام`,`round ${i}: no change ⇒ early stop`),null,i);break}}
+ if(neg)snap(t2('در دور V هنوز بهبود رخ داد ⇒ دور منفی وجود دارد!','an improvement still happened in round V ⇒ a negative cycle exists!'),null,V);else snap(t2('پایان — دور منفی قابل‌دسترس وجود ندارد','done — no reachable negative cycle exists'),null,V);return F};
 L.floyd=function(g){const ids=g.n.map(x=>x.id),n=ids.length,INF=Infinity;const D=ids.map((_,i)=>ids.map((_,j)=>i===j?0:INF));
  g.e.forEach(e=>{const i=ids.indexOf(e.a),j=ids.indexOf(e.b);D[i][j]=Math.min(D[i][j],e.w);if(!g.dir)D[j][i]=Math.min(D[j][i],e.w)});
- const F=[{D:D.map(r=>r.slice()),k:-1,ch:[],d:'ماتریس اولیه: وزن یال‌های مستقیم، قطر صفر، بقیه ∞'}];
+ const F=[{D:D.map(r=>r.slice()),k:-1,ch:[],d:t2('ماتریس اولیه: وزن یال‌های مستقیم، قطر صفر، بقیه ∞','initial matrix: direct edge weights, zero diagonal, everything else ∞')}];
  for(let k=0;k<n;k++){const ch=[];for(let i=0;i<n;i++)for(let j=0;j<n;j++)if(D[i][k]+D[k][j]<D[i][j]){D[i][j]=D[i][k]+D[k][j];ch.push([i,j])}
-  F.push({D:D.map(r=>r.slice()),k,ch,d:`مرحله k=${ids[k]}: آیا عبور از ${ids[k]} مسیر کوتاه‌تری می‌سازد؟ ${ch.length} خانه بهبود یافت`})}return{F,ids}};
+  F.push({D:D.map(r=>r.slice()),k,ch,d:t2(`مرحله k=${ids[k]}: آیا عبور از ${ids[k]} مسیر کوتاه‌تری می‌سازد؟ ${ch.length} خانه بهبود یافت`,`step k=${ids[k]}: does going through ${ids[k]} give a shorter path? ${ch.length} cells improved`)})}return{F,ids}};
 
 /* ---- Hash table ---- */
 L.hash=function(s,m){let h=0;for(const c of String(s))h=(h*31+c.charCodeAt(0))>>>0;return h%m};
@@ -113,16 +113,16 @@ L.BPT=class{constructor(m){this.m=m;this.root={leaf:true,keys:[],kids:[],next:nu
   const go=(n,d)=>{let x,w=W(n.keys.length);if(n.leaf){x=cur+w/2;cur+=w+GAP}else{const cs=n.kids.map(c=>go(c,d+1));x=(cs[0].x+cs[cs.length-1].x)/2}const o={n,x,y:d,w};nodes.push(o);return o};
   const root=go(this.root,0);return{nodes,width:cur,h:this.height()}}};
 /* ---- DP / recursion ---- */
-L.lcs=function(a,b){const m=a.length,n=b.length;const T=Array.from({length:m+1},()=>Array(n+1).fill(0));const F=[];const snap=(cur,d,path)=>F.push({T:T.map(r=>r.slice()),cur,d,path:path||[]});snap(null,'ردیف و ستون صفر = ۰ (رشته تهی)');
+L.lcs=function(a,b){const m=a.length,n=b.length;const T=Array.from({length:m+1},()=>Array(n+1).fill(0));const F=[];const snap=(cur,d,path)=>F.push({T:T.map(r=>r.slice()),cur,d,path:path||[]});snap(null,t2('ردیف و ستون صفر = ۰ (رشته تهی)','row and column 0 = 0 (empty string)'));
  for(let i=1;i<=m;i++)for(let j=1;j<=n;j++){if(a[i-1]===b[j-1]){T[i][j]=T[i-1][j-1]+1;snap([i,j],`${a[i-1]}=${b[j-1]} ⇒ T[${i}][${j}] = T[${i-1}][${j-1}]+1 = ${T[i][j]}`)}else{T[i][j]=Math.max(T[i-1][j],T[i][j-1]);snap([i,j],`${a[i-1]}≠${b[j-1]} ⇒ T[${i}][${j}] = max(${T[i-1][j]}, ${T[i][j-1]}) = ${T[i][j]}`)}}
  let i=m,j=n,s='',path=[[i,j]];while(i>0&&j>0){if(a[i-1]===b[j-1]){s=a[i-1]+s;i--;j--}else if(T[i-1][j]>=T[i][j-1])i--;else j--;path.push([i,j])}
- snap(null,`بازسازی پاسخ (Traceback): LCS = "${s}" با طول ${T[m][n]}`,path);return{F,lcs:s}};
+ snap(null,t2(`بازسازی پاسخ (Traceback): LCS = "${s}" با طول ${T[m][n]}`,`reconstruct the answer (traceback): LCS = "${s}" with length ${T[m][n]}`),path);return{F,lcs:s}};
 L.fibCount=function(n,memo){let calls=0;const M={};const f=k=>{calls++;if(k<2)return k;if(memo&&k in M)return M[k];const v=f(k-1)+f(k-2);if(memo)M[k]=v;return v};const v=f(n);return{v,calls}};
 L.fibTree=function(n,memo){const M={};let id=0;const go=k=>{const node={k,id:id++,kids:[],hit:false};if(k<2)return node;if(memo&&k in M){node.hit=true;return node}node.kids=[go(k-1),go(k-2)];M[k]=1;return node};return go(n)};
 L.queens=function(n){const F=[],cols=[];let cnt=0,sol=0;const ok=(r,c)=>{for(let i=0;i<r;i++)if(cols[i]===c||Math.abs(cols[i]-c)===r-i)return false;return true};
- const go=r=>{if(F.length>3000)return;if(r===n){sol++;F.push({q:cols.slice(),try:null,d:`جواب شماره ${sol} پیدا شد!`,sol:true});return}
-  for(let c=0;c<n;c++){cnt++;if(ok(r,c)){cols[r]=c;F.push({q:cols.slice(0,r+1),try:[r,c],d:`ردیف ${r}: ستون ${c} امن است ← قرار می‌دهیم`});go(r+1);cols.length=r;if(F.length<=3000)F.push({q:cols.slice(0,r),try:[r,c],d:`Backtrack از ردیف ${r}، ستون ${c} — برمی‌گردیم`,back:true})}
-   else F.push({q:cols.slice(0,r),try:[r,c],bad:true,d:`ردیف ${r}: ستون ${c} با ملکه‌های قبلی تهدید می‌شود ✗`})}};go(0);return{F,tries:cnt,sol}};
+ const go=r=>{if(F.length>3000)return;if(r===n){sol++;F.push({q:cols.slice(),try:null,d:t2(`جواب شماره ${sol} پیدا شد!`,`solution number ${sol} found!`),sol:true});return}
+  for(let c=0;c<n;c++){cnt++;if(ok(r,c)){cols[r]=c;F.push({q:cols.slice(0,r+1),try:[r,c],d:t2(`ردیف ${r}: ستون ${c} امن است ← قرار می‌دهیم`,`row ${r}: column ${c} is safe ← place a queen`)});go(r+1);cols.length=r;if(F.length<=3000)F.push({q:cols.slice(0,r),try:[r,c],d:t2(`Backtrack از ردیف ${r}، ستون ${c} — برمی‌گردیم`,`backtrack from row ${r}, column ${c} — go back`),back:true})}
+   else F.push({q:cols.slice(0,r),try:[r,c],bad:true,d:t2(`ردیف ${r}: ستون ${c} با ملکه‌های قبلی تهدید می‌شود ✗`,`row ${r}: column ${c} is attacked by earlier queens ✗`)})}};go(0);return{F,tries:cnt,sol}};
 L.coinGreedy=function(coins,t){const c=[...coins].sort((a,b)=>b-a);let r=t;const used=[];for(const x of c){while(r>=x){r-=x;used.push(x)}}return r?null:used};
 L.coinDP=function(coins,t){const D=Array(t+1).fill(Infinity),P=Array(t+1).fill(-1);D[0]=0;for(let i=1;i<=t;i++)for(const c of coins)if(c<=i&&D[i-c]+1<D[i]){D[i]=D[i-c]+1;P[i]=c}
  if(D[t]===Infinity)return null;const used=[];let x=t;while(x>0){used.push(P[x]);x-=P[x]}return used};
@@ -138,26 +138,27 @@ L.closure=function(attrs,fds){const s=new Set(attrs);let ch=true;while(ch){ch=fa
 L.candKeys=function(all,fds){const n=all.length,keys=[];for(let m=1;m<(1<<n);m++){const sub=all.filter((_,i)=>m&(1<<i));if(keys.some(k=>k.every(a=>sub.includes(a))))continue;if(L.closure(sub,fds).length===all.length)keys.push(sub)}
  return keys.sort((a,b)=>a.length-b.length)};
 /* ---- isolation-level simulation ---- */
-L.isoScenarios={
- dirty:{t:'Dirty Read',init:{x:100},steps:[['T1','write','x',200,'T1: UPDATE accounts SET x = 200 (هنوز commit نشده)'],['T2','read','x',null,'T2: SELECT x'],['T1','rollback',null,null,'T1: ROLLBACK'],['T2','read','x',null,'T2: دوباره SELECT x']]},
- nonrep:{t:'Non-Repeatable Read',init:{x:100},steps:[['T1','read','x',null,'T1: SELECT x'],['T2','write','x',200,'T2: UPDATE x = 200'],['T2','commit',null,null,'T2: COMMIT'],['T1','read','x',null,'T1: دوباره SELECT x']]},
- phantom:{t:'Phantom Read',init:{rows:3},steps:[['T1','count','rows',null,'T1: SELECT COUNT(*) WHERE dept=1'],['T2','insert','rows',null,'T2: INSERT یک ردیف جدید با dept=1'],['T2','commit',null,null,'T2: COMMIT'],['T1','count','rows',null,'T1: دوباره COUNT(*)']]}};
+L._isoMk=()=>({
+ dirty:{t:'Dirty Read',init:{x:100},steps:[['T1','write','x',200,t2('T1: UPDATE accounts SET x = 200 (هنوز commit نشده)','T1: UPDATE accounts SET x = 200 (not committed yet)')],['T2','read','x',null,'T2: SELECT x'],['T1','rollback',null,null,'T1: ROLLBACK'],['T2','read','x',null,t2('T2: دوباره SELECT x','T2: SELECT x again')]]},
+ nonrep:{t:'Non-Repeatable Read',init:{x:100},steps:[['T1','read','x',null,'T1: SELECT x'],['T2','write','x',200,'T2: UPDATE x = 200'],['T2','commit',null,null,'T2: COMMIT'],['T1','read','x',null,t2('T1: دوباره SELECT x','T1: SELECT x again')]]},
+ phantom:{t:'Phantom Read',init:{rows:3},steps:[['T1','count','rows',null,'T1: SELECT COUNT(*) WHERE dept=1'],['T2','insert','rows',null,t2('T2: INSERT یک ردیف جدید با dept=1','T2: INSERT a new row with dept=1')],['T2','commit',null,null,'T2: COMMIT'],['T1','count','rows',null,t2('T1: دوباره COUNT(*)','T1: COUNT(*) again')]]}});
+Object.defineProperty(L,'isoScenarios',{get(){return L._isoMk()}});
 L.isoRun=function(sc,level){const S=L.isoScenarios[sc],lv=['RU','RC','RR','SER'].indexOf(level);const committed=Object.assign({},S.init);let un=null,snap=null,blockedW=false;const log=[],reads=[];
  S.steps.forEach(([tx,op,key,val,txt])=>{let res='',note='';
   if(op==='write'||op==='insert'){
-   if(lv===3&&sc!=='dirty'&&snap){res='⏳ مسدود می‌شود: قفل/تداخل روی داده‌ای که T1 خوانده؛ تا پایان T1 اجرا نمی‌شود';blockedW=true}
-   else{un={key,val:op==='write'?val:(committed[key]||0)+1};res='اعمال شد (هنوز commit نشده)'}}
-  else if(op==='commit'){if(blockedW)res='⏳ در انتظار (T2 هنوز پشت قفل است)';else{if(un){committed[un.key]=un.val;un=null}res='commit شد'}}
-  else if(op==='rollback'){un=null;res='تغییرات T1 لغو شد'}
+   if(lv===3&&sc!=='dirty'&&snap){res=t2('⏳ مسدود می‌شود: قفل/تداخل روی داده‌ای که T1 خوانده؛ تا پایان T1 اجرا نمی‌شود','⏳ blocked: lock/conflict on data that T1 read; it will not run until T1 ends');blockedW=true}
+   else{un={key,val:op==='write'?val:(committed[key]||0)+1};res=t2('اعمال شد (هنوز commit نشده)','applied (not committed yet)')}}
+  else if(op==='commit'){if(blockedW)res=t2('⏳ در انتظار (T2 هنوز پشت قفل است)','⏳ waiting (T2 is still behind a lock)');else{if(un){committed[un.key]=un.val;un=null}res=t2('commit شد','committed')}}
+  else if(op==='rollback'){un=null;res=t2('تغییرات T1 لغو شد','T1\'s changes were rolled back')}
   else{if(lv>=2&&!snap)snap=Object.assign({},committed);let v;
    if(lv===0)v=(un&&un.key===key)?un.val:committed[key];else if(lv===1)v=committed[key];
-   else{v=snap[key];if(lv===3&&un&&un.key===key&&sc==='dirty')res='⏳ T2 تا پایان T1 مسدود می‌شود؛ سپس '}
-   res+=`مقدار خوانده‌شده = ${v}`;reads.push(v)}
+   else{v=snap[key];if(lv===3&&un&&un.key===key&&sc==='dirty')res=t2('⏳ T2 تا پایان T1 مسدود می‌شود؛ سپس ','⏳ T2 is blocked until T1 finishes; then ')}
+   res+=t2(`مقدار خوانده‌شده = ${v}`,`value read = ${v}`);reads.push(v)}
   log.push({tx,txt,res,note})});
  let anomaly=null;
- if(sc==='dirty'&&reads[0]===200)anomaly='Dirty Read رخ داد: T2 مقداری (200) را دید که هرگز commit نشد و بعداً rollback شد.';
- if(sc==='nonrep'&&reads[0]!==reads[1])anomaly=`Non-Repeatable Read رخ داد: T1 یک ردیف را دو بار خواند و دو مقدار متفاوت (${reads[0]} و ${reads[1]}) دید.`;
- if(sc==='phantom'&&reads[0]!==reads[1])anomaly=`Phantom Read رخ داد: شمارش ردیف‌های مطابق شرط از ${reads[0]} به ${reads[1]} تغییر کرد.`;
+ if(sc==='dirty'&&reads[0]===200)anomaly=t2('Dirty Read رخ داد: T2 مقداری (200) را دید که هرگز commit نشد و بعداً rollback شد.','A dirty read occurred: T2 saw a value (200) that was never committed and was later rolled back.');
+ if(sc==='nonrep'&&reads[0]!==reads[1])anomaly=t2(`Non-Repeatable Read رخ داد: T1 یک ردیف را دو بار خواند و دو مقدار متفاوت (${reads[0]} و ${reads[1]}) دید.`,`A non-repeatable read occurred: T1 read the same row twice and saw two different values (${reads[0]} and ${reads[1]}).`);
+ if(sc==='phantom'&&reads[0]!==reads[1])anomaly=t2(`Phantom Read رخ داد: شمارش ردیف‌های مطابق شرط از ${reads[0]} به ${reads[1]} تغییر کرد.`,`A phantom read occurred: the count of rows matching the condition changed from ${reads[0]} to ${reads[1]}.`);
  return{log,anomaly,reads}};
 
 /* ---- Math ---- */

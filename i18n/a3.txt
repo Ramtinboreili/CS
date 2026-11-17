@@ -1,0 +1,296 @@
+@@ a3-1|body#0
+1. The binary tree
+@@ a3-1|body#1
+A <b>tree</b> is a hierarchical structure of nodes: one <b>root</b>, every node has at most one parent and zero or more children; a node with no children is a <b>leaf</b>. The <b>depth</b> of a node = the number of edges to the root; the <b>height</b> of a tree = the maximum depth. In a <b>binary tree</b> every node has at most two children (left/right). A binary tree of height $h$ has at most $2^{h+1}-1$ nodes; so a "full" tree with $n$ nodes has height $\log_2 n$.
+@@ a3-1|body#2
+Traversals
+@@ a3-1|body#3
+<b>Preorder</b> (root, left, right): suitable for copying/serializing a tree.
+@@ a3-1|body#4
+<b>Inorder</b> (left, root, right): in a BST it returns the keys <b>in sorted order</b>.
+@@ a3-1|body#5
+<b>Postorder</b> (left, right, root): suitable for deleting a tree and computing subtree sizes.
+@@ a3-1|body#6
+<b>Level-order</b>: with a queue (BFS).
+@@ a3-1|body#7
+All are $\Theta(n)$. A recursive traversal needs stack depth equal to the height.
+@@ a3-1|body#8
+2. The binary search tree (BST)
+@@ a3-1|body#9
+Property: for every node, all keys of the left subtree are <b>smaller</b> and all keys of the right subtree are <b>larger</b> than it. Search and insert compare the key and go left or right, with cost proportional to the <b>height</b>: $O(h)$. Deletion has three cases: a leaf (just remove), one child (replace with the child), two children (replace with the <i>inorder successor</i> = the smallest element of the right subtree, then delete it).
+@@ a3-1|body#10
+<b>The problem:</b> if keys are inserted in sorted order the BST turns into a linked list of height $n$ and all operations become $O(n)$. For a random BST the expected height is $O(\log n)$ but this cannot be guaranteed for arbitrary input. The solution: <b>self-balancing trees</b>.
+@@ a3-1|body#11
+Interactive BST: insert, delete, search and animated traversals
+@@ a3-1|body#12
+3. The AVL tree
+@@ a3-1|body#13
+The <b>balance factor</b> of every node: $bf=h(\text{left})-h(\text{right})$. In an AVL tree $bf\in\{-1,0,1\}$ must hold for all nodes. After an insert/delete, if $|bf|=2$ the tree is repaired with a <b>rotation</b>:
+@@ a3-1|body#14
+Case
+@@ a3-1|body#15
+Condition
+@@ a3-1|body#16
+Fix
+@@ a3-1|body#17
+Left-left imbalance
+@@ a3-1|body#18
+One right rotation
+@@ a3-1|body#19
+Right-right imbalance
+@@ a3-1|body#20
+One left rotation
+@@ a3-1|body#21
+Left-right imbalance
+@@ a3-1|body#22
+Left rotation on the left child, then a right rotation
+@@ a3-1|body#23
+Right-left imbalance
+@@ a3-1|body#24
+Right rotation on the right child, then a left rotation
+@@ a3-1|body#25
+The height of an AVL tree with $n$ nodes is at most $1.44\log_2 n$ (proved with the Fibonacci-like sequence of minimum node counts), so search/insert/delete are all $O(\log n)$ and each insertion needs at most 2 rotations.
+@@ a3-1|body#26
+Interactive AVL: balance factor and rotations
+@@ a3-1|body#27
+4. The red-black tree
+@@ a3-1|body#28
+A binary search tree with node colouring (red/black) that maintains five properties: (1) every node is red or black; (2) the root is black; (3) the NIL leaves are black; (4) <b>the children of a red node are black</b>; (5) the number of black nodes on every path from the root to a NIL is the same (black-height). Consequence: the longest path is at most twice the shortest and the height is $\le 2\log_2(n+1)$.
+@@ a3-1|body#29
+Red-black property checker
+@@ a3-1|body#30
+Balance
+@@ a3-1|body#31
+Stricter (height ≤ 1.44 log n)
+@@ a3-1|body#32
+Looser (≤ 2 log n)
+@@ a3-1|body#33
+Search
+@@ a3-1|body#34
+Faster (shallower tree)
+@@ a3-1|body#35
+Slightly slower
+@@ a3-1|body#36
+Insert/delete
+@@ a3-1|body#37
+More rotations (especially on delete)
+@@ a3-1|body#38
+At most 2–3 rotations, many recolourings
+@@ a3-1|body#39
+Used for
+@@ a3-1|body#40
+Read-heavy data
+@@ a3-1|body#41
+<code>std::map</code>, Java's <code>TreeMap</code>, the Linux scheduler
+@@ a3-1|body#42
+<b class="t">Why don't databases use a BST?</b>Every BST node is a random access to memory/disk. High-fan-out trees like the B-tree are optimal for disk; you will see this in the database lessons and in the "Connecting the Foundations" section.
+@@ a3-1|obj:0#0
+Know the tree terms (root, leaf, depth, height) and the three traversals.
+@@ a3-1|obj:1#0
+Analyse BST operations together with the degenerate-tree problem.
+@@ a3-1|obj:2#0
+Explain balance using AVL rotations and the red-black properties.
+@@ a3-1|mis:0#0
+"A BST is always $O(\log n)$." ← Only if it is balanced; the worst case is $O(n)$.
+@@ a3-1|mis:1#0
+"Inorder gives sorted order on any binary tree." ← Only on a BST.
+@@ a3-1|mis:2#0
+"A red-black tree is always faster than an AVL tree." ← It depends on the workload; AVL is better for many lookups.
+@@ a3-1|sum:0#0
+A BST does its operations in $O(h)$; balancing keeps the height $O(\log n)$.
+@@ a3-1|sum:1#0
+AVL guarantees balance with balance factors and rotations; red-black with colouring rules.
+@@ a3-1|sum:2#0
+Inorder on a BST gives sorted order.
+@@ a3-1|ex:0:q#0
+What does the inorder traversal of a BST output?
+@@ a3-1|ex:0:e#0
+Left (smaller) ← root ← right (larger) ⇒ ascending order.
+@@ a3-1|ex:0:o:0#0
+Keys in insertion order
+@@ a3-1|ex:0:o:1#0
+Keys in ascending order
+@@ a3-1|ex:0:o:2#0
+Keys in descending order
+@@ a3-1|ex:0:o:3#0
+Level by level
+@@ a3-1|ex:1:q#0
+What is the maximum number of nodes of a binary tree of height $h=3$ (root at height 0)?
+@@ a3-1|ex:2:q#0
+We insert the keys 10, 20, 30 in this order into an empty AVL tree. Which rotation and what final root?
+@@ a3-1|ex:2:e#0
+After inserting 30, node 10 has $bf=-2$ (case RR) ⇒ a left rotation and the new root is 20 with children 10 and 30.
+@@ a3-1|ex:2:o:0#0
+Right rotation, root 10
+@@ a3-1|ex:2:o:1#0
+Left rotation, root 20
+@@ a3-1|ex:2:o:2#0
+Two rotations, root 30
+@@ a3-1|ex:2:o:3#0
+No rotation, root 10
+@@ a3-1|ex:3:q#0
+A red-black tree may contain two consecutive red nodes (parent and child).
+@@ a3-1|ex:3:e#0
+Property (4) explicitly requires the children of a red node to be black.
+@@ a3-1|ex:4:q#0
+Show why the minimum node count of an AVL tree of height $h$ satisfies $N(h)=N(h-1)+N(h-2)+1$ and what this implies for the height.
+@@ a3-1|ex:4:a#0
+The AVL tree with fewest nodes and height $h$ must have a root where one subtree has height $h-1$ and the other (to have as few nodes as possible while keeping $|bf|\le1$) has height $h-2$, and both are themselves minimal; so $N(h)=1+N(h-1)+N(h-2)$. This resembles Fibonacci and gives $N(h)=\Omega(\varphi^h)$; hence $h=O(\log_\varphi n)\approx1.44\log_2 n$.
+@@ a3-2|body#0
+1. The binary heap
+@@ a3-2|body#1
+A <b>heap</b> is a <b>complete binary tree</b> (all levels full except possibly the last, which is filled from the left) with the "heap property": in a <b>min-heap</b> every node is less than or equal to its children (the reverse in a max-heap). Because the tree is complete it can be stored in an array without pointers (zero-based indices):
+@@ a3-2|body#2
+<b>insert:</b> append at the end of the array and <b>sift-up</b> (swap with the parent until the property holds): $O(\log n)$.
+@@ a3-2|body#3
+<b>extract-min:</b> replace the root with the last element, remove the end and <b>sift-down</b> with the smaller child: $O(\log n)$.
+@@ a3-2|body#4
+<b>Searching for an arbitrary key:</b> $O(n)$ — a heap is not designed for searching.
+@@ a3-2|body#5
+Interactive heap with sift-up / sift-down animation
+@@ a3-2|body#6
+Build-heap in $O(n)$
+@@ a3-2|body#7
+Building a heap from $n$ elements by sift-down from the last parent to the root is $O(n)$, not $O(n\log n)$: about half the nodes are leaves (cost 0), $n/4$ nodes make at most 1 swap, $n/8$ nodes at most 2, and so on.
+@@ a3-2|body#8
+The priority queue
+@@ a3-2|body#9
+An ADT with operations <code>insert(x, priority)</code> and <code>extractMin/Max</code>. A heap is the most common implementation. Uses: Dijkstra and Prim, task scheduling, <b>top-K</b> (a heap of size $k$ in $O(n\log k)$), merging $k$ sorted lists, discrete-event simulation, heap sort.
+@@ a3-2|body#10
+the k largest in O(n log k)
+@@ a3-2|body#11
+drop the smallest
+@@ a3-2|body#12
+2. The trie (prefix tree)
+@@ a3-2|body#13
+A trie is a tree where each edge is a character and the path from the root to a node represents a <b>prefix</b>. A marked node means a word ends there. Insert, search and prefix check are $O(L)$ where $L$ is the key length, independent of the total number of words.
+@@ a3-2|body#14
+From here all words in the subtree = autocomplete
+@@ a3-2|body#15
+Interactive trie and autocomplete
+@@ a3-2|body#16
+Uses: autocomplete, spell checking, IP routing (longest prefix match, with the compressed form the radix tree), vocabulary indexing. <b>Cost:</b> lots of memory when sparsely populated (every node has a child table), reduced by compressed tries/radix trees or compact arrays.
+@@ a3-2|obj:0#0
+Explain the binary-heap structure in an array and the sift-up/down operations.
+@@ a3-2|obj:1#0
+Analyse build-heap in $O(n)$ and use the priority queue in applications.
+@@ a3-2|obj:2#0
+Implement a trie for prefix search and analyse its cost.
+@@ a3-2|mis:0#0
+"A heap is sorted." ← It only guarantees the parent–child relation; the order among siblings is unspecified.
+@@ a3-2|mis:1#0
+"Build-heap is $n$ inserts and $O(n\log n)$." ← With bottom-up sift-down it is $O(n)$.
+@@ a3-2|mis:2#0
+"A trie is always faster and smaller than a hash table." ← It is great for prefixes but needs more memory.
+@@ a3-2|sum:0#0
+A binary heap is a complete tree in an array; insert/extract $O(\log n)$, peek $O(1)$, build $O(n)$.
+@@ a3-2|sum:1#0
+A priority queue is an ADT implemented with a heap; top-K and Dijkstra are the main uses.
+@@ a3-2|sum:2#0
+A trie gives prefix search in $O(L)$, at a memory cost.
+@@ a3-2|ex:0:q#0
+In a min-heap stored in an array (indices from 0), what is the index of the parent of the element at index 9?
+@@ a3-2|ex:1:q#0
+The complexity of finding the smallest element in a min-heap:
+@@ a3-2|ex:1:e#0
+The smallest element is always at the root (index 0).
+@@ a3-2|ex:2:q#0
+The best method to find the $k$ largest of $n$ elements with $O(k)$ memory:
+@@ a3-2|ex:2:e#0
+A min-heap of size $k$: the smallest of the $k$ candidates is at the root and is replaced when a larger element arrives; cost $O(n\log k)$.
+@@ a3-2|ex:2:o:0#0
+A full sort
+@@ a3-2|ex:2:o:1#0
+A min-heap of size $k$
+@@ a3-2|ex:2:o:2#0
+A max-heap of size $n$
+@@ a3-2|ex:2:o:3#0
+A hash table
+@@ a3-2|ex:3:q#0
+Searching for a word of length $L$ in a trie depends on the total number of stored words.
+@@ a3-2|ex:3:e#0
+The cost is $O(L)$, independent of the number of words.
+@@ a3-2|ex:4:q#0
+Explain heap sort with its steps and complexity. Why is it often slower than quicksort in practice despite being $O(n\log n)$?
+@@ a3-2|ex:4:a#0
+Step 1: build a max-heap in $O(n)$. Step 2: $n$ times swap the root (maximum) with the last heap element, shrink the heap by one and sift-down: $O(n\log n)$. At the end the array is sorted ascending with $O(1)$ auxiliary memory (in place). Practical slowness: the memory access pattern of sift-down jumps far between parent and child and is not cache-friendly; it also makes more comparisons and swaps than quicksort. It is not stable either.
+@@ a3-3|body#0
+Definition
+@@ a3-3|body#1
+A graph $G=(V,E)$ is a set of <b>vertices</b> and <b>edges</b>. In an <b>undirected graph</b> the edge $\{u,v\}$ is two-way; in a <b>directed graph</b> the edge $(u\to v)$ is one-way. In a <b>weighted graph</b> each edge has a number (cost, distance, capacity). Basic concepts:
+@@ a3-3|body#2
+<b>Degree:</b> the number of edges attached to a vertex; in a directed graph the in-degree and out-degree.
+@@ a3-3|body#3
+<b>Path:</b> a sequence of vertices where each two consecutive ones are joined by an edge; a <b>cycle</b> is a path that returns to its start vertex.
+@@ a3-3|body#4
+<b>Connected:</b> there is a path between every two vertices. In directed graphs: <i>strongly connected (SCC)</i>.
+@@ a3-3|body#5
+<b>DAG:</b> a directed acyclic graph; the model for task dependencies, build systems and neural-network computation graphs.
+@@ a3-3|body#6
+A <b>sparse</b> graph: $|E|\approx|V|$; a <b>dense</b> graph: $|E|\approx|V|^2$.
+@@ a3-3|body#7
+In a simple undirected graph: $\sum_v \deg(v)=2|E|$ (the handshake lemma) and $|E|\le\frac{|V|(|V|-1)}{2}$.
+@@ a3-3|body#8
+Representing a graph
+@@ a3-3|body#9
+Representation
+@@ a3-3|body#10
+Memory
+@@ a3-3|body#11
+Check for edge $(u,v)$
+@@ a3-3|body#12
+Iterate the neighbours of $u$
+@@ a3-3|body#13
+Suited to
+@@ a3-3|body#14
+Sparse graphs (most of the real world)
+@@ a3-3|body#15
+Dense graphs, Floyd–Warshall, matrix multiplication
+@@ a3-3|body#16
+Kruskal, Bellman–Ford, input/output
+@@ a3-3|body#17
+A graph in two representations; change direction and weights
+@@ a3-3|body#18
+A social network with millions of users where everyone has a few hundred friends is extremely sparse; its adjacency matrix ($10^{12}$ cells) is impossible but an adjacency list is practical. In contrast, in a neural network or a similarity matrix a matrix is sometimes more natural. The <b>sparse matrix</b> representation (CSR/COO) bridges these two worlds.
+@@ a3-3|body#19
+undirected: twice
+@@ a3-3|obj:0#0
+Define the components of a graph and its types (directed, undirected, weighted, DAG).
+@@ a3-3|obj:1#0
+Compare the adjacency list, adjacency matrix and edge list representations.
+@@ a3-3|obj:2#0
+Choose a suitable representation for a problem according to the graph density.
+@@ a3-3|mis:0#0
+"The adjacency matrix is always simpler and better." ← It takes $\Theta(V^2)$ memory even when there are few edges.
+@@ a3-3|mis:1#0
+Forgetting that in an undirected graph each edge is stored twice.
+@@ a3-3|mis:2#0
+Confusing "connectedness" in directed and undirected graphs.
+@@ a3-3|sum:0#0
+A graph $G=(V,E)$ can be directed/undirected and weighted.
+@@ a3-3|sum:1#0
+An adjacency list suits sparse graphs ($\Theta(V+E)$) and a matrix suits dense graphs or $O(1)$ edge access.
+@@ a3-3|sum:2#0
+Handshake lemma: the sum of the degrees $=2|E|$.
+@@ a3-3|ex:0:q#0
+A simple undirected graph has 5 vertices with degrees 3, 2, 2, 2, 1. How many edges does it have?
+@@ a3-3|ex:1:q#0
+For a graph with $10^6$ vertices and $5\times10^6$ edges, which representation is suitable?
+@@ a3-3|ex:1:e#0
+The matrix would need $10^{12}$ cells; the adjacency list is $\Theta(V+E)\approx6\times10^6$.
+@@ a3-3|ex:1:o:2#0
+Both are the same
+@@ a3-3|ex:1:o:3#0
+Neither
+@@ a3-3|ex:2:q#0
+A DAG may contain a cycle.
+@@ a3-3|ex:2:e#0
+DAG means "directed acyclic graph"; no cycles.
+@@ a3-3|ex:3:q#0
+The maximum number of edges in a simple directed graph with $n$ vertices (no self-loops):
+@@ a3-3|ex:3:e#0
+One edge for every ordered pair $(u,v)$ with $u\neq v$: $n(n-1)$.
+@@ a3-3|ex:4:q#0
+How would you store a weighted city road network with an adjacency list, and which operations are slow on it?
+@@ a3-3|ex:4:a#0
+For each intersection a list of (neighbour, weight) pairs. Iterating the neighbours is $O(\deg)$ and memory is $\Theta(V+E)$. Directly checking whether a specific edge $(u,v)$ exists, or finding its weight, is $O(\deg u)$ (a hash table per list makes it $O(1)$ on average). A road graph is sparse (each intersection has few streets), so an adjacency list is better than a matrix.

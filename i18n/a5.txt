@@ -1,0 +1,426 @@
+@@ a5-1|body#0
+Recursion
+@@ a5-1|body#1
+A <b>recursive</b> function reduces a problem to smaller instances of <i>the same problem</i>. Every recursive solution needs two parts: a <b>base case</b> (finishes without a recursive call) and a <b>recursive step</b> that surely moves toward the base case. Otherwise it either runs forever or overflows the stack. Correctness is proved by <b>induction</b>.
+@@ a5-1|body#2
+x^n by divide and conquer: O(log n)
+@@ a5-1|body#3
+Each call has a frame on the call stack; the space complexity of a recursion is at least the recursion <i>depth</i>. <b>Tail recursion</b> (the recursive call is the function's last action) turns into a loop in languages with tail-call optimization (Python has none).
+@@ a5-1|body#4
+Divide and conquer
+@@ a5-1|body#5
+Three steps: <b>divide</b> (split into independent subproblems), <b>conquer</b> (solve recursively) and <b>combine</b> (merge the answers). Examples: merge sort, quicksort, binary search, Karatsuba multiplication, Strassen, the closest pair of points. The standard recurrence:
+@@ a5-1|body#6
+$a$ subproblems each of size $n/b$ and a divide/combine cost $f(n)=\Theta(n^d)$. The <b>master theorem</b> (for $f(n)=\Theta(n^d)$) compares $d$ with $\log_b a$:
+@@ a5-1|body#7
+Case
+@@ a5-1|body#8
+Condition
+@@ a5-1|body#9
+Result
+@@ a5-1|body#10
+Intuition
+@@ a5-1|body#11
+1
+@@ a5-1|body#12
+The leaves' cost dominates
+@@ a5-1|body#13
+2
+@@ a5-1|body#14
+Every level of the tree costs the same
+@@ a5-1|body#15
+3
+@@ a5-1|body#16
+The root's cost dominates (with the regularity condition)
+@@ a5-1|body#17
+Master-theorem calculator
+@@ a5-1|body#18
+When subproblems <b>overlap</b> (like Fibonacci), the plain recursive solution recomputes the same subproblem many times and the time becomes exponential. <b>Memoization</b> stores each subproblem's result in a table (usually a dict) and returns it directly next time; the time drops to the number of distinct subproblems × the cost of each.
+@@ a5-1|body#19
+O(n) time and memory  (without a cache: Θ(φ^n))
+@@ a5-1|body#20
+The call tree of fib(n) without and with memoization
+@@ a5-1|body#21
+<b class="t">Memoization versus divide and conquer</b>Divide and conquer has <b>independent</b> subproblems (merge sort), so a cache is useless. Memoization/DP helps when subproblems <b>repeat</b>.
+@@ a5-1|obj:0#0
+Explain the structure of a recursive function (base case and recursive step) and the call stack.
+@@ a5-1|obj:1#0
+Write a recurrence and solve it with the master theorem.
+@@ a5-1|obj:2#0
+Apply memoization to remove repeated computation.
+@@ a5-1|mis:0#0
+"Recursion is always slower and worse than a loop." ← Sometimes it is inherent to the problem (trees, backtracking); what matters is depth and cost.
+@@ a5-1|mis:1#0
+"Memoization needs no extra memory." ← The cache table and the recursion stack both use memory.
+@@ a5-1|mis:2#0
+Forgetting the base case or not approaching it.
+@@ a5-1|sum:0#0
+Recursion = base case + a shrinking step; the recursion depth sets the space complexity.
+@@ a5-1|sum:1#0
+Divide and conquer is analysed with the recurrence $T(n)=aT(n/b)+f(n)$ and the master theorem.
+@@ a5-1|sum:2#0
+Memoization solves overlapping subproblems only once and turns exponential into polynomial.
+@@ a5-1|ex:0:q#0
+For $T(n)=2T(n/2)+n$ with the master theorem: what is $\log_b a$? (for $a=2,b=2$)
+@@ a5-1|ex:0:e#0
+$\log_2 2=1$ and $d=1$ ⇒ case 2: $\Theta(n\log n)$ (merge sort).
+@@ a5-1|ex:1:q#0
+$T(n)=T(n/2)+1$ (binary search) equals:
+@@ a5-1|ex:1:e#0
+$a=1,b=2,d=0$; $\log_2 1=0=d$ ⇒ case 2: $\Theta(n^0\log n)=\Theta(\log n)$.
+@@ a5-1|ex:2:q#0
+Roughly how many times does plain recursive fib(20) without a cache call the function? (see the widget calculator)
+@@ a5-1|ex:2:e#0
+The number of calls is $2F(n+1)-1=2\cdot10946-1=21891$. With memoization only 39 calls are needed.
+@@ a5-1|ex:3:q#0
+What is $T(n)=3T(n/2)+n$?
+@@ a5-1|ex:3:e#0
+$\log_2 3\approx1.585>d=1$ ⇒ case 1: $\Theta(n^{\log_2 3})$ (Karatsuba).
+@@ a5-1|ex:4:q#0
+Show why plain recursive fib is exponential (the recurrence for the number of calls).
+@@ a5-1|ex:4:a#0
+The number of calls is $C(n)=C(n-1)+C(n-2)+1$ with $C(0)=C(1)=1$. This is the Fibonacci sequence and $C(n)=\Theta(\varphi^n)$ with $\varphi=\frac{1+\sqrt5}{2}\approx1.618$. That is, each $n\to n+1$ costs about 62% more work; the growth is exponential because fib($n-2$) is recomputed many times.
+@@ a5-2|body#0
+Greedy algorithms
+@@ a5-2|body#1
+A greedy algorithm makes the "best local choice" at each step and never regrets. Its correctness depends on two properties: the <b>greedy-choice property</b> (a locally optimal choice fits inside a globally optimal solution) and <b>optimal substructure</b>. The proof is usually an <i>exchange argument</i>: any optimal solution can be transformed, without getting worse, into one that contains the greedy choice.
+@@ a5-2|body#2
+<b>Example: activity selection (interval scheduling)</b>: for the maximum number of non-overlapping intervals, sort the intervals by <i>finish</i> time and each time pick the compatible one that finishes earliest. Time $O(n\log n)$. (Sorting by start time or by shortest length is <b>wrong</b>.) Other examples: Huffman, Kruskal/Prim, Dijkstra.
+@@ a5-2|body#3
+<b class="t">Greedy is not always right</b>For coins $\{1,3,4\}$ and amount 6: greedy gives 4+1+1 (3 coins) but the optimal answer is 3+3 (2 coins). In "canonical" coin systems like $\{1,5,10,25\}$ greedy is optimal.
+@@ a5-2|body#4
+Greedy versus DP on the coin problem
+@@ a5-2|body#5
+Dynamic programming
+@@ a5-2|body#6
+DP is for problems that (1) have <b>optimal substructure</b>: the optimal solution is built from optimal solutions of subproblems; and (2) have <b>overlapping subproblems</b>. Two implementation styles:
+@@ a5-2|body#7
+<b>Top-down (memoization):</b> recursion + cache; builds only the needed subproblems.
+@@ a5-2|body#8
+<b>Bottom-up (tabulation):</b> fills the table from small cases to large; no recursion overhead and memory can be reduced (keep only the previous row).
+@@ a5-2|body#9
+How to solve a DP problem
+@@ a5-2|body#10
+Define the <b>state</b>: what exactly does $dp[i][j]$ mean?
+@@ a5-2|body#11
+Write the <b>recurrence (transition)</b>.
+@@ a5-2|body#12
+Identify the <b>base cases</b>.
+@@ a5-2|body#13
+Choose the <b>fill order</b> so dependencies are already computed.
+@@ a5-2|body#14
+Read the answer from the table (and reconstruct with a traceback if needed).
+@@ a5-2|body#15
+Example 1: the coin problem (minimum count)
+@@ a5-2|body#16
+Time $O(x\cdot|coins|)$ and memory $O(x)$.
+@@ a5-2|body#17
+Example 2: the longest common subsequence (LCS)
+@@ a5-2|body#18
+$dp[i][j]$ = the length of the LCS of the prefixes $X[1..i]$ and $Y[1..j]$:
+@@ a5-2|body#19
+Filling the LCS table and the traceback
+@@ a5-2|body#20
+Example 3: the 0/1 knapsack
+@@ a5-2|body#21
+$dp[i][w]$ = the maximum value with the first $i$ items and capacity $w$: $dp[i][w]=\max(dp[i-1][w],\ dp[i-1][w-w_i]+v_i)$ (if $w_i\le w$). Time $O(nW)$ — this is <b>pseudo-polynomial</b> because $W$ is a numeric value, not the input length; the problem is NP-hard.
+@@ a5-2|body#22
+reverse: each item once (0/1)
+@@ a5-2|body#23
+memory O(W)
+@@ a5-2|obj:0#0
+Check the greedy-choice and optimal-substructure properties.
+@@ a5-2|obj:1#0
+Solve DP problems by defining the state, the recurrence and the table fill order.
+@@ a5-2|obj:2#0
+Compare greedy and DP on the coin problem and compute an LCS.
+@@ a5-2|mis:0#0
+"Every optimization problem can be solved greedily." ← Only with the greedy-choice property; counterexample: coins {1,3,4}.
+@@ a5-2|mis:1#0
+"DP means using a 2D array." ← DP is a <i>method</i>; the table is only its tool.
+@@ a5-2|mis:2#0
+"DP is always polynomial." ← The knapsack $O(nW)$ is pseudo-polynomial.
+@@ a5-2|sum:0#0
+Greedy: local choice + an exchange-argument proof; simple and fast but sometimes wrong.
+@@ a5-2|sum:1#0
+DP: state, recurrence, base cases, fill order; top-down (memoization) and bottom-up (tabulation).
+@@ a5-2|sum:2#0
+LCS in $O(mn)$; the 0/1 knapsack in pseudo-polynomial $O(nW)$.
+@@ a5-2|ex:0:q#0
+In greedy interval scheduling, what are the intervals sorted by?
+@@ a5-2|ex:0:e#0
+Sorting by finish time and picking the compatible interval that finishes earliest is optimal (exchange argument).
+@@ a5-2|ex:0:o:0#0
+Start time
+@@ a5-2|ex:0:o:1#0
+Finish time
+@@ a5-2|ex:0:o:2#0
+Interval length
+@@ a5-2|ex:0:o:3#0
+Random
+@@ a5-2|ex:1:q#0
+For coins {1,3,4} and amount 6, what is the minimum number of coins by DP?
+@@ a5-2|ex:1:e#0
+$dp[6]=\min(dp[5],dp[3],dp[2])+1$; $dp[3]=1$ so $dp[6]=2$ (3+3).
+@@ a5-2|ex:2:q#0
+What is the LCS length of the strings "ABCBDAB" and "BDCABA"?
+@@ a5-2|ex:2:e#0
+For example "BCBA" (or "BDAB") with length 4; the table in the LCS widget gives this value.
+@@ a5-2|ex:3:q#0
+In the 0/1 knapsack with a 1D array, the capacity must be iterated from small to large.
+@@ a5-2|ex:3:e#0
+It must be iterated from large to small so each item is used at most once; ascending iteration gives the unbounded knapsack.
+@@ a5-2|ex:4:q#0
+Using the two DP properties, how do you tell whether a problem can be solved with greedy or needs DP? Argue for the coin problem.
+@@ a5-2|ex:4:a#0
+Greedy needs the local choice never to block the way to the global solution. With coins {1,3,4} choosing 4 for 6 destroys the optimal answer (because the remainder 2 can only be filled with 1+1), so the greedy-choice property is violated. DP tries all options for the last coin ($\min_c dp[x-c]+1$) and exploits optimal substructure and repeated subproblems. In canonical systems (every coin a multiple of the smaller one, or with a special property) one can prove greedy is correct.
+@@ a5-3|body#0
+The idea
+@@ a5-3|body#1
+<b>Backtracking</b> is depth-first search in a <b>state-space tree</b>: we build the solution step by step, and if a partial solution already violates the constraints we go back to the previous step without continuing that branch (<b>pruning</b>). The result: still exponential in the worst case but in practice many branches are never visited.
+@@ a5-3|body#2
+The general template
+@@ a5-3|body#3
+pruning: only consistent choices
+@@ a5-3|body#4
+choose
+@@ a5-3|body#5
+explore
+@@ a5-3|body#6
+un-choose  ← the heart of backtracking
+@@ a5-3|body#7
+Example: all subsets and permutations
+@@ a5-3|body#8
+n! solutions ⇒ Θ(n·n!)
+@@ a5-3|body#9
+Classic example: the N-queens problem
+@@ a5-3|body#10
+Place $N$ queens on an $N\times N$ board so that no two share a row, column or diagonal. We place one queen per row and skip a column if it conflicts with earlier queens. Without pruning there are $N^N$ states; with pruning for $N=6$ only about 900 cells are tried (instead of $6^6=46656$).
+@@ a5-3|body#11
+N-queens: the search, pruning and backtracking animation
+@@ a5-3|body#12
+Backtracking, brute force and DP
+@@ a5-3|body#13
+Method
+@@ a5-3|body#14
+Idea
+@@ a5-3|body#15
+When it fits
+@@ a5-3|body#16
+Examines all states without pruning
+@@ a5-3|body#17
+Small space
+@@ a5-3|body#18
+Builds states incrementally and prunes invalid branches
+@@ a5-3|body#19
+Constraint-satisfaction problems (Sudoku, N-queens, graph colouring)
+@@ a5-3|body#20
+Stores overlapping subproblems
+@@ a5-3|body#21
+When states repeat and the state is compact
+@@ a5-3|body#22
+Improvements: smart ordering of choices (most constrained variable), forward checking, branch and bound for optimization (upper/lower bounds for pruning).
+@@ a5-3|obj:0#0
+Model the state space as a tree and shrink the search with pruning.
+@@ a5-3|obj:1#0
+Implement the general backtracking template for combinatorial problems.
+@@ a5-3|obj:2#0
+State the difference between backtracking, brute force and DP.
+@@ a5-3|mis:0#0
+Forgetting to "undo the state" (<code>cur.pop()</code>), which makes branches corrupt each other's state.
+@@ a5-3|mis:1#0
+Storing a reference to <code>cur</code> instead of a copy in the answer (<code>res.append(cur)</code> instead of <code>cur[:]</code>).
+@@ a5-3|mis:2#0
+"Backtracking is always polynomial." ← It is exponential/factorial in the worst case; pruning only improves the constant.
+@@ a5-3|sum:0#0
+Backtracking = DFS on the state-space tree + pruning invalid branches + undoing state.
+@@ a5-3|sum:1#0
+N-queens, permutations, subsets and Sudoku are common examples.
+@@ a5-3|sum:2#0
+Exponential in the worst case; pruning and smart ordering improve performance.
+@@ a5-3|ex:0:q#0
+How many solutions does the 4-queens problem have?
+@@ a5-3|ex:0:e#0
+For $N=4$ there are exactly 2 arrangements (check in the N-queens widget).
+@@ a5-3|ex:1:q#0
+Which step is the heart of the backtracking algorithm?
+@@ a5-3|ex:1:e#0
+Un-choosing lets the next branch start from a clean state.
+@@ a5-3|ex:1:o:0#0
+Sorting the choices
+@@ a5-3|ex:1:o:1#0
+Undoing the change after the recursive call
+@@ a5-3|ex:1:o:2#0
+Using a queue
+@@ a5-3|ex:1:o:3#0
+Splitting into two halves
+@@ a5-3|ex:2:q#0
+The number of permutations of $n$ distinct elements is $n!$ and generating all of them takes at least $\Omega(n!)$ time.
+@@ a5-3|ex:2:e#0
+The output alone has $n!$ permutations; generating them cannot be faster.
+@@ a5-3|ex:3:q#0
+What pruning would you suggest for solving Sudoku with backtracking, and how does the order of filling cells matter?
+@@ a5-3|ex:3:a#0
+Before placing a digit, check it is not repeated in the row, column and 3×3 box (basic pruning). Improvement: keep for every empty cell the set of possible values and fill first the cell with the fewest options (minimum remaining values), because it discovers contradictions sooner and prunes a larger branch. Forward checking shrinks the domains of neighbouring cells after each choice and backtracks if some domain becomes empty.
+@@ a5-4|body#0
+The minimum spanning tree (MST)
+@@ a5-4|body#1
+For a connected, weighted, undirected graph, a <b>spanning tree</b> is a subset of edges that connects all vertices without a cycle ($V-1$ edges). An <b>MST</b> is the spanning tree with the least total weight. Uses: network design (cabling/piping at minimum cost), hierarchical clustering. Two key theorems: the <b>cut property</b>: the lightest edge crossing a cut belongs to some MST; and the <b>cycle property</b>: the heaviest edge of any cycle (with distinct weights) belongs to no MST.
+@@ a5-4|body#2
+Sort the edges ascending; accept each edge if its two endpoints are in different components (it creates no cycle). Cycle detection with <b>union-find</b>. Time: $O(E\log E)$ (sorting dominates).
+@@ a5-4|body#3
+Kruskal on the sample graph
+@@ a5-4|body#4
+Starts from one vertex and each time adds the lightest edge that connects the current tree to a new vertex (like Dijkstra with a priority queue): $O(E\log V)$. For dense graphs Prim with a matrix/heap and for sparse graphs Kruskal is usually simpler.
+@@ a5-4|body#5
+Two operations: <code>find(x)</code> the representative of the set of $x$ and <code>union(x,y)</code> merging two sets. With two optimizations, <b>path compression</b> and <b>union by rank/size</b>, the amortized cost of each operation is $O(\alpha(n))$ where $\alpha$ is the inverse Ackermann function and is below 5 for any practical $n$ — constant in practice.
+@@ a5-4|body#6
+cycle
+@@ a5-4|body#7
+Topological sort (a reminder)
+@@ a5-4|body#8
+In a DAG, a linear order of the vertices in which every edge $u\to v$ puts $u$ before $v$. Two methods: DFS (reverse post-order) or <b>Kahn's algorithm</b> (repeatedly remove vertices with in-degree zero using a queue; if not all vertices get removed, a cycle exists). Time $O(V+E)$. Uses: build systems, course scheduling, the execution order of a computation graph (autograd).
+@@ a5-4|obj:0#0
+Define the minimum spanning tree (MST) and compare Kruskal and Prim.
+@@ a5-4|obj:1#0
+Explain the union-find structure with path compression and union by rank.
+@@ a5-4|obj:2#0
+Apply topological sort to a DAG.
+@@ a5-4|mis:0#0
+"An MST gives the shortest path between vertices." ← An MST minimizes the total weight, not the distance between two particular vertices.
+@@ a5-4|mis:1#0
+"An MST is always unique." ← Only if the weights are distinct.
+@@ a5-4|sum:0#0
+An MST is built with Kruskal ($O(E\log E)$) or Prim ($O(E\log V)$), and both are greedy.
+@@ a5-4|sum:1#0
+Union-find with path compression and union by size is essentially amortized $O(1)$.
+@@ a5-4|sum:2#0
+Topological sort of a DAG is done with DFS or Kahn in $O(V+E)$.
+@@ a5-4|ex:0:q#0
+How many edges does an MST of a connected graph with 10 vertices have?
+@@ a5-4|ex:1:q#0
+What structure does Kruskal use to detect that an edge would create a cycle?
+@@ a5-4|ex:1:e#0
+If the two endpoints of an edge have the same representative, adding it would create a cycle.
+@@ a5-4|ex:2:q#0
+Kahn's algorithm for topological sort can detect the presence of a cycle.
+@@ a5-4|ex:2:e#0
+If after the queue ends some vertex still has a positive in-degree, there is a cycle.
+@@ a5-4|ex:3:q#0
+Why is Kruskal with "sorting by weight" optimal? (cut property)
+@@ a5-4|ex:3:a#0
+When we examine the smallest edge $e$ in the sorted list and its endpoints are in different components, $e$ is the lightest edge crossing a cut between the component of one endpoint and the rest. By the cut property some MST contains $e$, so adding it is safe. If both endpoints are in the same component, $e$ lies on a cycle all of whose other edges are lighter or equal, and rejecting it is safe.
+@@ a6-1|body#0
+A selection framework
+@@ a6-1|body#1
+There is no absolute "best" data structure. Ask in order: (1) What is the <b>dominant operation</b> (reads/writes, point/range)? (2) The <b>data size</b> and growth rate? (3) Is <b>order</b> or <b>priority</b> needed? (4) The <b>memory</b> limit and the <b>cache</b> pattern? (5) <b>Concurrency</b> and durability?
+@@ a6-1|body#2
+A guide to choosing a data structure
+@@ a6-1|body#3
+Common trade-offs
+@@ a6-1|body#4
+<b>Memory versus time:</b> hash tables and indexes eat memory to make lookup fast; so do memo tables, caches and lookup tables. <b>Probabilistic</b> structures like the <i>Bloom filter</i> answer "definitely not / probably yes" with very little memory (used in LSM trees, caches).
+@@ a6-1|body#5
+<b>Reads versus writes:</b> a sorted array makes reads cheap and writes expensive; an LSM tree makes writes cheap through sequential appends and leaves reads to background merges; a B+Tree balances both.
+@@ a6-1|body#6
+<b>Simplicity versus performance:</b> sometimes a plain array plus one sort is faster and less error-prone than a complex structure.
+@@ a6-1|body#7
+Optimizing algorithms
+@@ a6-1|body#8
+First <b>correctness</b>, then <b>measurement</b> (profiling), and optimize only the real bottleneck.
+@@ a6-1|body#9
+Change the <b>algorithm and data structure</b> before micro-optimizing (going from $O(n^2)\to O(n\log n)$ matters more than any constant trick).
+@@ a6-1|body#10
+Remove repeated computation (memoization, prefix-sum preprocessing, two pointers).
+@@ a6-1|body#11
+Think about <b>locality</b>: contiguous arrays, SoA instead of AoS, batching I/O.
+@@ a6-1|body#12
+A real benchmark: search in an array, binary search and a set
+@@ a6-1|body#13
+Real-world uses
+@@ a6-1|body#14
+Area
+@@ a6-1|body#15
+Data structure
+@@ a6-1|body#16
+Reason
+@@ a6-1|body#17
+Database index
+@@ a6-1|body#18
+A shallow, wide tree; minimal disk access, range scans through leaf links
+@@ a6-1|body#19
+Write-heavy key-value stores (RocksDB, Cassandra)
+@@ a6-1|body#20
+Fast sequential writes; a filter prevents useless reads
+@@ a6-1|body#21
+LRU cache
+@@ a6-1|body#22
+$O(1)$ access and move
+@@ a6-1|body#23
+Task scheduling, Dijkstra
+@@ a6-1|body#24
+Extract-min in $O(\log n)$
+@@ a6-1|body#25
+Text search
+@@ a6-1|body#26
+A map from term to a list of documents
+@@ a6-1|body#27
+Nearest-neighbour search (embeddings)
+@@ a6-1|body#28
+KD-tree, HNSW (graph), IVF
+@@ a6-1|body#29
+Vector index; approximate search for high dimensions
+@@ a6-1|body#30
+Sparse data in ML (one-hot features)
+@@ a6-1|body#31
+Only the non-zero values are stored
+@@ a6-1|body#32
+Tensors in deep learning
+@@ a6-1|body#33
+Contiguous array + strides
+@@ a6-1|body#34
+Fast matrix multiplication on GPUs and cache-friendly
+@@ a6-1|body#35
+The effect of data structures on databases and ML
+@@ a6-1|body#36
+In databases, choosing the index type (B+Tree for ranges, hash for equality) brings the query cost from an $O(n)$ scan to $O(\log n)$, and a hash join ($O(n+m)$) versus a sort-merge join ($O(n\log n)$) makes a huge difference. In ML, tensor memory layout (row-major, contiguous), batching and using sparse matrices change performance by tens of times; and in embedding retrieval, the vector-index structure trades off accuracy, latency and memory.
+@@ a6-1|obj:0#0
+Choose a suitable data structure based on the access pattern.
+@@ a6-1|obj:1#0
+Know the memory-versus-speed trade-off and the effect of the cache.
+@@ a6-1|obj:2#0
+Explain the effect of data structures on database and machine-learning workloads.
+@@ a6-1|mis:0#0
+"Always pick the hash table because it is $O(1)$." ← It is unsuitable if you need order/ranges or little memory.
+@@ a6-1|mis:1#0
+"Premature optimization is better." ← Profile first, then optimize the bottleneck.
+@@ a6-1|mis:2#0
+"Asymptotic complexity is the only criterion." ← Constants, cache and I/O are decisive.
+@@ a6-1|sum:0#0
+Choose a data structure by the dominant operation, data size, order, memory and concurrency.
+@@ a6-1|sum:1#0
+Memory/time and read/write trade-offs are everywhere: hash, B+Tree, LSM, Bloom filter.
+@@ a6-1|sum:2#0
+Algorithm and data structure first, then constants; always with profiling.
+@@ a6-1|sum:3#0
+Data structures in DB and ML (index, join, tensor, sparse matrix) directly determine cost.
+@@ a6-1|ex:0:q#0
+What combination is needed to implement an LRU cache with $O(1)$ get and put?
+@@ a6-1|ex:0:e#0
+A hash table makes node access $O(1)$ and a doubly linked list makes moving to the front and evicting the tail $O(1)$.
+@@ a6-1|ex:0:o:0#0
+A sorted array
+@@ a6-1|ex:1:q#0
+For a very high write volume with point reads, which storage structure is usually more suitable?
+@@ a6-1|ex:1:e#0
+An LSM tree gathers writes in memory and writes them sequentially to disk; a Bloom filter makes reads efficient.
+@@ a6-1|ex:1:o:2#0
+A sorted array
+@@ a6-1|ex:2:q#0
+A Bloom filter may give a "false positive" but not a "false negative".
+@@ a6-1|ex:2:e#0
+If it says "not present" it is definitely not present; if it says "present" it may be wrong.
+@@ a6-1|ex:3:q#0
+For a service with 10 million records where 90% of requests are "lookup by id" and 10% are "list records between two dates", what structure(s) do you suggest?
+@@ a6-1|ex:3:a#0
+For lookup by id: a hash index or a B+Tree on the id (hash is more efficient for equality). For the date range: a B+Tree on the date column (range scan via leaf links), or, if data is inserted in time order, a clustered index/partitioning on the date. Altogether two indexes (cost: memory and slower writes) and measurement on the real workload. If writes are heavy, an LSM is also an option.

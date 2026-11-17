@@ -1,0 +1,190 @@
+@@ a1-1|body#0
+1. What is an algorithm?
+@@ a1-1|body#1
+<b>An algorithm</b> is a finite, precisely defined sequence of steps that turns an input into a desired output. To count as an "algorithm" a method needs five properties: <b>input</b>, <b>output</b>, <b>definiteness</b> (every step unambiguous), <b>finiteness</b> (it ends after a finite number of steps) and <b>effectiveness</b> (every step can be carried out with real resources).
+@@ a1-1|body#2
+Two different questions must be asked about any algorithm: (1) <b>Is it correct?</b> Does it give the right output for every valid input? (2) <b>Is it efficient?</b> How much time and memory does it need, and how does that grow as the input grows? This lesson is about the second question. Correctness is usually proved by induction or by a loop invariant.
+@@ a1-1|body#3
+2. Why "analysis" and not just timing?
+@@ a1-1|body#4
+Measured running time depends on the hardware, the language, the compiler and the test inputs. In theoretical analysis we use the <b>RAM model</b>: every basic operation (addition, comparison, reading/writing one memory cell) has unit cost, and we ask how the number of these operations depends on the <b>input size</b> $n$. We call that function $T(n)$. The goal is to predict the <b>growth behaviour</b>, not the exact time in seconds.
+@@ a1-1|body#5
+Example: counting operations
+@@ a1-1|body#6
+1 operation
+@@ a1-1|body#7
+n times
+@@ a1-1|body#8
+(n-1)+(n-2)+...+0 times
+@@ a1-1|body#9
+c constant operations
+@@ a1-1|body#10
+The inner loop body runs exactly $\sum_{i=0}^{n-1}(n-1-i) = \frac{n(n-1)}{2}$ times. So $T(n)=c\cdot\frac{n(n-1)}{2}+O(n)$, which is of order $n^2$. Note that the factor $\frac12$ and the lower-order terms become irrelevant in the long-run behaviour.
+@@ a1-1|body#11
+3. Space complexity
+@@ a1-1|body#12
+<b>Space complexity</b> is the amount of memory the algorithm uses beyond the input (<i>auxiliary space</i>). The memory of the recursive call stack counts too: a recursive function of depth $n$ needs $O(n)$ memory even if it has no helper variables. There is usually a trade-off between time and memory; for example a hash table gives faster lookup in exchange for more memory.
+@@ a1-1|body#13
+4. Asymptotic notation
+@@ a1-1|body#14
+Let $f,g:\mathbb{N}\to\mathbb{R}_{\ge0}$.
+@@ a1-1|body#15
+
+$$f(n)=O(g(n))\iff \exists\,c>0,\,n_0:\ \forall n\ge n_0,\ f(n)\le c\,g(n)$$
+$$f(n)=\Omega(g(n))\iff \exists\,c>0,\,n_0:\ \forall n\ge n_0,\ f(n)\ge c\,g(n)$$
+$$f(n)=\Theta(g(n))\iff f=O(g)\ \text{and}\ f=\Omega(g)$$
+
+@@ a1-1|body#16
+<b>Proof example:</b> we show $3n^2+5n+2=\Theta(n^2)$. For $n\ge1$ we have $3n^2\le 3n^2+5n+2\le 3n^2+5n^2+2n^2=10n^2$. So with $c_1=3$, $c_2=10$ and $n_0=1$ both sides hold.
+@@ a1-1|body#17
+<b class="t">Careful: Big-O is not the same as "worst case" or "running time"</b>$O(g)$ is only an <b>upper bound on a function</b> and can be applied separately to the best, average or worst case. The sentence "this algorithm is $O(n^2)$" does not by itself say what the exact time is; it only says its growth is no more than $n^2$. When we want a tight bound we use $\Theta$.
+@@ a1-1|body#18
+5. Best, average and worst case
+@@ a1-1|body#19
+For inputs of the same size $n$ the running time can differ. The <b>best case</b> is the minimum, the <b>worst case</b> the maximum and the <b>average case</b> the expected time under an assumed distribution over inputs. In linear search: the best case is 1 comparison ($\Theta(1)$), the worst case $n$ comparisons and the average (assuming a uniformly random target position) $\frac{n+1}{2}$.
+@@ a1-1|body#20
+Linear search: best / average / worst case
+@@ a1-1|body#21
+6. Comparing growth rates
+@@ a1-1|body#22
+The usual order of growth: $1\ll\log n\ll\sqrt n\ll n\ll n\log n\ll n^2\ll n^3\ll 2^n\ll n!$. The table and chart below show why exponential algorithms are practical only for very small inputs.
+@@ a1-1|body#23
+Growth of complexity functions and approximate running time
+@@ a1-1|body#24
+Practical rules for analysing code
+@@ a1-1|body#25
+<b>Constants and lower-order terms are dropped:</b> $5n^2+100n+7=\Theta(n^2)$.
+@@ a1-1|body#26
+<b>A sequence of statements:</b> costs add and the largest order dominates.
+@@ a1-1|body#27
+<b>Nested loops:</b> costs (when independent) multiply.
+@@ a1-1|body#28
+<b>Repeated halving</b> (as in binary search) makes the number of steps $\lfloor\log_2 n\rfloor+1$.
+@@ a1-1|body#29
+The base of the logarithm does not matter in asymptotic notation: $\log_a n=\Theta(\log_b n)$.
+@@ a1-1|body#30
+7. Limits of asymptotic analysis
+@@ a1-1|body#31
+For small $n$ or large constants, an algorithm that is "worse" in order can be faster (for example insertion sort on a small array beats merge sort; that is why real sort implementations are hybrids). Asymptotic analysis also does not model the effect of the cache, I/O and parallelism.
+@@ a1-1|obj:0#0
+Define an algorithm precisely and state the difference between correctness and efficiency.
+@@ a1-1|obj:1#0
+Derive the time and space complexity of a code fragment by counting basic operations.
+@@ a1-1|obj:2#0
+Explain the notations $O$, $\Omega$ and $\Theta$ with their mathematical definitions and know how they differ from best/worst case.
+@@ a1-1|obj:3#0
+Compare the growth of common functions and estimate whether an algorithm is feasible for large inputs.
+@@ a1-1|pre:0#0
+Familiarity with loops, functions and arrays in a programming language
+@@ a1-1|mis:0#0
+"$O(n)$ means exactly n steps." ← No; it means of order $n$, without constant factors. $100n$ and $n/2$ are both $O(n)$.
+@@ a1-1|mis:1#0
+"An $O(n^2)$ algorithm is always slower than an $O(n)$ one." ← Only for large enough $n$. For small $n$ the constants decide.
+@@ a1-1|mis:2#0
+"Big-O = worst case." ← The two are independent concepts; $O$ is a bound on a function and the worst case is a kind of input.
+@@ a1-1|mis:3#0
+"Space complexity means the input size." ← We usually count only the auxiliary memory.
+@@ a1-1|sum:0#0
+Complexity is a function of the input size that measures growth behaviour independently of the hardware.
+@@ a1-1|sum:1#0
+$O$ is an upper bound, $\Omega$ a lower bound and $\Theta$ a tight bound; best/average/worst identify the kind of input.
+@@ a1-1|sum:2#0
+Constants and lower-order terms vanish in asymptotic notation but can matter in practice.
+@@ a1-1|sum:3#0
+Space complexity includes auxiliary memory and the recursion stack.
+@@ a1-1|ex:0:q#0
+Which statement about $f(n)=4n^2+10n+1$ is true?
+@@ a1-1|ex:0:e#0
+The dominant term is $4n^2$ and the constant $4$ is dropped; so $\Theta(n^2)$. Note: $f=O(n^3)$ is also true but not a tight bound.
+@@ a1-1|ex:1:q#0
+If an algorithm is $O(n^2)$, it runs slower than an $O(n)$ algorithm for every input.
+@@ a1-1|ex:1:e#0
+The notation $O$ describes asymptotic behaviour and ignores constants. For small $n$ or favourable inputs a higher-order algorithm can be faster.
+@@ a1-1|ex:2:q#0
+For $n=10$, how many times does the inner loop of the code below run?
+@@ a1-1|ex:2:e#0
+The number of executions is $\sum_{i=1}^{n} i=\frac{n(n+1)}{2}$. For $n=10$: $\frac{10\cdot 11}{2}=55$.
+@@ a1-1|ex:3:q#0
+How many comparisons does binary search need at most, in the worst case, on a sorted array of 1024 elements? (formula $\lfloor\log_2 n\rfloor+1$)
+@@ a1-1|ex:3:e#0
+$\log_2 1024=10$ so $10+1=11$ comparisons in the worst case.
+@@ a1-1|ex:4:q#0
+How does $f(n)=n\log n$ relate to $g(n)=n^2$?
+@@ a1-1|ex:4:e#0
+$\lim \frac{n\log n}{n^2}=\lim\frac{\log n}{n}=0$ so $f=o(g)$; that is, $f=O(g)$ but $f$ grows more slowly than $g$ and is not $\Omega(g)$.
+@@ a1-1|ex:4:o:0#0
+$f=\Omega(g)$ but $f\neq O(g)$
+@@ a1-1|ex:4:o:1#0
+$f=O(g)$ but $f\neq\Omega(g)$
+@@ a1-1|ex:4:o:3#0
+They are not comparable
+@@ a1-1|ex:5:q#0
+Explain the difference between "worst case" and "$O$" with an example. Why is the statement "insertion sort's best-case time is $O(n)$" meaningful?
+@@ a1-1|ex:5:a#0
+The worst case specifies which input we examine (the worst one), whereas $O$ specifies what kind of bound (upper) we derive for the time function. We can state an upper bound for the best case too. In insertion sort on an already-sorted input the inner loop always stops immediately and $T_{best}(n)=\Theta(n)$; so "the best case is $O(n)$" means even on the best input the growth is no more than linear (and since it is also $\Omega(n)$, it is $\Theta(n)$).
+@@ a1-2|body#0
+The problem
+@@ a1-2|body#1
+Sometimes an operation is cheap most of the time and very expensive rarely. If we count only the worst case of that single operation we are too pessimistic. <b>Amortized analysis</b> measures the total cost of a <b>sequence</b> of $n$ operations in the <b>worst sequence</b> and divides by $n$. It is a deterministic guarantee for the sequence of operations, not a probabilistic analysis.
+@@ a1-2|body#2
+Main example: the dynamic array
+@@ a1-2|body#3
+When the array is full we build a new array of double the capacity and copy all the elements (cost $\Theta(k)$ when copying $k$ elements). An ordinary push is $\Theta(1)$.
+@@ a1-2|body#4
+The aggregate method
+@@ a1-2|body#5
+In $n$ push operations the copies happen at sizes $1,2,4,\dots,2^{\lfloor\log_2 n\rfloor}$. The total cost of the copies:
+@@ a1-2|body#6
+So the total cost is $\le n+2n=3n$ and the amortized cost of each push is below 3, i.e. $O(1)$.
+@@ a1-2|body#7
+The accounting method
+@@ a1-2|body#8
+We charge each push an amortized cost of 3 "coins": 1 coin for the insertion itself, 1 coin for copying this same element at the next growth, and 1 coin as savings for copying one of the older half's elements. When a growth happens, the saved coins pay for the copying and the balance never goes negative.
+@@ a1-2|body#9
+The potential method
+@@ a1-2|body#10
+Define the potential function $\Phi=2\cdot\text{size}-\text{capacity}$. The amortized cost of operation $i$ is $\hat c_i=c_i+\Phi_i-\Phi_{i-1}$. For a push without growth: $\hat c=1+2=3$. For a push with growth (with $k$ old elements): $c=k+1$ and the potential goes from $2k-k=k$ to $2(k+1)-2k=2$, so $\hat c=(k+1)+(2-k)=3$. Both cases give a constant.
+@@ a1-2|body#11
+Dynamic-array simulator: doubling versus a fixed increase
+@@ a1-2|body#12
+If the capacity grows by adding a fixed amount $c$ instead of multiplying by a constant factor, the number of copies is $\Theta(n/c)$ and the total copying is $\Theta(n^2/c)$; so the amortized cost is $\Theta(n)$, not $O(1)$ — which is why geometric growth (×1.5 or ×2) is the standard.
+@@ a1-2|body#13
+Other applications
+@@ a1-2|body#14
+<b>Hash-table rehash:</b> when the load factor reaches the threshold the table doubles and all keys are rehashed; insertion is amortized $O(1)$.
+@@ a1-2|body#15
+<b>Binary counter:</b> incrementing a $k$-bit counter flips amortized $O(1)$ bits.
+@@ a1-2|body#16
+<b>Splay trees and union-find</b> are also analysed with amortized analysis.
+@@ a1-2|obj:0#0
+Explain the difference between amortized analysis, average case and worst case.
+@@ a1-2|obj:1#0
+Derive the amortized cost of a sequence of operations with the aggregate, accounting and potential methods.
+@@ a1-2|obj:2#0
+Show why appending to a dynamic array by doubling the capacity is amortized $O(1)$.
+@@ a1-2|mis:0#0
+"Amortized means a probabilistic average." ← No; amortized is a guarantee on the worst sequence of operations with no probabilistic assumption. The average case depends on the input distribution.
+@@ a1-2|mis:1#0
+"So no push is expensive." ← Individual operations can be $\Theta(n)$ (a sudden latency spike); in real-time systems this matters even if the amortized cost is $O(1)$.
+@@ a1-2|sum:0#0
+Amortized = the worst total cost of a sequence of operations divided by the number of operations, with no probabilistic assumption.
+@@ a1-2|sum:1#0
+The aggregate, accounting and potential methods give the same result.
+@@ a1-2|sum:2#0
+Geometric capacity growth makes push amortized $O(1)$; fixed additive growth does not.
+@@ a1-2|ex:0:q#0
+In a doubling dynamic array with initial capacity 1, after 8 push operations how many elements in total were copied during growth? (copies occur at sizes 1, 2, 4)
+@@ a1-2|ex:0:e#0
+Growth happens when full at sizes 1, 2 and 4: $1+2+4=7$ copies. (The growth at size 8 happens at the ninth push.)
+@@ a1-2|ex:1:q#0
+The amortized cost of a push in a doubling dynamic array is $O(1)$, but the worst case of one particular push is $\Theta(n)$.
+@@ a1-2|ex:1:e#0
+True; the pushes that trigger growth cost $\Theta(n)$ but over the whole sequence the cost per push is a constant on average.
+@@ a1-2|ex:2:q#0
+If the capacity grows by only 10 units at each growth, what happens to the amortized cost of a push?
+@@ a1-2|ex:2:e#0
+The number of growths is $n/10$ and each growth copies $O(n)$ elements; the total is $\Theta(n^2)$ and the per-operation average $\Theta(n)$.
+@@ a1-2|ex:3:q#0
+Why is a growth factor of 1.5 preferred over 2 in some implementations? (Hint: reusing freed memory)
+@@ a1-2|ex:3:a#0
+With factor 2 the sum of all previous block sizes is always less than the new block ($1+2+\dots+2^{k-1}<2^k$), so the allocator can never combine the previously freed blocks for the next growth and reuse them. With a factor $\le\varphi\approx1.618$ the sum of the earlier blocks eventually exceeds the new block and reuse becomes possible. The cost: more growths (a larger amortized constant).
