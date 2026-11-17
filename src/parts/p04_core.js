@@ -37,12 +37,18 @@ const T={ids:[],every(fn,ms){const id=setInterval(fn,ms);this.ids.push(id);retur
 /* ---- data registries ---- */
 const MODS={
  A:{t:'ساختمان داده و الگوریتم',en:'Data Structures & Algorithms',ic:'🌳',d:'از تحلیل پیچیدگی تا درخت‌ها، گراف‌ها، مرتب‌سازی، برنامه‌ریزی پویا و Backtracking؛ با انیمیشن‌های گام‌به‌گام.',
+  de:'From complexity analysis to trees, graphs, sorting, dynamic programming and backtracking, with step-by-step animations.',
   g:{A1:'A1 · Algorithm Fundamentals',A2:'A2 · Linear Data Structures',A3:'A3 · Non-Linear Data Structures',A4:'A4 · Algorithms',A5:'A5 · Advanced Concepts',A6:'A6 · Complexity & Applications'}},
  B:{t:'سیستم‌های پایگاه داده',en:'Database Systems',ic:'🗄️',d:'مدل رابطه‌ای، SQL با موتور اجرای واقعی در مرورگر، نرمال‌سازی، ایندکس‌ها و B+Tree، تراکنش‌ها، MVCC و درونی‌های پایگاه داده.',
+  de:'The relational model, SQL on a real in-browser engine, normalization, indexes and B+Trees, transactions, MVCC and database internals.',
   g:{B1:'B1 · Fundamentals',B2:'B2 · Relational Theory',B3:'B3 · SQL & Query Processing',B4:'B4 · Database Design',B5:'B5 · Indexing & Storage',B6:'B6 · Transactions & Concurrency',B7:'B7 · Architecture & Advanced',B8:'B8 · Internals'}},
  C:{t:'ریاضیات برای هوش مصنوعی',en:'Mathematics for AI',ic:'📐',d:'جبر خطی، حسابان، احتمال، آمار و بهینه‌سازی با شهود هندسی، اشتقاق گام‌به‌گام و کاربرد در شبکه‌های عصبی.',
+  de:'Linear algebra, calculus, probability, statistics and optimization with geometric intuition, step-by-step derivations and neural-network applications.',
   g:{C1:'C1 · Linear Algebra',C2:'C2 · Calculus',C3:'C3 · Probability',C4:'C4 · Statistics',C5:'C5 · Optimization'}},
+ D:{t:'یادگیری ماشین',en:'Machine Learning',ic:'🤖',d:'از رگرسیون و طبقه‌بندی تا خوشه‌بندی، PCA، ارزیابی مدل و شبکه‌های عصبی (MLP و CNN)، با ویجت‌های زنده و آزمایشگاه‌های تصویری.',de:'From regression and classification to clustering, PCA, model evaluation and neural networks (MLP and CNN), with live widgets and visual labs.',
+  g:{D1:'D1 · Regression & Generalization',D2:'D2 · Classification',D3:'D3 · Unsupervised Learning',D4:'D4 · Evaluation & Model Selection',D5:'D5 · Neural Networks'}},
  X:{t:'اتصال بنیان‌ها',en:'Connecting the Foundations',ic:'🔗',d:'پیوند میان ساختمان داده، پایگاه داده و ریاضیات هوش مصنوعی: از آرایه تا تانسور، از B+Tree تا ایندکس، از گرادیان تا آموزش شبکه و ترنسفورمر.',
+  de:'The links between data structures, databases and the math of AI: from arrays to tensors, from the B+Tree to the index, from the gradient to training and the transformer.',
   g:{X:'Connecting the Foundations'}}};
 const LESSONS=[];const W={};
 const LVL={fa:['','مبتدی','متوسط','پیشرفته'],en:['','Beginner','Intermediate','Advanced']};const lv=k=>LVL[LANG][k];
@@ -161,7 +167,7 @@ function exCard(l,e,i){const key=exKey(l,i);const card=h('div',{class:'ex'});con
  const mark=ok=>{if(ok||S.ex[key]!==1)S.ex[key]=ok?1:0;save();card.classList.toggle('right',ok);card.classList.toggle('wrong',!ok);buildNav(l);refreshScore()};
  const fb=h('div',{class:'fb',style:{display:'none'}});
  const show=(ok,html)=>{fb.className='fb '+(ok?'ok':'no');fb.style.display='block';fb.innerHTML=(ok?t2('✅ <b>درست!</b> ','✅ <b>Correct!</b> '):t2('❌ <b>نادرست.</b> ','❌ <b>Not quite.</b> '))+rich(html||e.e||'');renderMath(fb)};
- const showExp=()=>{fb.className='fb';fb.style.display='block';fb.innerHTML='💡 '+rich(e.e||'');renderMath(fb)};
+ const showExp=()=>{fb.className='fb';fb.style.display='block';fb.innerHTML='💡 '+rich(e.e||(typeof e.a==='string'?e.a:'')||'');renderMath(fb)};
  card.append(h('div',{class:'qh'},h('b',{},t2('تمرین ','Exercise ')+(i+1)),h('span',{class:'chip b'+e.l},lv(e.l)),h('span',{class:'chip'},EXT()[e.t])),h('div',{html:rich(e.q)}));
  const body=h('div');card.append(body);
  if(e.t==='mcq'||e.t==='tf'){const opts=e.t==='tf'?[t2('درست','True'),t2('نادرست','False')]:e.o;const ans=e.t==='tf'?(e.a?0:1):e.a;

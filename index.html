@@ -650,12 +650,18 @@ const T={ids:[],every(fn,ms){const id=setInterval(fn,ms);this.ids.push(id);retur
 /* ---- data registries ---- */
 const MODS={
  A:{t:'ساختمان داده و الگوریتم',en:'Data Structures & Algorithms',ic:'🌳',d:'از تحلیل پیچیدگی تا درخت‌ها، گراف‌ها، مرتب‌سازی، برنامه‌ریزی پویا و Backtracking؛ با انیمیشن‌های گام‌به‌گام.',
+  de:'From complexity analysis to trees, graphs, sorting, dynamic programming and backtracking, with step-by-step animations.',
   g:{A1:'A1 · Algorithm Fundamentals',A2:'A2 · Linear Data Structures',A3:'A3 · Non-Linear Data Structures',A4:'A4 · Algorithms',A5:'A5 · Advanced Concepts',A6:'A6 · Complexity & Applications'}},
  B:{t:'سیستم‌های پایگاه داده',en:'Database Systems',ic:'🗄️',d:'مدل رابطه‌ای، SQL با موتور اجرای واقعی در مرورگر، نرمال‌سازی، ایندکس‌ها و B+Tree، تراکنش‌ها، MVCC و درونی‌های پایگاه داده.',
+  de:'The relational model, SQL on a real in-browser engine, normalization, indexes and B+Trees, transactions, MVCC and database internals.',
   g:{B1:'B1 · Fundamentals',B2:'B2 · Relational Theory',B3:'B3 · SQL & Query Processing',B4:'B4 · Database Design',B5:'B5 · Indexing & Storage',B6:'B6 · Transactions & Concurrency',B7:'B7 · Architecture & Advanced',B8:'B8 · Internals'}},
  C:{t:'ریاضیات برای هوش مصنوعی',en:'Mathematics for AI',ic:'📐',d:'جبر خطی، حسابان، احتمال، آمار و بهینه‌سازی با شهود هندسی، اشتقاق گام‌به‌گام و کاربرد در شبکه‌های عصبی.',
+  de:'Linear algebra, calculus, probability, statistics and optimization with geometric intuition, step-by-step derivations and neural-network applications.',
   g:{C1:'C1 · Linear Algebra',C2:'C2 · Calculus',C3:'C3 · Probability',C4:'C4 · Statistics',C5:'C5 · Optimization'}},
+ D:{t:'یادگیری ماشین',en:'Machine Learning',ic:'🤖',d:'از رگرسیون و طبقه‌بندی تا خوشه‌بندی، PCA، ارزیابی مدل و شبکه‌های عصبی (MLP و CNN)، با ویجت‌های زنده و آزمایشگاه‌های تصویری.',de:'From regression and classification to clustering, PCA, model evaluation and neural networks (MLP and CNN), with live widgets and visual labs.',
+  g:{D1:'D1 · Regression & Generalization',D2:'D2 · Classification',D3:'D3 · Unsupervised Learning',D4:'D4 · Evaluation & Model Selection',D5:'D5 · Neural Networks'}},
  X:{t:'اتصال بنیان‌ها',en:'Connecting the Foundations',ic:'🔗',d:'پیوند میان ساختمان داده، پایگاه داده و ریاضیات هوش مصنوعی: از آرایه تا تانسور، از B+Tree تا ایندکس، از گرادیان تا آموزش شبکه و ترنسفورمر.',
+  de:'The links between data structures, databases and the math of AI: from arrays to tensors, from the B+Tree to the index, from the gradient to training and the transformer.',
   g:{X:'Connecting the Foundations'}}};
 const LESSONS=[];const W={};
 const LVL={fa:['','مبتدی','متوسط','پیشرفته'],en:['','Beginner','Intermediate','Advanced']};const lv=k=>LVL[LANG][k];
@@ -774,7 +780,7 @@ function exCard(l,e,i){const key=exKey(l,i);const card=h('div',{class:'ex'});con
  const mark=ok=>{if(ok||S.ex[key]!==1)S.ex[key]=ok?1:0;save();card.classList.toggle('right',ok);card.classList.toggle('wrong',!ok);buildNav(l);refreshScore()};
  const fb=h('div',{class:'fb',style:{display:'none'}});
  const show=(ok,html)=>{fb.className='fb '+(ok?'ok':'no');fb.style.display='block';fb.innerHTML=(ok?t2('✅ <b>درست!</b> ','✅ <b>Correct!</b> '):t2('❌ <b>نادرست.</b> ','❌ <b>Not quite.</b> '))+rich(html||e.e||'');renderMath(fb)};
- const showExp=()=>{fb.className='fb';fb.style.display='block';fb.innerHTML='💡 '+rich(e.e||'');renderMath(fb)};
+ const showExp=()=>{fb.className='fb';fb.style.display='block';fb.innerHTML='💡 '+rich(e.e||(typeof e.a==='string'?e.a:'')||'');renderMath(fb)};
  card.append(h('div',{class:'qh'},h('b',{},t2('تمرین ','Exercise ')+(i+1)),h('span',{class:'chip b'+e.l},lv(e.l)),h('span',{class:'chip'},EXT()[e.t])),h('div',{html:rich(e.q)}));
  const body=h('div');card.append(body);
  if(e.t==='mcq'||e.t==='tf'){const opts=e.t==='tf'?[t2('درست','True'),t2('نادرست','False')]:e.o;const ans=e.t==='tf'?(e.a?0:1):e.a;
@@ -1555,6 +1561,110 @@ W.attention=(el)=>{const toks=['من','عاشق','یادگیری','عمیق'];co
   box.append(h('div',{class:'grid g2'},h('div',{},h('b',{},'X (n×d) — embedding توکن‌ها'),dtable(['',...[1,2,3,4].map(i=>'d'+i)],P.X.map((r,i)=>[toks[i],...r])),h('b',{},'Q = X·W_Q'),dtable(['',...[1,2,3,4].map(i=>'q'+i)],Q.map((r,i)=>[toks[i],...r.map(v=>Math.round(v*100)/100)]))),h('div',{},h('b',{},'وزن‌های توجه A = softmax(QKᵀ'+(scale?'/√d':'')+(causal?' + mask':'')+')'),h('div',{class:'tw'},hm),h('div',{class:'wn'},'هر سطر مجموعش ۱ است: توزیع احتمال روی توکن‌هایی که این توکن به آن‌ها «نگاه» می‌کند.'),h('b',{},'خروجی O = A·V (n×d)'),dtable(['',...[1,2,3,4].map(i=>'o'+i)],O.map((r,i)=>[toks[i],...r.map(v=>Math.round(v*100)/100)])))),
    h('div',{class:'callout',html:`<b class="t">همه‌چیز ضرب ماتریس است</b><span class="en">Q = XW_Q , K = XW_K , V = XW_V  →  S = QKᵀ (n×n)  →  A = softmax(S/√d_k)  →  O = AV</span><br>هر کدام از این‌ها یک matmul بزرگ است که روی GPU موازی اجرا می‌شود؛ هزینه‌ی S برابر O(n²d) است ⇒ دلیل محدودیت طول متن در Transformerها. ${scale?'تقسیم بر √d مانع بزرگ‌شدن امتیازها و اشباع softmax (گرادیان ناچیز) می‌شود.':'بدون مقیاس‌دهی، softmax تیزتر و نزدیک‌تر به one-hot می‌شود.'} ${causal?'ماسک علّی (Decoder): هر توکن فقط توکن‌های قبلی خود را می‌بیند؛ بالای قطر صفر است.':''}`}));}
  body_(el,ctl(h('label',{},h('input',{type:'checkbox',checked:true,onchange:e=>{scale=e.target.checked;draw()}}),'مقیاس‌دهی ÷√d'),h('label',{},h('input',{type:'checkbox',onchange:e=>{causal=e.target.checked;draw()}}),'ماسک علّی (Causal)'),btn('وزن‌های تصادفی جدید',()=>{seed++;P=mk(seed);draw()})),box,h('div',{class:'wn'},'مقادیر Embedding و وزن‌ها تصادفی (seeded)اند و فقط برای نمایش مکانیسم هستند؛ در مدل واقعی از داده آموخته می‌شوند و چند «سر» (Multi-Head) موازی دارند.'));draw()};
+/* ===================== WIDGETS: Module D (Machine Learning) ===================== */
+const MLX={
+ gauss(r){let u=0,v=0;while(!u)u=r();v=r();return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v)},
+ blobs(seed,n,cs,sd){const r=mulberry(seed),o=[];cs.forEach((c,k)=>{for(let i=0;i<n;i++)o.push({x:c[0]+sd*MLX.gauss(r),y:c[1]+sd*MLX.gauss(r),c:k})});return o},
+ moons(seed,n,noise){const r=mulberry(seed),o=[];for(let i=0;i<n;i++){const t=Math.PI*r();o.push({x:Math.cos(t)+noise*MLX.gauss(r),y:Math.sin(t)+noise*MLX.gauss(r),c:0});const u=Math.PI*r();o.push({x:1-Math.cos(u)+noise*MLX.gauss(r),y:.5-Math.sin(u)+noise*MLX.gauss(r),c:1})}return o},
+ xor(seed,n,noise){const r=mulberry(seed),o=[];for(let i=0;i<n*4;i++){const a=i%2,b=(i>>1)%2;o.push({x:(a?1:-1)+noise*MLX.gauss(r),y:(b?1:-1)+noise*MLX.gauss(r),c:a^b})}return o},
+ rings(seed,n,noise){const r=mulberry(seed),o=[];for(let i=0;i<n*2;i++){const t=2*Math.PI*r(),rad=i%2?1.6:0.6;o.push({x:rad*Math.cos(t)+noise*MLX.gauss(r),y:rad*Math.sin(t)+noise*MLX.gauss(r),c:i%2})}return o},
+ col:c=>c?'var(--bad)':'var(--ac)',
+ sig:z=>1/(1+Math.exp(-z)),
+ ext(pts,pad){let a=1e9,b=-1e9,c=1e9,d=-1e9;pts.forEach(p=>{a=Math.min(a,p.x);b=Math.max(b,p.x);c=Math.min(c,p.y);d=Math.max(d,p.y)});return[a-pad,b+pad,c-pad,d+pad]},
+ /* draw a class-coloured decision map on a canvas: f(x,y)-> class probability in [0,1] */
+ map(host,w,h,ex,f,pts,res){const C=cv(host,w,h),g=C.g;res=res||8;const cs=getComputedStyle(document.documentElement),a=cs.getPropertyValue('--ac').trim(),b=cs.getPropertyValue('--bad').trim();
+  for(let i=0;i<w;i+=res)for(let j=0;j<h;j+=res){const x=ex[0]+(i+res/2)/w*(ex[1]-ex[0]),y=ex[3]-(j+res/2)/h*(ex[3]-ex[2]),p=f(x,y);g.globalAlpha=.1+.38*Math.abs(p-.5)*2;g.fillStyle=p>.5?b:a;g.fillRect(i,j,res,res)}
+  g.globalAlpha=1;pts.forEach(p=>{g.beginPath();const X=(p.x-ex[0])/(ex[1]-ex[0])*w,Y=(ex[3]-p.y)/(ex[3]-ex[2])*h;if(p.c){g.fillStyle=b;g.moveTo(X,Y-5);g.lineTo(X+5,Y+4);g.lineTo(X-5,Y+4);g.closePath();g.fill()}else{g.fillStyle=a;g.arc(X,Y,4,0,7);g.fill()}g.strokeStyle='#fff';g.lineWidth=.8;g.stroke()});return C}};
+
+W.logreg=(el,o)=>{const pts=MLX.blobs(5,30,[[-1.2,-1],[1.2,1]],0.9);let w=[0,0,0],hist=[];const host=h('div'),info=h('div',{class:'stat'});
+ const ex=[-4,4,-4,4];const loss=()=>pts.reduce((s,p)=>{const q=MLX.sig(w[0]*p.x+w[1]*p.y+w[2]);return s-(p.c?Math.log(q+1e-9):Math.log(1-q+1e-9))},0)/pts.length;
+ const acc=()=>pts.filter(p=>(w[0]*p.x+w[1]*p.y+w[2]>0)===!!p.c).length/pts.length;
+ const step=eta=>{const g=[0,0,0];pts.forEach(p=>{const e=MLX.sig(w[0]*p.x+w[1]*p.y+w[2])-p.c;g[0]+=e*p.x;g[1]+=e*p.y;g[2]+=e});for(let i=0;i<3;i++)w[i]-=eta*g[i]/pts.length;hist.push(loss())};
+ const lr=rng('η',0.05,3,0.05,0.8,()=>{},v=>fmt(v,2));
+ const draw=()=>{host.innerHTML='';const P=chart(520,330,ex[0],ex[1],ex[2],ex[3],{l:28,b:20});P.axes(8,8,v=>String(Math.round(v)),v=>String(Math.round(v)));
+  const line=(k,dash,col)=>{if(Math.abs(w[1])<1e-6)return;const f=x=>(k-w[0]*x-w[2])/w[1];P.line(ex[0],f(ex[0]),ex[1],f(ex[1]),col,dash,dash?1.2:2.4)};line(0,null,'var(--ok)');line(2.2,'5 4','var(--mut)');line(-2.2,'5 4','var(--mut)');
+  pts.forEach(p=>{if(p.c)P.svg.append(sv('path',{d:`M${P.X(p.x)} ${P.Y(p.y)-6} l6 10 h-12z`,fill:'var(--bad)',stroke:'#fff','stroke-width':.8}));else P.dot(p.x,p.y,4.5,'var(--ac)')});host.append(P.svg);
+  info.innerHTML='';info.append(h('span',{},t2('گام‌ها: ','Steps: '),h('b',{},hist.length)),h('span',{},t2('زیان cross-entropy: ','Cross-entropy: '),h('b',{},fmt(loss(),3))),h('span',{},t2('دقت: ','Accuracy: '),h('b',{},Math.round(acc()*100)+'%')),h('span',{},'w = (',h('b',{},fmt(w[0],2)+', '+fmt(w[1],2)),'), b = ',h('b',{},fmt(w[2],2))))};
+ el.append(host,info,h('div',{class:'ctl'},lr.el,btn(t2('گام ×۱','Step ×1'),()=>{step(lr.get());draw()}),btn(t2('گام ×۵۰','Step ×50'),()=>{for(let i=0;i<50;i++)step(lr.get());draw()}),btn(t2('↺ از نو','↺ Reset'),()=>{w=[0,0,0];hist=[];draw()})),h('div',{class:'wn'},t2('خط سبز: p=۰٫۵؛ خط‌چین‌ها: p≈۰٫۱ و ۰٫۹. ▲ = کلاس ۱، ● = کلاس ۰.','Green line: p = 0.5; dashed: p ≈ 0.1 and 0.9. ▲ = class 1, ● = class 0.')));draw()};
+
+W.knn=(el,o)=>{const tr=MLX.moons(3,35,0.28),te=MLX.moons(11,60,0.28);const host=h('div'),info=h('div',{class:'stat'});const ex=[-1.8,2.8,-1.2,1.8];
+ const pred=(pts,x,y,k,skip)=>{const d=pts.map((p,i)=>({i,d:(p.x-x)**2+(p.y-y)**2,c:p.c})).filter(a=>a.i!==skip).sort((a,b)=>a.d-b.d).slice(0,k);return d.reduce((s,a)=>s+a.c,0)/k};
+ const kk=rng('k',1,45,2,5,()=>{},v=>String(Math.round(v)));
+ const draw=()=>{host.innerHTML='';const k=Math.round(kk.get());MLX.map(host,520,300,ex,(x,y)=>pred(tr,x,y,k,-1),tr,8);
+  const trAcc=tr.filter((p,i)=>(pred(tr,p.x,p.y,k,-1)>.5)===!!p.c).length/tr.length,teAcc=te.filter(p=>(pred(tr,p.x,p.y,k,-1)>.5)===!!p.c).length/te.length;
+  info.innerHTML='';info.append(h('span',{},'k = ',h('b',{},k)),h('span',{},t2('دقت آموزش: ','Train accuracy: '),h('b',{},Math.round(trAcc*100)+'%')),h('span',{},t2('دقت آزمون: ','Test accuracy: '),h('b',{},Math.round(teAcc*100)+'%')))};
+ kk.input.addEventListener('input',draw);el.append(host,info,h('div',{class:'ctl'},kk.el),h('div',{class:'wn'},t2('k=۱ هر نقطه‌ی آموزش را حفظ می‌کند (دقت آموزش ۱۰۰٪) ولی مرز دندانه‌دار است؛ k بزرگ مرز را هموار و در نهایت بیش‌ازحد ساده می‌کند. ۷۰ نقطه‌ی آموزش، ۱۲۰ نقطه‌ی آزمون.','k = 1 memorizes every training point (100% train accuracy) with a jagged boundary; a large k smooths the boundary and eventually oversimplifies. 70 training points, 120 test points.')));draw()};
+
+W.dtree=(el,o)=>{const tr=MLX.rings(4,40,0.22),te=MLX.rings(9,70,0.22);const host=h('div'),info=h('div',{class:'stat'});const ex=[-2.6,2.6,-2.6,2.6];
+ const gini=a=>{if(!a.length)return 0;const p=a.filter(q=>q.c).length/a.length;return 2*p*(1-p)};
+ const build=(a,d,md)=>{const n1=a.filter(q=>q.c).length;if(d>=md||n1===0||n1===a.length||a.length<3)return{leaf:1,p:a.length?n1/a.length:0};let best=null;['x','y'].forEach(f=>{const s=[...a].sort((p,q)=>p[f]-q[f]);for(let i=1;i<s.length;i++){if(s[i][f]===s[i-1][f])continue;const t=(s[i][f]+s[i-1][f])/2,L=s.slice(0,i),R=s.slice(i),g=(L.length*gini(L)+R.length*gini(R))/a.length;if(!best||g<best.g)best={g,f,t,L,R}}});if(!best)return{leaf:1,p:n1/a.length};return{f:best.f,t:best.t,l:build(best.L,d+1,md),r:build(best.R,d+1,md)}};
+ const ev=(n,x,y)=>n.leaf?n.p:ev(((n.f==='x'?x:y)<n.t)?n.l:n.r,x,y);
+ const cnt=n=>n.leaf?1:cnt(n.l)+cnt(n.r);const md=rng(t2('عمق','Depth'),0,10,1,2,()=>{},v=>String(Math.round(v)));
+ const draw=()=>{host.innerHTML='';const d=Math.round(md.get()),T=build(tr,0,d);MLX.map(host,520,300,ex,(x,y)=>ev(T,x,y),tr,6);
+  const a1=tr.filter(p=>(ev(T,p.x,p.y)>.5)===!!p.c).length/tr.length,a2=te.filter(p=>(ev(T,p.x,p.y)>.5)===!!p.c).length/te.length;
+  info.innerHTML='';info.append(h('span',{},t2('عمق: ','Depth: '),h('b',{},d)),h('span',{},t2('برگ‌ها: ','Leaves: '),h('b',{},cnt(T))),h('span',{},t2('دقت آموزش: ','Train: '),h('b',{},Math.round(a1*100)+'%')),h('span',{},t2('دقت آزمون: ','Test: '),h('b',{},Math.round(a2*100)+'%')))};
+ md.input.addEventListener('input',draw);el.append(host,info,h('div',{class:'ctl'},md.el),h('div',{class:'wn'},t2('هر گره بهترین برش محور-موازی را با کمینه‌کردن ناخالصی Gini انتخاب می‌کند. عمق بیشتر = مرز دقیق‌تر روی داده‌ی آموزش، و در نهایت overfitting.','Each node picks the best axis-aligned split by minimizing Gini impurity. More depth = a tighter fit to the training data, and eventually overfitting.')));draw()};
+
+W.kmeans=(el,o)=>{const pts=MLX.blobs(8,30,[[-2,-1.2],[1.8,-1],[0,2]],0.75);const host=h('div'),info=h('div',{class:'stat'});let C=[],asg=[],it=0,seed=1;const ex=[-5,5,-4,4];
+ const init=k=>{const r=mulberry(seed*97);C=Array.from({length:k},()=>{const p=pts[Math.floor(r()*pts.length)];return[p.x,p.y]});asg=pts.map(()=>-1);it=0};
+ const assign=()=>{asg=pts.map(p=>C.reduce((b,c,i)=>((p.x-c[0])**2+(p.y-c[1])**2<b[0]?[(p.x-c[0])**2+(p.y-c[1])**2,i]:b),[1e9,0])[1])};
+ const update=()=>{C=C.map((c,i)=>{const m=pts.filter((p,j)=>asg[j]===i);return m.length?[m.reduce((s,p)=>s+p.x,0)/m.length,m.reduce((s,p)=>s+p.y,0)/m.length]:c})};
+ const inertia=()=>asg[0]<0?NaN:pts.reduce((s,p,j)=>s+(p.x-C[asg[j]][0])**2+(p.y-C[asg[j]][1])**2,0);
+ const kk=rng('k',1,6,1,3,()=>{},v=>String(Math.round(v)));
+ const draw=()=>{host.innerHTML='';const P=chart(520,330,ex[0],ex[1],ex[2],ex[3],{l:26,b:20});P.axes(10,8,v=>String(Math.round(v)),v=>String(Math.round(v)));const pal=['var(--ac)','var(--bad)','var(--ok)','var(--warn)','var(--ac2)','var(--hl)'],sh=['●','■','▲','◆','★','✚'];
+  pts.forEach((p,j)=>{const c=asg[j];if(c<0)P.dot(p.x,p.y,3.5,'var(--mut)');else P.svg.append(sv('text',{x:P.X(p.x),y:P.Y(p.y)+4,'text-anchor':'middle','font-size':11,fill:pal[c%6]},sh[c%6]))});
+  C.forEach((c,i)=>{P.svg.append(sv('circle',{cx:P.X(c[0]),cy:P.Y(c[1]),r:9,fill:'none',stroke:pal[i%6],'stroke-width':3}),sv('text',{x:P.X(c[0]),y:P.Y(c[1])+4,'text-anchor':'middle','font-size':11,'font-weight':700},'μ'+(i+1)))});host.append(P.svg);
+  info.innerHTML='';info.append(h('span',{},t2('تکرار: ','Iteration: '),h('b',{},it)),h('span',{},t2('inertia (مجموع مربع فاصله): ','Inertia (sum of squared distances): '),h('b',{},isNaN(inertia())?'—':fmt(inertia(),1))))};
+ const reset=()=>{init(Math.round(kk.get()));draw()};kk.input.addEventListener('change',reset);
+ el.append(host,info,h('div',{class:'ctl'},kk.el,btn(t2('گام: انتساب + به‌روزرسانی','Step: assign + update'),()=>{assign();update();it++;draw()}),btn(t2('اجرا تا همگرایی','Run to convergence'),()=>{for(let i=0;i<30;i++){const a0=asg.join();assign();if(asg.join()===a0&&i>0)break;update();it++}draw()}),btn(t2('مقداردهی اولیه‌ی تازه','New initialization'),()=>{seed++;reset()})),h('div',{class:'wn'},t2('۹۰ نقطه از ۳ خوشه‌ی واقعی. با k=۳ و مقداردهی بد ممکن است به کمینه‌ی موضعی برسید؛ چند بار «مقداردهی تازه» بزنید.','90 points from 3 true clusters. With k = 3 and an unlucky start you may reach a local minimum; press "New initialization" a few times.')));init(3);draw()};
+
+W.pca=(el,o)=>{const r=mulberry(12),th0=0.55,pts=Array.from({length:80},()=>{const a=2.2*MLX.gauss(r),b=0.7*MLX.gauss(r);return{x:a*Math.cos(th0)-b*Math.sin(th0),y:a*Math.sin(th0)+b*Math.cos(th0)}});
+ const n=pts.length,mx=pts.reduce((s,p)=>s+p.x,0)/n,my=pts.reduce((s,p)=>s+p.y,0)/n;pts.forEach(p=>{p.x-=mx;p.y-=my});
+ const sxx=pts.reduce((s,p)=>s+p.x*p.x,0)/n,syy=pts.reduce((s,p)=>s+p.y*p.y,0)/n,sxy=pts.reduce((s,p)=>s+p.x*p.y,0)/n;const pc=0.5*Math.atan2(2*sxy,sxx-syy);
+ const V=a=>{const c=Math.cos(a),s=Math.sin(a);return c*c*sxx+2*c*s*sxy+s*s*syy};const tot=sxx+syy;const host=h('div'),info=h('div',{class:'stat'});
+ const ph=rng('φ°',0,180,1,100,()=>{},v=>Math.round(v)+'°');
+ const draw=()=>{host.innerHTML='';const a=ph.get()*Math.PI/180,c=Math.cos(a),s=Math.sin(a);const P=chart(520,330,-6,6,-4,4,{l:26,b:20});P.axes(6,4,v=>String(Math.round(v)),v=>String(Math.round(v)));
+  P.line(-6*c,-6*s,6*c,6*s,'var(--ok)',null,2.4);pts.forEach(p=>{const t=p.x*c+p.y*s;P.line(p.x,p.y,t*c,t*s,'var(--bd)',null,.8)});pts.forEach(p=>P.dot(p.x,p.y,3.2,'var(--ac)'));
+  P.line(-6*Math.cos(pc),-6*Math.sin(pc),6*Math.cos(pc),6*Math.sin(pc),'var(--warn)','5 4',1.4);host.append(P.svg);
+  const Q=chart(520,110,0,180,0,tot*1.1,{l:34,b:22,t:6});Q.axes(6,2,v=>Math.round(v)+'°',v=>fmt(v,1));Q.path(x=>V(x*Math.PI/180),'var(--ac2)',0,180,120,2.2);Q.dot(ph.get(),V(a),5,'var(--ok)');host.append(Q.svg);
+  info.innerHTML='';info.append(h('span',{},t2('واریانس روی خط انتخابی: ','Variance along the chosen line: '),h('b',{},fmt(V(a),2))),h('span',{},t2('سهم از کل: ','Share of total: '),h('b',{},Math.round(V(a)/tot*100)+'%')),h('span',{},t2('PC1 در ','PC1 at '),h('b',{},Math.round(((pc*180/Math.PI)+180)%180)+'°'),' → ',h('b',{},Math.round(V(pc)/tot*100)+'%')))};
+ ph.input.addEventListener('input',draw);el.append(host,info,h('div',{class:'ctl'},ph.el,btn(t2('پرش به PC1','Snap to PC1'),()=>{ph.set(Math.round(((pc*180/Math.PI)+180)%180));draw()})),h('div',{class:'wn'},t2('خط سبز = راستای تصویر؛ خط‌های خاکستری = فاصله‌ی هر نقطه تا تصویرش (خطای بازسازی). نمودار پایین واریانس تصویر را بر حسب زاویه نشان می‌دهد؛ بیشینه‌ی آن PC1 است و بازسازی‌خطا همان‌جا کمینه.','Green line = projection direction; grey segments = each point\'s distance to its projection (reconstruction error). The lower chart shows projected variance versus angle; its maximum is PC1, where the reconstruction error is smallest.')));draw()};
+
+W.cvfold=(el,o)=>{const r=mulberry(21),f=x=>Math.sin(1.5*x),mk=(n,seed)=>{const q=mulberry(seed);return Array.from({length:n},()=>{const x=-2+4*q();return{x,y:f(x)+0.3*MLX.gauss(q)}})};
+ const D=mk(24,5),T=mk(300,77);const host=h('div'),info=h('div',{class:'stat'});const kk=rng('K',2,12,1,5,()=>{},v=>String(Math.round(v)));
+ const fit=(S,d)=>Lib.polyfit(S.map(p=>p.x),S.map(p=>p.y),d,1e-6),mse=(w,S)=>S.reduce((s,p)=>s+(Lib.polyval(w,p.x)-p.y)**2,0)/S.length;
+ const cvs=(d,K)=>{let s=0,c=0;for(let k=0;k<K;k++){const te=D.filter((_,i)=>i%K===k),tr=D.filter((_,i)=>i%K!==k);if(!te.length)continue;const w=fit(tr,d);s+=mse(w,te)*te.length;c+=te.length}return s/c};
+ const draw=()=>{host.innerHTML='';const K=Math.round(kk.get()),degs=[1,2,3,4,5,6,7,8],tr=[],cv_=[],tes=[];degs.forEach(d=>{const w=fit(D,d);tr.push(mse(w,D));cv_.push(cvs(d,K));tes.push(mse(w,T))});const clip=v=>Math.min(v,1.5);
+  const P=chart(520,250,1,8,0,1.5,{l:38,b:26});P.axes(7,5,v=>String(Math.round(v)),v=>fmt(v,1));
+  [[tr,'var(--ok)'],[cv_,'var(--warn)'],[tes,'var(--bad)']].forEach(([a,c],i)=>{let d='';a.forEach((v,j)=>d+=(j?'L':'M')+P.X(degs[j])+' '+P.Y(clip(v)));P.svg.append(sv('path',{d,fill:'none',stroke:c,'stroke-width':2.4,'stroke-dasharray':i===1?'6 3':i===2?'2 3':null}));a.forEach((v,j)=>P.svg.append(sv('circle',{cx:P.X(degs[j]),cy:P.Y(clip(v)),r:3,fill:c})))});
+  const bd=degs[cv_.indexOf(Math.min(...cv_))],bt=degs[tes.indexOf(Math.min(...tes))];P.svg.append(sv('rect',{x:P.X(bd)-6,y:10,width:12,height:230,fill:'var(--warn)',opacity:.14}));
+  P.text(1.1,1.42,'── '+t2('آموزش','train')+'   - - '+t2('اعتبارسنجی متقابل','CV')+'   ··· '+t2('آزمون واقعی','true test'),'var(--fg)','start',11);host.append(P.svg);
+  info.innerHTML='';info.append(h('span',{},'K = ',h('b',{},K)),h('span',{},t2('بهترین درجه طبق CV: ','Best degree by CV: '),h('b',{},bd)),h('span',{},t2('بهترین درجه طبق آزمون واقعی: ','Best degree on the true test set: '),h('b',{},bt)))};
+ kk.input.addEventListener('input',draw);el.append(host,info,h('div',{class:'ctl'},kk.el),h('div',{class:'wn'},t2('۲۴ نقطه‌ی آموزش از y=sin(1.5x)+نویز؛ آزمون واقعی ۳۰۰ نقطه‌ی جدا. خطای آموزش با درجه همیشه کم می‌شود؛ CV و آزمون U‌شکل‌اند و CV بهترین درجه را بدون دیدن آزمون پیدا می‌کند.','24 training points from y = sin(1.5x) + noise; the true test set has 300 separate points. Training error always falls with degree; CV and test errors are U-shaped and CV finds the best degree without seeing the test set.')));draw()};
+
+W.mlp2d=(el,o)=>{let H=4,ds='xor',w1,b1,w2,b2,loss=0,run=null,ep=0;const host=h('div'),info=h('div',{class:'stat'});const sets={xor:()=>MLX.xor(2,25,0.25),rings:()=>MLX.rings(3,60,0.12),moons:()=>MLX.moons(4,50,0.15)};let pts=sets.xor();const ex=[-2.6,2.6,-2.6,2.6];
+ const init=()=>{const r=mulberry(7);const g=()=>MLX.gauss(r)*0.8;w1=Array.from({length:H},()=>[g(),g()]);b1=Array(H).fill(0);w2=Array.from({length:H},g);b2=0;ep=0;loss=NaN};
+ const fwd=(x,y)=>{const a=w1.map((w,i)=>Math.tanh(w[0]*x+w[1]*y+b1[i]));return{a,p:MLX.sig(a.reduce((s,v,i)=>s+v*w2[i],b2))}};
+ const train=n=>{for(let e=0;e<n;e++){const g1=w1.map(()=>[0,0]),gb1=Array(H).fill(0),g2=Array(H).fill(0);let gb2=0,L=0;pts.forEach(p=>{const{a,p:q}=fwd(p.x,p.y),d=q-p.c;L-=p.c?Math.log(q+1e-9):Math.log(1-q+1e-9);gb2+=d;a.forEach((v,i)=>{g2[i]+=d*v;const dh=d*w2[i]*(1-v*v);g1[i][0]+=dh*p.x;g1[i][1]+=dh*p.y;gb1[i]+=dh})});const N=pts.length,eta=0.5;for(let i=0;i<H;i++){w1[i][0]-=eta*g1[i][0]/N;w1[i][1]-=eta*g1[i][1]/N;b1[i]-=eta*gb1[i]/N;w2[i]-=eta*g2[i]/N}b2-=eta*gb2/N;loss=L/N;ep++}};
+ const draw=()=>{host.innerHTML='';MLX.map(host,520,300,ex,(x,y)=>fwd(x,y).p,pts,6);const acc=pts.filter(p=>(fwd(p.x,p.y).p>.5)===!!p.c).length/pts.length;info.innerHTML='';info.append(h('span',{},t2('دوره‌ها: ','Epochs: '),h('b',{},ep)),h('span',{},t2('زیان: ','Loss: '),h('b',{},isNaN(loss)?'—':fmt(loss,3))),h('span',{},t2('دقت: ','Accuracy: '),h('b',{},Math.round(acc*100)+'%')),h('span',{},t2('پارامترها: ','Parameters: '),h('b',{},H*4+1)))};
+ const hs=rng(t2('نورون‌های پنهان','Hidden units'),0,8,1,4,()=>{},v=>String(Math.round(v)));
+ const setH=()=>{H=Math.round(hs.get());stop();if(H===0){w1=[];b1=[];w2=[];b2=0;ep=0;loss=NaN}else init();draw()};hs.input.addEventListener('change',setH);
+ const stop=()=>{if(run){T.stop(run);run=null}};
+ const dsel=sel(t2('داده','Data'),[{v:'xor',t:'XOR'},{v:'rings',t:t2('حلقه‌ها','Rings')},{v:'moons',t:t2('دو هلال','Moons')}],'xor',v=>{ds=v;pts=sets[v]();stop();if(H)init();draw()});
+ el.append(host,info,h('div',{class:'ctl'},hs.el,dsel.el,btn(t2('▶ آموزش','▶ Train'),()=>{if(!H||run)return;run=T.every(()=>{train(8);draw()},60)}),btn(t2('⏸ توقف','⏸ Pause'),stop),btn(t2('↺ شروع مجدد','↺ Restart'),()=>{stop();if(H)init();draw()})),h('div',{class:'wn'},t2('بدون لایه‌ی پنهان (۰ نورون) مدل لجستیک است و XOR را نمی‌تواند جدا کند؛ با ≥۲ نورون tanh مرز خمیده می‌شود. آموزش: گرادیان کامل با η=۰٫۵.','With no hidden layer (0 units) the model is logistic regression and cannot separate XOR; with ≥ 2 tanh units the boundary bends. Training: full-batch gradient descent, η = 0.5.')));init();draw()};
+
+W.conv2d=(el,o)=>{const IMG={bar:t2('میله‌ی عمودی','Vertical bar'),sq:t2('مربع','Square'),diag:t2('قطر','Diagonal')};const mk=n=>Array.from({length:8},(_,i)=>Array.from({length:8},(_,j)=>n==='bar'?(j===3||j===4?1:0):n==='sq'?(i>=2&&i<=5&&j>=2&&j<=5?1:0):(Math.abs(i-j)<=0?1:0)));
+ const K={vedge:[[-1,0,1],[-1,0,1],[-1,0,1]],hedge:[[-1,-1,-1],[0,0,0],[1,1,1]],blur:[[1,1,1],[1,1,1],[1,1,1]].map(r=>r.map(v=>v/9)),ident:[[0,0,0],[0,1,0],[0,0,0]]};
+ let img='bar',ker='vedge',pad=0,str=1;const host=h('div'),info=h('div',{class:'stat'});
+ const draw=()=>{host.innerHTML='';const I=mk(img),k=K[ker],n=8,P=pad,S=str,m=Math.floor((n+2*P-3)/S)+1;const get=(i,j)=>(i<0||j<0||i>=n||j>=n)?0:I[i][j];const out=[];for(let a=0;a<m;a++){out.push([]);for(let b=0;b<m;b++){let s=0;for(let u=0;u<3;u++)for(let v=0;v<3;v++)s+=k[u][v]*get(a*S+u-P,b*S+v-P);out[a].push(s)}}
+  const svg=sv('svg',{viewBox:'0 0 560 240',class:'sv'});const cs=22;
+  I.forEach((r,i)=>r.forEach((v,j)=>svg.append(sv('rect',{x:10+j*cs,y:30+i*cs,width:cs-1,height:cs-1,fill:v?'var(--ac)':'var(--panel2)',stroke:'var(--bd)'}))));svg.append(sv('text',{x:10,y:18,class:'mut','font-size':11},t2('تصویر ۸×۸','input 8×8')));
+  svg.append(sv('text',{x:230,y:18,class:'mut','font-size':11},t2('هسته ۳×۳','kernel 3×3')));k.forEach((r,i)=>r.forEach((v,j)=>{svg.append(sv('rect',{x:230+j*34,y:30+i*34,width:33,height:33,class:'cell'}),sv('text',{x:246.5+j*34,y:52+i*34,'text-anchor':'middle','font-size':10},fmt(v,2)))}));
+  const mx=Math.max(1,...out.flat().map(Math.abs)),oc=Math.min(22,176/m);svg.append(sv('text',{x:350,y:18,class:'mut','font-size':11},t2('نقشه‌ی ویژگی ','feature map ')+m+'×'+m));
+  out.forEach((r,i)=>r.forEach((v,j)=>svg.append(sv('rect',{x:350+j*oc,y:30+i*oc,width:oc-1,height:oc-1,fill:v>0?'var(--ok)':v<0?'var(--bad)':'var(--panel2)',opacity:v?.25+.75*Math.abs(v)/mx:1}))));
+  host.append(svg);info.innerHTML='';info.append(h('span',{},t2('اندازه‌ی خروجی ','Output size '),h('b',{},'⌊(8+2·'+P+'−3)/'+S+'⌋+1 = '+m)),h('span',{},t2('پارامترهای هسته: ','Kernel parameters: '),h('b',{},'9+1')),h('span',{},t2('سبز = پاسخ مثبت، قرمز = منفی','green = positive response, red = negative')))};
+ const mkSel=(l,o,v,f)=>sel(l,o,v,x=>{f(x);draw()});
+ el.append(host,info,h('div',{class:'ctl'},mkSel(t2('تصویر','Image'),Object.entries(IMG).map(([v,t])=>({v,t})),img,v=>img=v).el,mkSel(t2('هسته','Kernel'),[{v:'vedge',t:t2('لبه‌ی عمودی','Vertical edge')},{v:'hedge',t:t2('لبه‌ی افقی','Horizontal edge')},{v:'blur',t:t2('محو','Blur')},{v:'ident',t:t2('همانی','Identity')}],ker,v=>ker=v).el,mkSel('padding',[0,1,2],pad,v=>pad=+v).el,mkSel('stride',[1,2],str,v=>str=+v).el),h('div',{class:'wn'},t2('همان هسته در همه‌ی مکان‌ها اعمال می‌شود (اشتراک وزن)؛ هسته‌ی لبه‌ی عمودی روی میله فقط در دو لبه‌اش پاسخ بزرگ می‌دهد.','The same kernel is applied at every position (weight sharing); the vertical-edge kernel responds strongly only at the bar\'s two edges.')));draw()};
 /* ===================== CONTENT: Module A (part 1) ===================== */
 const R=String.raw;
 LESSONS.push({id:'a1-1',mod:'A',g:'A1',t:'الگوریتم و تحلیل پیچیدگی',en:'Algorithms & Complexity Analysis',lvl:1,min:35,pre:['آشنایی با حلقه، تابع و آرایه در یک زبان برنامه‌نویسی'],
@@ -2982,6 +3092,251 @@ ex:[{t:'num',l:1,q:'$J_{reg}=\\sum(y-\\hat y)^2+\\lambda\\|\\mathbf w\\|_2^2$ ب
 {t:'tf',l:2,q:'در یک مسئله‌ی بهینه‌سازی محدب، هر کمینه‌ی موضعی کمینه‌ی سراسری است.',a:true,e:'ویژگی بنیادی محدب‌بودن (از Jensen).'},
 {t:'think',l:3,q:'اثبات کنید $f(x)=x^4-3x^2+x$ محدب نیست و پیامد آن برای GD چیست؟',a:'$f\'\'(x)=12x^2-6$ که برای $|x|<1/\\sqrt2$ منفی است (مثلاً در $x=0$ برابر $-6$) ⇒ هسین معین مثبت نیست و تابع نامحدب است. تابع دو کمینه‌ی موضعی دارد (یکی نزدیک $x\\approx-1.3$ سراسری و دیگری نزدیک $x\\approx1.1$). GD بسته به نقطه‌ی شروع (و η) به یکی از آن‌ها می‌رسد؛ از شروع مثبت ممکن است در کمینه‌ی موضعی (بدتر) بماند. بنابراین Restart تصادفی، Momentum یا نویز لازم است.'}],
 sum:['Regularization با جریمه‌ی $\\lambda\\Omega(w)$ واریانس را کم می‌کند؛ λ با اعتبارسنجی انتخاب می‌شود.','L2 وزن‌ها را کوچک (Weight Decay)، L1 تُنُک می‌کند؛ هندسه: دایره در برابر لوزی؛ prior گاوسی/لاپلاس.','محدب: کمینه‌ی موضعی = سراسری؛ آموزش شبکه‌ی عصبی نامحدب است ولی در عمل با SGD/Adam خوب کار می‌کند.']});
+/* ===================== CONTENT: Module D (Machine Learning) ===================== */
+LESSONS.push({id:'d1-1',mod:'D',g:'D1',t:'رگرسیون خطی و کمترین مربعات',en:'Linear Regression & Least Squares',lvl:2,min:45,pre:['c1-1','c2-1'],kw:'linear regression least squares mse normal equation gradient descent residual r squared supervised learning',
+obj:['مسئله‌ی یادگیری نظارت‌شده را با داده، مدل، زیان و بهینه‌ساز توصیف کنید.','برازش خط به‌روش کمترین مربعات را با فرمول بسته و با گرادیان نزولی انجام دهید.','$R^2$ و باقیمانده‌ها را تفسیر کنید.'],
+body:R`
+<h2>۱. یادگیری نظارت‌شده در یک نگاه</h2>
+<p>داده‌ی آموزشی $\{(\mathbf x_i,y_i)\}_{i=1}^n$ داریم و می‌خواهیم تابعی $f_\theta$ بیابیم که روی داده‌ی <i>تازه</i> هم $y$ را خوب پیش‌بینی کند. هر الگوریتم ML چهار جزء دارد: <b>داده</b>، <b>مدل</b> (فضای توابع)، <b>زیان</b> (اندازه‌ی خطا) و <b>بهینه‌ساز</b> (روش یافتن پارامتر). رگرسیون یعنی خروجی عددی پیوسته.</p>
+<h2>۲. مدل خطی و زیان مربعات</h2>
+<p>مدل: $\hat y=\mathbf w^\top\mathbf x+b$. با افزودن ستون ۱ به $X$ می‌توان $b$ را در $\mathbf w$ جا داد: $\hat{\mathbf y}=X\mathbf w$. باقیمانده‌ی هر نمونه $r_i=\hat y_i-y_i$ و زیان میانگین مربعات (MSE):</p>
+$$J(\mathbf w)=\frac1n\|X\mathbf w-\mathbf y\|_2^2$$
+<p>چرا مربع؟ (الف) مشتق‌پذیر و محدب است، (ب) بزرگ‌ترین خطاها را بیش‌تر جریمه می‌کند، (پ) معادل بیشینه‌ی درست‌نمایی با نویز گاوسی است (درس MLE).</p>
+<h2>۳. دو راه برای کمینه‌کردن $J$</h2>
+<p><b>معادله‌ی نرمال:</b> گرادیان $\nabla J=\tfrac2n X^\top(X\mathbf w-\mathbf y)$ را صفر کنید:</p>
+$$X^\top X\,\mathbf w=X^\top\mathbf y\ \Rightarrow\ \mathbf w^\*=(X^\top X)^{-1}X^\top\mathbf y$$
+<p>هندسه: $X\mathbf w^\*$ تصویر قائم $\mathbf y$ روی فضای ستونی $X$ است و باقیمانده بر آن عمود است. اگر ستون‌ها وابسته خطی باشند $X^\top X$ وارون‌ناپذیر است (جواب یکتا نیست).</p>
+<p><b>گرادیان نزولی:</b> $\mathbf w\leftarrow\mathbf w-\eta\,\tfrac2nX^\top(X\mathbf w-\mathbf y)$. هزینه‌ی هر گام $O(nd)$ است، ولی معادله‌ی نرمال $O(nd^2+d^3)$؛ برای $d$ بزرگ GD (یا SGD) ارزان‌تر است. چون $J$ محدب است، GD با $\eta$ مناسب به همان جواب می‌رسد.</p>
+${wd('linreg','رگرسیون خطی تعاملی: نقطه اضافه کنید و w را از معادله‌ی نرمال ببینید')}
+<h2>۴. مثال گام‌به‌گام</h2>
+<p>داده‌ها $(1,2),(2,3),(3,5)$. میانگین‌ها $\bar x=2$ و $\bar y=10/3$. شیب $a=\frac{\sum(x-\bar x)(y-\bar y)}{\sum(x-\bar x)^2}=\frac{3}{2}=1.5$ و عرض از مبدأ $b=\bar y-a\bar x=1/3$. پیش‌بینی‌ها $1.83,\,3.33,\,4.83$؛ باقیمانده‌ها $0.17,-0.33,0.17$ و $\mathrm{SSE}=0.1667$.</p>
+<h2>۵. $R^2$: چقدر از تغییرات را توضیح می‌دهیم؟</h2>
+$$R^2=1-\frac{\mathrm{SSE}}{\mathrm{SST}},\qquad \mathrm{SST}=\sum(y_i-\bar y)^2$$
+<p>در مثال بالا $\mathrm{SST}=4.667$ پس $R^2\approx0.964$. $R^2=1$ یعنی برازش کامل، $R^2=0$ یعنی مدل از «پیش‌بینی میانگین» بهتر نیست (روی داده‌ی آموزشی هیچ‌گاه منفی نمی‌شود؛ روی داده‌ی آزمون می‌شود).</p>
+${co('warn','باقیمانده‌ها را نگاه کنید','$R^2$ بالا به‌تنهایی کافی نیست: الگوی منحنی‌وار در باقیمانده‌ها یعنی مدل خطی مناسب نیست، و یک نقطه‌ی پرت می‌تواند خط را به‌شدت بکشد (اثر اهرمی).')}`,
+mis:['«رگرسیون خطی یعنی مدل فقط با خط کار می‌کند.» ← خطی در <i>پارامترها</i>؛ با ویژگی‌های $x,x^2,\\log x$ منحنی هم می‌سازد.','«$R^2$ بالا یعنی پیش‌بینی روی داده‌ی تازه هم خوب است.» ← $R^2$ آموزشی اطلاعاتی درباره‌ی تعمیم نمی‌دهد.','«معادله‌ی نرمال همیشه بهترین راه است.» ← برای $d$ بزرگ یا $X^\\top X$ بدشرط، GD/SGD یا تجزیه‌ی QR/SVD بهتر است.'],
+ex:[{t:'num',l:1,q:'نقاط $(1,2),(2,3),(3,5)$. شیب خط کمترین مربعات چیست؟',a:1.5,tol:0.001,e:'$\\bar x=2,\\bar y=10/3$؛ $S_{xy}=3$، $S_{xx}=2$ ⇒ $a=1.5$.'},
+{t:'num',l:2,q:'برای همان داده و خط $y=1.5x+1/3$، مقدار SSE (مجموع مربع باقیمانده‌ها) چقدر است؟',a:0.1667,tol:0.001,e:'باقیمانده‌ها $0.1667,-0.3333,0.1667$ ⇒ $0.0278+0.1111+0.0278=0.1667$.'},
+{t:'num',l:2,q:'برای همان داده با $w=0,b=0$ و $\\eta=0.1$ (مدل $\\hat y=wx$ و MSE)، $w$ پس از یک گام GD چند می‌شود؟',a:1.5333,tol:0.001,e:'$\\partial J/\\partial w=\\frac2n\\sum(\\hat y-y)x=\\frac23(-23)=-15.33$ ⇒ $w=0-0.1(-15.33)=1.5333$.'},
+{t:'mcq',l:1,q:'در معادله‌ی نرمال، چه زمانی $X^\\top X$ وارون‌ناپذیر است؟',o:['وقتی $n$ زیاد باشد','وقتی ستون‌های $X$ وابسته‌ی خطی باشند','وقتی $\\eta$ بزرگ باشد','هرگز'],a:1,e:'ستون‌های وابسته (مثلاً دو ویژگی یکسان) ⇒ رتبه‌ی ناقص ⇒ بی‌شمار جواب.'},
+{t:'tf',l:2,q:'باقیمانده‌ی کمترین مربعات بر همه‌ی ستون‌های $X$ عمود است.',a:true,e:'از $X^\\top(X\\mathbf w-\\mathbf y)=0$.'},
+{t:'think',l:3,q:'چرا MSE برای داده‌ی دارای نقاط پرت حساس است و چه جایگزینی دارید؟',a:'خطا مربع می‌شود، پس یک نقطه‌ی بسیار دور سهم بزرگی در $J$ دارد و خط را به سمت خود می‌کشد. جایگزین‌ها: زیان MAE ($|r|$)، زیان Huber (مربعی نزدیک صفر و خطی دور از آن)، یا حذف/وزن‌دهی نقاط پرت. این‌ها معادل فرض توزیع نویز با دم سنگین‌تر (لاپلاس) هستند.'}],
+sum:['ML نظارت‌شده = داده + مدل + زیان + بهینه‌ساز؛ رگرسیون خروجی پیوسته دارد.','کمترین مربعات: $\\mathbf w^*=(X^\\top X)^{-1}X^\\top\\mathbf y$ (تصویر قائم) یا GD روی MSE محدب.','$R^2=1-\\mathrm{SSE}/\\mathrm{SST}$؛ باقیمانده‌ها را نگاه کنید.']});
+
+LESSONS.push({id:'d1-2',mod:'D',g:'D1',t:'بیش‌برازش، منظم‌سازی و تعمیم',en:'Overfitting, Regularization & Generalization',lvl:2,min:45,pre:['d1-1','c5-3'],kw:'overfitting underfitting generalization regularization ridge lasso train test bias variance capacity learning curve',
+obj:['بیش‌برازش و کم‌برازش را از روی خطای آموزش و آزمون تشخیص دهید.','با افزایش ظرفیت و با منظم‌سازی ($\\lambda$) رفتار خطا را توضیح دهید.','از منحنی یادگیری برای تصمیم‌گیری (داده‌ی بیش‌تر یا مدل ساده‌تر؟) استفاده کنید.'],
+body:R`
+<h2>۱. هدف: تعمیم</h2>
+<p>مدل را با داده‌ی آموزشی می‌سازیم ولی برای داده‌ی <i>دیده‌نشده</i> می‌خواهیمش. <b>خطای تعمیم</b> را با مجموعه‌ی آزمون که هرگز در آموزش نبوده تخمین می‌زنیم. خطای آموزش خوش‌بینانه است.</p>
+<h2>۲. ظرفیت مدل: کم‌برازش تا بیش‌برازش</h2>
+<p>چندجمله‌ای درجه‌ی $d$ را روی $n$ نقطه‌ی نویزی بازیابی می‌کنیم. $d$ کوچک: مدل نمی‌تواند الگو را بگیرد (<b>کم‌برازش</b>، سوگیری بالا). $d$ بزرگ: مدل نویز را حفظ می‌کند (<b>بیش‌برازش</b>، واریانس بالا): با $d=n-1$ همه‌ی نقاط را دقیقاً می‌گذراند و خطای آموزش صفر است. خطای آموزش با ظرفیت همیشه کم می‌شود؛ خطای آزمون <b>U‌شکل</b> است.</p>
+${wd('biasvar','برازش چندجمله‌ای: Underfit، Overfit و منحنی U‌شکل خطای آزمون')}
+<h2>۳. منظم‌سازی: ظرفیت را مهار کنید</h2>
+<p>به‌جای کوچک‌کردن مدل، وزن‌ها را جریمه می‌کنیم: $J_\lambda=J+\lambda\|\mathbf w\|_2^2$ (ریج). جواب بسته: $\mathbf w=(X^\top X+\lambda I)^{-1}X^\top\mathbf y$. $\lambda=0$ بدون منظم‌سازی؛ $\lambda\to\infty$ همه‌ی وزن‌ها به صفر می‌روند (کم‌برازش). L1 (Lasso) بعضی وزن‌ها را دقیقاً صفر می‌کند.</p>
+${wd('biasvar','اثر λ (ریج) روی برازش چندجمله‌ای درجه‌ی بالا',{lam:true})}
+<h2>۴. منحنی یادگیری</h2>
+<p>خطای آموزش و آزمون را بر حسب تعداد نمونه رسم کنید. اگر هر دو بالا و نزدیک‌اند ⇒ <b>سوگیری بالا</b>: داده‌ی بیشتر کمک نمی‌کند؛ مدل را غنی‌تر کنید. اگر فاصله‌ی بزرگی بین آموزش (کم) و آزمون (زیاد) هست ⇒ <b>واریانس بالا</b>: داده‌ی بیشتر یا منظم‌سازی کمک می‌کند.</p>
+${ft(['علامت','تشخیص','درمان'],[['خطای آموزش و آزمون هر دو بالا','کم‌برازش (سوگیری)','مدل پرظرفیت‌تر، ویژگی بهتر، $\\lambda$ کمتر'],['آموزش کم، آزمون زیاد','بیش‌برازش (واریانس)','داده‌ی بیشتر، $\\lambda$ بیشتر، مدل ساده‌تر، توقف زودهنگام'],['هر دو پایین و نزدیک','تعمیم خوب','—']])}`,
+mis:['«خطای آموزش صفر یعنی مدل عالی است.» ← اغلب نشانه‌ی حفظ‌کردن نویز است.','«منظم‌سازی همیشه دقت را بهتر می‌کند.» ← $\\lambda$ بیش‌ازحد باعث کم‌برازش می‌شود؛ باید با اعتبارسنجی انتخاب شود.','«λ را روی خطای آموزش انتخاب می‌کنیم.» ← روی آموزش همیشه $\\lambda=0$ برنده است؛ باید روی داده‌ی اعتبارسنجی انتخاب شود.'],
+ex:[{t:'num',l:1,q:'چندجمله‌ای درجه‌ی ۹ چند پارامتر (ضریب) دارد؟',a:10,tol:0.001,e:'ضرایب $x^0$ تا $x^9$ ⇒ ۱۰.'},
+{t:'num',l:2,q:'رگرسیون ریج بدون عرض از مبدأ: $x=(1,2)$, $y=(2,4)$, $\\lambda=5$. $w=\\dfrac{\\sum x_iy_i}{\\sum x_i^2+\\lambda}$ چند است؟',a:1,tol:0.001,e:'$\\sum xy=2+8=10$ و $\\sum x^2=5$ ⇒ $10/(5+5)=1$ (بدون منظم‌سازی $w=2$).'},
+{t:'mcq',l:2,q:'خطای آموزش ۲٪ و خطای آزمون ۲۵٪. اولین اقدام مناسب چیست؟',o:['مدل را پرظرفیت‌تر کنید','داده‌ی بیشتر یا منظم‌سازی قوی‌تر','تعداد ویژگی‌ها را زیاد کنید','$\\lambda$ را صفر کنید'],a:1,e:'شکاف بزرگ ⇒ واریانس بالا ⇒ داده یا منظم‌سازی.'},
+{t:'tf',l:1,q:'با افزایش ظرفیت مدل، خطای آموزش (در حالت بهینه‌سازی کامل) هیچ‌گاه افزایش نمی‌یابد.',a:true,e:'مدل‌های تو در تو؛ ظرفیت بیشتر شامل مدل کوچک‌تر است.'},
+{t:'mcq',l:3,q:'در منحنی یادگیری، آموزش و آزمون هر دو در خطای ۳۰٪ هم‌گرا شده‌اند. چه کمکی می‌کند؟',o:['داده‌ی بیشتر','مدل غنی‌تر یا ویژگی‌های بهتر','منظم‌سازی بیشتر','توقف زودهنگام'],a:1,e:'سوگیری بالا: مدل نمی‌تواند الگو را بگیرد؛ داده‌ی بیشتر همان خطا را می‌دهد.'},
+{t:'think',l:3,q:'چرا ریج وزن‌ها را کوچک می‌کند ولی دقیقاً صفر نمی‌کند، درحالی‌که Lasso می‌کند؟',a:'گرادیان جریمه‌ی L2 برابر $2\\lambda w$ است و با کوچک‌شدن $w$ کوچک می‌شود، پس هیچ نیروی ثابتی وزن را به صفر نمی‌کشد. جریمه‌ی L1 زیرگرادیان $\\lambda\\,\\mathrm{sign}(w)$ دارد که مستقل از اندازه‌ی $w$ است و می‌تواند وزن‌های کم‌اهمیت را دقیقاً به صفر برساند. هندسه: دایره‌ی L2 گوشه ندارد، لوزی L1 روی محورها گوشه دارد.'}],
+sum:['خطای آموزش با ظرفیت کاهشی و خطای آزمون U‌شکل است؛ هدف کمینه‌ی آزمون است.','منظم‌سازی با $\\lambda$ ظرفیت مؤثر را کم می‌کند؛ $\\lambda$ را با اعتبارسنجی انتخاب کنید.','منحنی یادگیری تشخیص می‌دهد مشکل سوگیری است یا واریانس.']});
+
+LESSONS.push({id:'d2-1',mod:'D',g:'D2',t:'رگرسیون لجستیک و زیان Cross-Entropy',en:'Logistic Regression & Cross-Entropy',lvl:2,min:45,pre:['d1-1','c3-3'],kw:'logistic regression sigmoid cross entropy classification decision boundary logit softmax gradient',
+obj:['از ترکیب مدل خطی و تابع سیگموید احتمال کلاس را بسازید.','زیان Cross-Entropy و گرادیان آن را استخراج و محاسبه کنید.','مرز تصمیم را تفسیر و مدل را با GD آموزش دهید.'],
+body:R`
+<h2>۱. از رگرسیون به طبقه‌بندی</h2>
+<p>برای برچسب دودویی $y\in\{0,1\}$ می‌خواهیم احتمال $P(y=1\mid\mathbf x)$ را پیش‌بینی کنیم. خروجی خطی $z=\mathbf w^\top\mathbf x+b$ هر عددی است، پس آن را با <b>سیگموید</b> به $(0,1)$ می‌بریم:</p>
+$$\hat p=\sigma(z)=\frac{1}{1+e^{-z}},\qquad z=\ln\frac{\hat p}{1-\hat p}\ (\text{لوجیت})$$
+<p>$\sigma(0)=0.5$؛ مرز تصمیم $z=0$ یک ابرصفحه است (مرز خطی). با $\hat p>0.5$ کلاس ۱ می‌گوییم.</p>
+<h2>۲. زیان Cross-Entropy</h2>
+<p>درست‌نمایی نمونه: $\hat p^{\,y}(1-\hat p)^{1-y}$. منفی لگاریتم میانگین آن:</p>
+$$J(\mathbf w)=-\frac1n\sum_i\big[y_i\ln\hat p_i+(1-y_i)\ln(1-\hat p_i)\big]$$
+<p>اگر مدل با اطمینان اشتباه کند ($y=1$ و $\hat p\to0$) زیان به $\infty$ می‌رود. این همان MLE مدل برنولی است. <b>چرا MSE نه؟</b> با سیگموید، MSE وقتی مدل اشتباه ولی سیر است گرادیان تقریباً صفر دارد (یادگیری کند)؛ Cross-Entropy این را حذف می‌کند.</p>
+<h2>۳. گرادیان زیبا</h2>
+<p>برای یک نمونه $\partial J/\partial\mathbf w=(\hat p-y)\,\mathbf x$ و $\partial J/\partial b=\hat p-y$: «خطا ضرب‌در ورودی»، دقیقاً مثل رگرسیون خطی. گام GD: $\mathbf w\leftarrow\mathbf w-\eta\,\tfrac1n\sum_i(\hat p_i-y_i)\mathbf x_i$. $J$ محدب است و روی داده‌ی جداپذیر وزن‌ها بی‌نهایت می‌شوند (منظم‌سازی لازم است).</p>
+${wd('logreg','رگرسیون لجستیک: گام‌های GD، مرز تصمیم و زیان')}
+<h2>۴. چندکلاسه: Softmax</h2>
+<p>برای $K$ کلاس $K$ امتیاز $z_k$ می‌سازیم و $\hat p_k=e^{z_k}/\sum_je^{z_j}$. زیان $-\ln\hat p_{y}$ و گرادیان $\hat{\mathbf p}-\mathbf y_{\text{one-hot}}$ است؛ همین در لایه‌ی آخر شبکه‌های عصبی به‌کار می‌رود.</p>
+${co('note','آستانه یک انتخاب است','۰٫۵ فقط پیش‌فرض است. در تشخیص بیماری برای کم‌کردن منفی‌های کاذب آستانه را پایین می‌آوریم (درس معیارهای ارزیابی).')}`,
+mis:['«رگرسیون لجستیک یک الگوریتم رگرسیون است.» ← نام تاریخی است؛ طبقه‌بند احتمالی است.','«خروجی سیگموید همیشه احتمال کالیبره‌شده است.» ← ممکن است بیش‌ازحد مطمئن باشد؛ کالیبراسیون جدا بررسی می‌شود.','«مرز تصمیم لجستیک می‌تواند منحنی باشد.» ← فقط با ویژگی‌های غیرخطی؛ در فضای ویژگی اصلی خطی است.'],
+ex:[{t:'num',l:1,q:'$\\sigma(z)$ برای $z=\\ln 3$ چند است؟',a:0.75,tol:0.001,e:'$\\sigma(\\ln3)=3/(1+3)=0.75$.'},
+{t:'num',l:2,q:'نمونه با $y=1$ و پیش‌بینی $\\hat p=0.8$. مقدار Cross-Entropy (با $\\ln$) چند است؟',a:0.2231,tol:0.001,e:'$-\\ln0.8=0.2231$.'},
+{t:'num',l:2,q:'برای نمونه با $x=2$, $y=1$, $\\hat p=0.8$ مقدار $\\partial J/\\partial w$ چند است؟',a:-0.4,tol:0.001,e:'$(\\hat p-y)x=(0.8-1)\\cdot2=-0.4$.'},
+{t:'mcq',l:1,q:'مرز تصمیم $\\hat p=0.5$ معادل کدام شرط است؟',o:['$z=1$','$z=0$','$z=0.5$','$\\mathbf w=0$'],a:1,e:'$\\sigma(z)=0.5\\iff z=0$.'},
+{t:'tf',l:2,q:'Cross-Entropy برای $y=1$ و $\\hat p\\to0$ به بی‌نهایت میل می‌کند.',a:true,e:'$-\\ln\\hat p\\to\\infty$؛ اشتباهِ مطمئن به‌شدت جریمه می‌شود.'},
+{t:'think',l:3,q:'نشان دهید گرادیان Cross-Entropy+سیگموید نسبت به $z$ برابر $\\hat p-y$ است و توضیح دهید چرا برای یادگیری خوب است.',a:'$\\partial J/\\partial\\hat p=-y/\\hat p+(1-y)/(1-\\hat p)$ و $\\partial\\hat p/\\partial z=\\hat p(1-\\hat p)$. ضرب دو عبارت: $-y(1-\\hat p)+(1-y)\\hat p=\\hat p-y$. چون جمله‌ی $\\hat p(1-\\hat p)$ حذف می‌شود، حتی وقتی سیگموید سیر است (و مشتقش کوچک) گرادیان همچنان متناسب با خطاست و یادگیری کند نمی‌شود؛ با MSE این حذف رخ نمی‌دهد.'}],
+sum:['$\\hat p=\\sigma(\\mathbf w^\\top\\mathbf x+b)$؛ مرز تصمیم خطی است.','Cross-Entropy = MLE برنولی؛ گرادیان $(\\hat p-y)\\mathbf x$.','چندکلاسه: softmax و گرادیان $\\hat{\\mathbf p}-\\mathbf y$.']});
+
+LESSONS.push({id:'d2-2',mod:'D',g:'D2',t:'k-NN و درخت تصمیم',en:'k-NN & Decision Trees',lvl:2,min:50,pre:['d2-1'],kw:'knn k nearest neighbors decision tree gini entropy information gain overfitting depth random forest curse of dimensionality',
+obj:['k-NN را اجرا و اثر $k$ و مقیاس ویژگی‌ها را توضیح دهید.','ناخالصی Gini و بهره‌ی اطلاعات را برای یک برش محاسبه کنید.','عمق درخت را با بیش‌برازش مرتبط و ایده‌ی جنگل تصادفی را بیان کنید.'],
+body:R`
+<h2>۱. k-NN: «شبیه‌ترین‌ها» رأی می‌دهند</h2>
+<p>برای نقطه‌ی تازه $\mathbf x$، $k$ نزدیک‌ترین نمونه‌ی آموزشی را (با فاصله‌ی اقلیدسی) بیاب و رأی اکثریت (یا میانگین در رگرسیون) را بده. آموزشی در کار نیست؛ همه‌ی کار هنگام پیش‌بینی ($O(nd)$) است. $k=1$ داده‌ی آموزشی را حفظ می‌کند (واریانس بالا، مرز دندانه‌دار)؛ $k$ بزرگ مرز را هموار می‌کند و در حد $k=n$ همیشه کلاس اکثریت را می‌گوید (سوگیری بالا).</p>
+${wd('knn','k-NN: مرز تصمیم، دقت آموزش و آزمون بر حسب k')}
+${co('warn','مقیاس ویژگی‌ها و نفرین بُعد','فاصله با ویژگی‌های بزرگ‌مقیاس تسلط پیدا می‌کند؛ پیش از k-NN ویژگی‌ها را استانداردسازی کنید. در بُعد بالا همه‌ی نقاط تقریباً هم‌فاصله می‌شوند و «نزدیک‌ترین» بی‌معنا می‌شود.')}
+<h2>۲. درخت تصمیم: پرسش‌های پشت‌سرهم</h2>
+<p>درخت فضا را با برش‌های محور-موازی ($x_j<t$؟) به مستطیل‌ها تقسیم می‌کند و در هر برگ اکثریت را می‌گوید. بهترین برش را حریصانه با کاهش <b>ناخالصی</b> انتخاب می‌کنیم. برای گره‌ای با نسبت کلاس $p_c$:</p>
+$$G=1-\sum_cp_c^2,\qquad H=-\sum_cp_c\ln p_c$$
+<p>مثال: گره‌ای با ۶ مثبت و ۲ منفی: $G=1-(0.75^2+0.25^2)=0.375$. برشی که آن را به $(4^+,0^-)$ و $(2^+,2^-)$ می‌شکند، Gini وزنی $\tfrac48\cdot0+\tfrac48\cdot0.5=0.25$ دارد؛ <b>بهره</b> $=0.375-0.25=0.125$.</p>
+${wd('dtree','درخت تصمیم روی داده‌ی حلقه‌ای: عمق، برگ‌ها و دقت آموزش/آزمون')}
+<h2>۳. بیش‌برازش و جنگل تصادفی</h2>
+<p>درخت بدون محدودیت هر نمونه را حفظ می‌کند (واریانس بالا). کنترل: حداکثر عمق، حداقل نمونه در برگ، هرس. <b>جنگل تصادفی</b> صدها درخت را روی نمونه‌های بوت‌استرپ و زیرمجموعه‌ی تصادفی ویژگی‌ها می‌آموزد و رأی می‌گیرد؛ میانگین‌گیری واریانس را کم می‌کند بدون آنکه سوگیری زیاد شود.</p>
+${ft(['','k-NN','درخت تصمیم'],[['آموزش','ندارد (حافظه)','حریصانه، $O(nd\\log n)$'],['مرز','هر شکل؛ حساس به مقیاس','مستطیلی؛ بدون نیاز به مقیاس'],['تفسیرپذیری','پایین','بالا (قواعد اگر-آنگاه)'],['ضعف','بُعد بالا، پیش‌بینی کند','ناپایدار؛ بیش‌برازش']])}`,
+mis:['«k=1 بهترین است چون دقت آموزش ۱۰۰٪ است.» ← حفظ نویز؛ دقت آزمون را ببینید.','«درخت عمیق‌تر همیشه بهتر است.» ← بعد از عمق مناسب خطای آزمون بالا می‌رود.','«Gini و آنتروپی نتایج بسیار متفاوتی می‌دهند.» ← در عمل تقریباً یکسان‌اند.'],
+ex:[{t:'num',l:1,q:'گره‌ای با ۶ مثبت و ۲ منفی چه Gini دارد؟',a:0.375,tol:0.001,e:'$1-(0.75^2+0.25^2)=0.375$.'},
+{t:'num',l:2,q:'همان گره به $(4^+,0^-)$ و $(2^+,2^-)$ تقسیم می‌شود. بهره‌ی Gini چند است؟',a:0.125,tol:0.001,e:'وزنی $=0.5\\cdot0+0.5\\cdot0.5=0.25$؛ $0.375-0.25=0.125$.'},
+{t:'mcq',l:1,q:'با $k=n$ در k-NN طبقه‌بندی چه پیش‌بینی می‌شود؟',o:['نزدیک‌ترین همسایه','کلاس اکثریت کل داده','کلاس تصادفی','کلاس اقلیت'],a:1,e:'همه‌ی نمونه‌ها رأی می‌دهند.'},
+{t:'tf',l:2,q:'برای k-NN لازم است ویژگی‌ها هم‌مقیاس شوند.',a:true,e:'فاصله‌ی اقلیدسی به مقیاس حساس است.'},
+{t:'mcq',l:2,q:'کدام روش واریانس درخت‌ها را کم می‌کند؟',o:['افزایش عمق','میانگین‌گیری از درخت‌های بوت‌استرپ (جنگل تصادفی)','حذف ویژگی‌ها','کاهش داده'],a:1,e:'بگینگ؛ خطاهای نسبتاً ناهمبسته با میانگین‌گیری کم می‌شوند.'},
+{t:'think',l:3,q:'چرا در بُعد خیلی بالا k-NN معمولاً ضعیف می‌شود؟',a:'در بُعد بالا حجم فضا به‌سرعت زیاد می‌شود و داده‌ی ثابت بسیار پراکنده است؛ فاصله‌ی نزدیک‌ترین و دورترین نقطه تقریباً برابر می‌شود (تمرکز فاصله) و مفهوم «همسایه‌ی نزدیک» اطلاعات کمی دارد. درمان: کاهش بُعد (PCA)، انتخاب ویژگی، یا معیار فاصله‌ی آموخته‌شده.'}],
+sum:['k-NN: رأی همسایه‌ها؛ $k$ تعادل سوگیری-واریانس را تعیین می‌کند؛ مقیاس‌دهی لازم است.','درخت: برش‌های حریصانه با Gini/آنتروپی؛ عمق = ظرفیت.','جنگل تصادفی با میانگین‌گیری واریانس را کم می‌کند.']});
+
+LESSONS.push({id:'d3-1',mod:'D',g:'D3',t:'خوشه‌بندی k-means',en:'k-means Clustering',lvl:2,min:40,pre:['d2-2','c1-1'],kw:'kmeans clustering unsupervised lloyd centroid inertia elbow silhouette initialization local minimum',
+obj:['الگوریتم Lloyd (انتساب و به‌روزرسانی) را گام‌به‌گام اجرا کنید.','تابع هدف inertia و همگرایی به کمینه‌ی موضعی را توضیح دهید.','$k$ را با روش آرنج انتخاب و محدودیت‌های k-means را فهرست کنید.'],
+body:R`
+<h2>۱. یادگیری بدون ناظر</h2>
+<p>برچسب نداریم؛ می‌خواهیم ساختار نهفته‌ی داده را بیابیم. <b>خوشه‌بندی</b> نمونه‌ها را به $k$ گروه افرازبندی می‌کند به‌طوری که نمونه‌های هم‌گروه به هم شبیه‌ترند. k-means هر گروه را با یک <b>مرکز</b> $\boldsymbol\mu_c$ نشان می‌دهد و هدف زیر را کمینه می‌کند:</p>
+$$J=\sum_{i=1}^n\|\mathbf x_i-\boldsymbol\mu_{c(i)}\|^2\quad(\text{inertia})$$
+<h2>۲. الگوریتم Lloyd</h2>
+<ol><li><b>مقداردهی:</b> $k$ مرکز (مثلاً $k$ نمونه‌ی تصادفی).</li><li><b>انتساب:</b> هر نمونه به نزدیک‌ترین مرکز.</li><li><b>به‌روزرسانی:</b> هر مرکز = میانگین اعضایش.</li><li>تکرار ۲–۳ تا انتساب‌ها ثابت شوند.</li></ol>
+<p>هر گام $J$ را کم یا برابر می‌کند (انتساب برای مراکز ثابت بهینه است و میانگین، $J$ را برای انتساب ثابت کمینه می‌کند)، پس الگوریتم همگرا می‌شود، ولی فقط به <b>کمینه‌ی موضعی</b>. هر تکرار $O(nkd)$ است.</p>
+${wd('kmeans','k-means گام‌به‌گام: انتساب، به‌روزرسانی، inertia و k')}
+<h2>۳. مثال یک‌بعدی</h2>
+<p>نقاط $\{1,2,3,10,11\}$، مراکز اولیه $\mu_1=0,\mu_2=5$. انتساب: $\{1,2\}\to\mu_1$ و $\{3,10,11\}\to\mu_2$؛ مراکز جدید $1.5$ و $8$. انتساب دوباره: ۳ به $\mu_1$ می‌رود (فاصله $1.5<5$)؛ مراکز $2$ و $10.5$ و $J=2+0.5=2.5$ و پایدار.</p>
+<h2>۴. انتخاب k و محدودیت‌ها</h2>
+<p>$J$ با افزایش $k$ همیشه کم می‌شود (در $k=n$ صفر). نمودار $J$ بر حسب $k$ را بکشید و «آرنج» را بیابید یا شاخص <b>silhouette</b> را بیشینه کنید. محدودیت‌ها: خوشه‌های کروی هم‌اندازه را فرض می‌کند، به مقیاس و پرت حساس است، به مقداردهی وابسته است (راه‌حل: k-means++ و چند اجرا).</p>
+${co('note','k-means++','مراکز اولیه را پراکنده انتخاب می‌کند: هر مرکز بعدی با احتمال متناسب با مربع فاصله از نزدیک‌ترین مرکز موجود. تضمین نظری $O(\\log k)$ از بهینه را دارد.')}`,
+mis:['«k-means همیشه بهترین خوشه‌بندی را می‌یابد.» ← فقط کمینه‌ی موضعی؛ به مقداردهی وابسته است.','«با افزایش k کیفیت همیشه بهتر می‌شود.» ← inertia کم می‌شود ولی خوشه‌ها بی‌معنا می‌شوند.','«k-means روی هر شکل خوشه‌ای کار می‌کند.» ← خوشه‌های غیرکروی (مثلاً دو هلال) را نمی‌شناسد.'],
+ex:[{t:'num',l:1,q:'نقاط ۱، ۲، ۳، ۱۰، ۱۱ و مراکز اولیه ۰ و ۵. پس از اولین به‌روزرسانی مرکز دوم چند است؟',a:8,tol:0.001,e:'$\\{3,10,11\\}\\to\\mu_2$ ⇒ $(3+10+11)/3=8$.'},
+{t:'num',l:2,q:'همان مثال، inertia نهایی پس از همگرایی چقدر است؟',a:2.5,tol:0.001,e:'مراکز $2$ و $10.5$: $(1+0+1)+(0.25+0.25)=2.5$.'},
+{t:'mcq',l:1,q:'در گام به‌روزرسانی k-means هر مرکز چه می‌شود؟',o:['میانه‌ی اعضا','میانگین اعضا','نزدیک‌ترین عضو','یک عضو تصادفی'],a:1,e:'میانگین مجموع مربع فاصله‌ها را کمینه می‌کند.'},
+{t:'tf',l:2,q:'k-means با هر مقداردهی اولیه به یک جواب یکسان می‌رسد.',a:false,e:'کمینه‌ی موضعی؛ جواب به مقداردهی بستگی دارد.'},
+{t:'mcq',l:2,q:'در نمودار $J$ بر حسب $k$ «آرنج» چیست؟',o:['نقطه‌ای که $J$ صفر شود','نقطه‌ای که کاهش $J$ به‌طور محسوس کند می‌شود','بیشینه‌ی $J$','$k=n$'],a:1,e:'بعد از آرنج، خوشه‌ی اضافه سود کمی دارد.'},
+{t:'think',l:3,q:'چرا ویژگی‌ها را پیش از k-means استاندارد می‌کنیم؟',a:'k-means بر فاصله‌ی اقلیدسی مبتنی است. ویژگی‌ای با مقیاس بزرگ (مثلاً درآمد به ریال) فاصله را تحت‌سلطه می‌گیرد و ویژگی‌های کوچک‌مقیاس (مثلاً سن) بی‌اثر می‌شوند. استانداردسازی (میانگین صفر و واریانس یک) سهم برابر به هر ویژگی می‌دهد، مگر اینکه وزن‌دهی آگاهانه بخواهیم.'}],
+sum:['k-means: انتساب به نزدیک‌ترین مرکز + میانگین‌گیری؛ هدف inertia.','همگرایی به کمینه‌ی موضعی؛ k-means++ و چند اجرا.','$k$ با آرنج/silhouette؛ ویژگی‌ها را مقیاس کنید.']});
+
+LESSONS.push({id:'d3-2',mod:'D',g:'D3',t:'PCA و کاهش بُعد',en:'PCA & Dimensionality Reduction',lvl:3,min:50,pre:['d3-1','c1-3','c3-2'],kw:'pca principal component analysis covariance eigenvector explained variance projection dimensionality reduction svd',
+obj:['PCA را به‌عنوان بیشینه‌کردن واریانس تصویر (و کمینه‌کردن خطای بازسازی) بیان کنید.','مؤلفه‌های اصلی را از ماتریس کوواریانس یا SVD به‌دست آورید.','نسبت واریانس توضیح‌داده‌شده را محاسبه و $k$ مناسب را انتخاب کنید.'],
+body:R`
+<h2>۱. چرا کاهش بُعد؟</h2>
+<p>داده‌ی $d$ بُعدی اغلب تقریباً روی زیرفضایی کم‌بُعدتر است (ویژگی‌های همبسته). کاهش بُعد برای تجسم، حذف نویز، فشرده‌سازی و مقابله با نفرین بُعد مفید است. PCA بهترین <b>زیرفضای خطی</b> را می‌یابد.</p>
+<h2>۲. ایده: جهتی که واریانس را بیشینه کند</h2>
+<p>داده را مرکزی کنید ($\bar{\mathbf x}=0$). تصویر روی جهت یکه‌ی $\mathbf u$ برابر $\mathbf u^\top\mathbf x$ است و واریانسش $\mathbf u^\top\Sigma\mathbf u$ که $\Sigma=\tfrac1nX^\top X$ ماتریس کوواریانس است. مسئله:</p>
+$$\max_{\|\mathbf u\|=1}\mathbf u^\top\Sigma\mathbf u\ \Rightarrow\ \Sigma\mathbf u=\lambda\mathbf u$$
+<p>جواب بردار ویژه‌ی متناظر با بزرگ‌ترین مقدار ویژه است ($\lambda_1$ = واریانس در راستای $\mathbf u_1$). بردارهای بعدی بر قبلی‌ها عمودند. از دید دیگر، بیشینه‌کردن واریانس تصویر همان کمینه‌کردن مجموع مربع فاصله‌ی نقاط تا تصویرشان (خطای بازسازی) است، چون فیثاغورس: $\|\mathbf x\|^2=\text{واریانس تصویر}+\text{خطای بازسازی}$.</p>
+${wd('pca','PCA: زاویه‌ی تصویر را بچرخانید و واریانس را ببینید؛ PC1 بیشینه است')}
+<h2>۳. الگوریتم و واریانس توضیح‌داده‌شده</h2>
+<ol><li>مرکزی‌کردن (و در صورت نیاز استانداردسازی).</li><li>$\Sigma$ یا SVD: $X=U S V^\top$؛ ستون‌های $V$ مؤلفه‌ها و $\lambda_i=s_i^2/n$.</li><li>انتخاب $k$ مؤلفه‌ی اول؛ داده‌ی کاهش‌یافته $Z=XV_k\in\mathbb{R}^{n\times k}$.</li></ol>
+$$\text{نسبت واریانس توضیح‌داده‌شده}=\frac{\sum_{i\le k}\lambda_i}{\sum_{i=1}^d\lambda_i}$$
+<p>مثال: $\Sigma=\begin{pmatrix}4&2\\2&1\end{pmatrix}$ دارای $\mathrm{tr}=5$ و $\det=0$ است ⇒ $\lambda=5,0$؛ مؤلفه‌ی اول $(2,1)/\sqrt5$ همه‌ی ($۱۰۰٪$) واریانس را می‌گیرد (داده دقیقاً روی یک خط است).</p>
+${co('warn','محدودیت‌ها','PCA خطی و حساس به مقیاس است؛ جهت‌های با واریانس بالا لزوماً «مهم برای پیش‌بینی» نیستند؛ ساختار غیرخطی (مثل مارپیچ) را نمی‌شناسد (راه‌حل: kernel PCA، t-SNE/UMAP برای تجسم).')}`,
+mis:['«مؤلفه‌های اصلی همان ویژگی‌های اصلی داده‌اند.» ← ترکیب‌های خطی همه‌ی ویژگی‌ها هستند.','«PCA بدون مقیاس‌دهی هم درست است.» ← ویژگی‌های با واحد بزرگ مؤلفه‌ی اول را تصاحب می‌کنند.','«واریانس بالا یعنی اطلاعات مفید.» ← نویز با واریانس بالا هم ممکن است.'],
+ex:[{t:'num',l:2,q:'ماتریس کوواریانس $\\begin{pmatrix}4&2\\\\2&1\\end{pmatrix}$. بزرگ‌ترین مقدار ویژه چند است؟',a:5,tol:0.001,e:'$\\mathrm{tr}=5$ و $\\det=0$ ⇒ $\\lambda=5,0$.'},
+{t:'num',l:2,q:'مقادیر ویژه‌ی کوواریانس $6,3,1$. دو مؤلفه‌ی اول چه کسری از واریانس را توضیح می‌دهند؟',a:0.9,tol:0.001,e:'$(6+3)/10=0.9$.'},
+{t:'num',l:2,q:'داده‌ی $100\\times5$ با PCA به $k=2$ مؤلفه کاهش می‌یابد. تعداد کل اعداد داده‌ی کاهش‌یافته $Z$ چند است؟',a:200,tol:0.001,e:'$Z\\in\\mathbb R^{100\\times2}$ ⇒ ۲۰۰.'},
+{t:'mcq',l:1,q:'اولین مؤلفه‌ی اصلی کدام است؟',o:['جهتی با کمترین واریانس','جهتی با بیشترین واریانس تصویر','محور $x$','میانگین داده'],a:1,e:'بردار ویژه‌ی بزرگ‌ترین مقدار ویژه‌ی $\\Sigma$.'},
+{t:'tf',l:2,q:'مؤلفه‌های اصلی بر یکدیگر عمودند.',a:true,e:'بردارهای ویژه‌ی ماتریس متقارن با مقادیر ویژه‌ی متفاوت عمودند.'},
+{t:'think',l:3,q:'ارتباط PCA و SVD ماتریس داده‌ی مرکزی‌شده چیست؟',a:'اگر $X=USV^\\top$ باشد، $\\Sigma=\\tfrac1nX^\\top X=V\\,(S^2/n)\\,V^\\top$؛ پس ستون‌های $V$ بردارهای ویژه‌ی کوواریانس (مؤلفه‌های اصلی) و $s_i^2/n$ مقادیر ویژه‌اند. SVD بدون ساختن صریح $\\Sigma$ پایدارتر است و برای ماتریس‌های بزرگ استفاده می‌شود؛ تصویر روی $k$ مؤلفه $XV_k=U_kS_k$ است.'}],
+sum:['PCA: جهت‌های عمود با بیشترین واریانس = بردارهای ویژه‌ی کوواریانس (یا $V$ در SVD).','نسبت واریانس توضیح‌داده‌شده: $\\sum_{i\\le k}\\lambda_i/\\sum\\lambda_i$.','خطی و حساس به مقیاس؛ بیشینه‌ی واریانس ≡ کمینه‌ی خطای بازسازی.']});
+
+LESSONS.push({id:'d4-1',mod:'D',g:'D4',t:'اعتبارسنجی متقابل و انتخاب مدل',en:'Cross-Validation & Model Selection',lvl:2,min:40,pre:['d1-2'],kw:'cross validation k fold validation test set hyperparameter grid search model selection leakage stratified',
+obj:['سه مجموعه‌ی آموزش، اعتبارسنجی و آزمون و نقش هرکدام را توضیح دهید.','اعتبارسنجی متقابل $K$ لایه را اجرا و میانگین و انحراف آن را گزارش کنید.','ابرپارامتر را بدون دیدن مجموعه‌ی آزمون انتخاب کنید.'],
+body:R`
+<h2>۱. سه مجموعه، سه نقش</h2>
+<ul><li><b>آموزش:</b> برای برازش پارامترها.</li><li><b>اعتبارسنجی:</b> برای انتخاب ابرپارامترها ($\lambda$، $k$، عمق…) و مدل.</li><li><b>آزمون:</b> یک‌بار، در پایان، برای گزارش خطای تعمیم. اگر بر اساس آن تصمیم بگیرید دیگر بی‌طرف نیست.</li></ul>
+<h2>۲. اعتبارسنجی متقابل $K$-لایه</h2>
+<p>وقتی داده کم است، یک تقسیم ثابت پرنوسان است. داده را به $K$ لایه تقسیم کنید؛ $K$ بار هر لایه را اعتبارسنجی و باقی را آموزش بگیرید و میانگین خطا را بردارید:</p>
+$$\mathrm{CV}_K=\frac1K\sum_{k=1}^K\mathrm{err}_k$$
+<p>هزینه: $K$ بار آموزش. معمولاً $K=5$ یا ۱۰. برای طبقه‌بندی نامتوازن از لایه‌بندی (Stratified) استفاده کنید. مثال: امتیازهای ۵-لایه‌ی $0.82,0.80,0.84,0.78,0.86$ میانگین $0.82$ و انحراف معیار نمونه $0.0316$ دارند؛ این انحراف عدم‌قطعیت تخمین است.</p>
+${wd('cvfold','اعتبارسنجی متقابل: بهترین درجه‌ی چندجمله‌ای بدون دیدن آزمون')}
+<h2>۳. جست‌وجوی ابرپارامتر</h2>
+<p><b>Grid search:</b> شبکه‌ی همه‌ی ترکیب‌ها (با ۴ مقدار و $K=5$: ۲۰ آموزش برای هر ابرپارامتر). <b>Random search:</b> نمونه‌گیری تصادفی؛ وقتی فقط چند ابرپارامتر مهم‌اند کارآمدتر است. پس از انتخاب، مدل نهایی را روی کل آموزش+اعتبارسنجی دوباره برازش و یک‌بار روی آزمون ارزیابی کنید.</p>
+<h2>۴. نشت داده (Data Leakage)</h2>
+<p>هر اطلاعاتی از اعتبارسنجی/آزمون که به آموزش راه یابد، خطا را خوش‌بینانه می‌کند. مثال‌ها: استانداردسازی روی کل داده پیش از تقسیم؛ نمونه‌های تکراری در دو مجموعه؛ ویژگی‌ای که نتیجه را لو می‌دهد. راه‌حل: همه‌ی پیش‌پردازش‌ها را <b>درون</b> هر لایه‌ی آموزش بیاموزید (Pipeline).</p>
+${co('warn','CV و داده‌ی زمانی','برای سری زمانی نمونه‌ها مستقل نیستند؛ از تقسیم زمانی (آموزش روی گذشته، اعتبارسنجی روی آینده) استفاده کنید نه شافل تصادفی.')}`,
+mis:['«می‌توانم با خطای آزمون چند مدل را مقایسه و بهترین را انتخاب کنم.» ← آزمون آن‌گاه اعتبارسنجی می‌شود و خوش‌بینانه است.','«استانداردسازی را قبل از تقسیم انجام دهم تا ساده باشد.» ← نشت: میانگین/واریانس آزمون به آموزش می‌رسد.','«$K$ بزرگ‌تر همیشه بهتر است.» ← هزینه زیاد می‌شود و واریانس تخمین ممکن است کم نشود.'],
+ex:[{t:'num',l:1,q:'امتیازهای ۵-لایه: $0.82,0.80,0.84,0.78,0.86$. میانگین چند است؟',a:0.82,tol:0.001,e:'مجموع ۴٫۱۰ تقسیم بر ۵ = ۰٫۸۲.'},
+{t:'num',l:2,q:'برای همان امتیازها انحراف معیار نمونه (مخرج $K-1$) چند است؟',a:0.0316,tol:0.001,e:'انحرافات $0,-0.02,0.02,-0.04,0.04$؛ مجموع مربعات $0.004$؛ واریانس $0.001$؛ ریشه $0.0316$.'},
+{t:'num',l:1,q:'Grid search با ۴ مقدار ابرپارامتر و CV پنج‌لایه چند بار مدل را آموزش می‌دهد؟',a:20,tol:0.001,e:'$4\\times5=20$.'},
+{t:'mcq',l:2,q:'کدام مورد نشت داده است؟',o:['استانداردسازی روی آموزش و اعمال همان پارامترها روی آزمون','استانداردسازی با میانگین کل داده پیش از تقسیم','تقسیم لایه‌بندی‌شده','CV پنج‌لایه'],a:1,e:'آمار آزمون در آموزش وارد شده است.'},
+{t:'tf',l:1,q:'مجموعه‌ی آزمون باید برای انتخاب ابرپارامتر استفاده شود.',a:false,e:'برای انتخاب از اعتبارسنجی/CV استفاده کنید.'},
+{t:'think',l:3,q:'چرا در طبقه‌بندی با ۵٪ کلاس مثبت از CV لایه‌بندی‌شده استفاده می‌کنیم؟',a:'با تقسیم تصادفی ساده ممکن است بعضی لایه‌ها تقریباً هیچ نمونه‌ی مثبتی نداشته باشند و امتیازهایشان بی‌معنا یا بسیار پرنوسان شود. لایه‌بندی نسبت کلاس‌ها را در هر لایه تقریباً برابر نگه می‌دارد و تخمین پایدارتر و بدون‌سوگیری می‌دهد.'}],
+sum:['آموزش برای پارامتر، اعتبارسنجی برای ابرپارامتر، آزمون یک‌بار برای گزارش نهایی.','CV $K$-لایه: میانگین و انحراف خطا؛ برای داده‌ی کم و نامتوازن لایه‌بندی‌شده.','پیش‌پردازش را درون لایه‌ها بیاموزید تا نشت نکند.']});
+
+LESSONS.push({id:'d4-2',mod:'D',g:'D4',t:'معیارهای ارزیابی: دقت، فراخوانی، F1 و ROC',en:'Evaluation Metrics: Accuracy, Recall, F1 & ROC',lvl:2,min:40,pre:['d2-1','c3-1'],kw:'accuracy precision recall f1 roc auc confusion matrix threshold imbalance pr curve calibration',
+obj:['ماتریس درهم‌ریختگی را بسازید و Precision، Recall، F1 و Accuracy را حساب کنید.','دلیل ناکافی‌بودن Accuracy در داده‌ی نامتوازن را توضیح دهید.','اثر آستانه را با ROC و AUC تفسیر کنید.'],
+body:R`
+<h2>۱. ماتریس درهم‌ریختگی</h2>
+<p>برای طبقه‌بندی دودویی: TP (مثبت درست)، FP (مثبت کاذب)، FN (منفی کاذب)، TN (منفی درست).</p>
+$$\text{Precision}=\frac{TP}{TP+FP},\quad \text{Recall}=\frac{TP}{TP+FN},\quad F_1=\frac{2PR}{P+R},\quad \text{Accuracy}=\frac{TP+TN}{n}$$
+<p>Precision: «از مثبت‌هایی که گفتم چند تا درست بود؟» Recall: «از مثبت‌های واقعی چند تا را گرفتم؟» $F_1$ میانگین همساز آن‌هاست و هر دو را باید بالا نگه دارد.</p>
+<p>مثال: $TP=40,FP=10,FN=20,TN=930$ ⇒ $P=0.8$، $R=0.667$، $F_1=0.727$، Accuracy $=0.97$.</p>
+<h2>۲. دام Accuracy در داده‌ی نامتوازن</h2>
+<p>اگر ۵٪ نمونه‌ها مثبت باشند، مدلی که همیشه «منفی» بگوید ۹۵٪ دقت دارد ولی هیچ مثبتی را نمی‌یابد ($R=0$). برای مسائل نادر (تقلب، بیماری) Precision، Recall و PR-curve را گزارش کنید.</p>
+<h2>۳. آستانه، ROC و AUC</h2>
+<p>خروجی مدل احتمال است و آستانه $\tau$ تصمیم می‌گیرد. کاهش $\tau$ Recall را زیاد و Precision را معمولاً کم می‌کند. منحنی <b>ROC</b> نرخ مثبت درست $TPR=R$ را در برابر نرخ مثبت کاذب $FPR=FP/(FP+TN)$ برای همه‌ی آستانه‌ها می‌کشد؛ <b>AUC</b> مساحت زیر آن و برابر احتمال آن است که یک نمونه‌ی مثبت تصادفی امتیاز بیشتری از یک نمونه‌ی منفی تصادفی بگیرد ($0.5$ = حدس تصادفی، $1$ = کامل).</p>
+${wd('confusion','ماتریس درهم‌ریختگی، Precision/Recall و ROC با آستانه، جدایی و شیوع')}
+${co('note','کدام معیار؟','تقلب/بیماری: Recall بالا (و Precision قابل‌قبول). فیلتر هرزنامه: Precision بالا (اشتباه‌گرفتن نامه‌ی مهم گران است). همیشه معیار را از هزینه‌ی خطاهای تجاری انتخاب کنید.')}`,
+mis:['«Accuracy ۹۹٪ یعنی مدل عالی است.» ← در داده‌ی نامتوازن می‌تواند بی‌ارزش باشد.','«AUC به نامتوازنی حساس نیست پس همیشه خوب است.» ← AUC خوشبینانه می‌شود؛ PR-AUC برای نادرها آموزنده‌تر است.','«آستانه ۰٫۵ بهینه است.» ← بسته به هزینه‌ها و شیوع تنظیم می‌شود.'],
+ex:[{t:'num',l:1,q:'$TP=40,FP=10$. Precision چند است؟',a:0.8,tol:0.001,e:'$40/50=0.8$.'},
+{t:'num',l:2,q:'$TP=40,FN=20$. Recall چند است؟',a:0.6667,tol:0.001,e:'$40/60=0.667$.'},
+{t:'num',l:2,q:'با $P=0.8$ و $R=2/3$، مقدار $F_1$ چند است؟',a:0.7273,tol:0.001,e:'$2\\cdot0.8\\cdot0.6667/(1.4667)=0.7273$.'},
+{t:'num',l:2,q:'در داده‌ای با ۱۰۰۰ نمونه و ۵۰ مثبت، مدلی همه را منفی می‌گوید. Accuracy چند است؟',a:0.95,tol:0.001,e:'$950/1000=0.95$ ولی Recall برابر ۰ است.'},
+{t:'mcq',l:2,q:'برای تشخیص یک بیماری خطرناک کدام معیار را بیشتر وزن می‌دهید؟',o:['Precision','Recall','Accuracy','هیچ‌کدام'],a:1,e:'منفی کاذب (از دست‌دادن بیمار) گران‌تر است.'},
+{t:'think',l:3,q:'معنی AUC=0.5 چیست و چه زمانی ممکن است AUC بالا ولی Precision پایین باشد؟',a:'AUC=0.5: مدل نمونه‌های مثبت و منفی را بهتر از شانس رتبه‌بندی نمی‌کند (ROC همان قطر). اگر کلاس مثبت بسیار نادر باشد، حتی یک FPR کوچک تعداد زیادی FP می‌سازد (چون منفی‌ها بسیارند) پس Precision پایین است درحالی‌که ROC/AUC بالا دیده می‌شود. به همین دلیل برای داده‌ی بسیار نامتوازن PR-curve را هم بررسی می‌کنیم.'}],
+sum:['Precision، Recall، $F_1$ و Accuracy از ماتریس درهم‌ریختگی؛ Accuracy در نامتوازنی گمراه‌کننده است.','آستانه Precision و Recall را معاوضه می‌کند؛ ROC/AUC همه‌ی آستانه‌ها را خلاصه می‌کند.','معیار را از هزینه‌ی خطاها انتخاب کنید.']});
+
+LESSONS.push({id:'d5-1',mod:'D',g:'D5',t:'از پرسپترون تا MLP',en:'From the Perceptron to the MLP',lvl:2,min:45,pre:['d2-1','c2-2'],kw:'perceptron mlp neural network xor hidden layer activation tanh relu forward pass backpropagation universal approximation parameters',
+obj:['خروجی یک نورون و یک شبکه‌ی ۲ لایه را (forward) محاسبه کنید.','توضیح دهید چرا XOR با مدل خطی جدا نمی‌شود ولی با یک لایه‌ی پنهان می‌شود.','تعداد پارامترهای شبکه را بشمارید و نقش تابع فعال‌سازی را بیان کنید.'],
+body:R`
+<h2>۱. نورون = مدل خطی + غیرخطی‌ساز</h2>
+<p>یک نورون $a=\phi(\mathbf w^\top\mathbf x+b)$ است. با $\phi=\sigma$ همان رگرسیون لجستیک است. توابع فعال‌سازی رایج: $\tanh$، ReLU ($\max(0,z)$)، سیگموید. بدون $\phi$ هر ترکیب لایه‌ای خطی دوباره خطی است، پس عمق چیزی اضافه نمی‌کند.</p>
+<h2>۲. XOR: مرز خطی کافی نیست</h2>
+<p>نقاط XOR ($(\pm1,\pm1)$ با برچسب علامت‌های متفاوت) با هیچ خطی جدا نمی‌شوند. یک لایه‌ی پنهان با چند نورون هر کدام یک مرز خطی می‌سازند و لایه‌ی خروجی آن‌ها را ترکیب می‌کند؛ نتیجه مرز غیرخطی است.</p>
+${wd('mlp2d','MLP دو‌بعدی: با ۰ نورون پنهان تلاش کنید، بعد ۲ و ۴؛ XOR، حلقه‌ها و دو هلال')}
+<h2>۳. MLP</h2>
+<p>برای $L$ لایه: $\mathbf a^{(l)}=\phi\big(W^{(l)}\mathbf a^{(l-1)}+\mathbf b^{(l)}\big)$ با $\mathbf a^{(0)}=\mathbf x$. شبکه‌ی $2\to4\to1$ دارای $2\cdot4+4+4\cdot1+1=17$ پارامتر است. مثال عددی یک نورون: $\mathbf w=(0.5,-1)$، $b=0.2$، $\mathbf x=(2,1)$ ⇒ $z=1-1+0.2=0.2$؛ $\tanh(0.2)=0.197$ و ReLU$(0.2)=0.2$.</p>
+<h2>۴. آموزش و ظرفیت</h2>
+<p>زیان را با backprop (قاعده‌ی زنجیره‌ای) و GD/SGD کمینه می‌کنیم (درس‌های بهینه‌سازی و X7). <b>قضیه‌ی تقریب جهانی:</b> یک لایه‌ی پنهان با نورون‌های کافی هر تابع پیوسته‌ی روی مجموعه‌ی فشرده را به دلخواه تقریب می‌زند؛ ولی این به ما نمی‌گوید به چند نورون نیاز است یا آموزش آن را پیدا می‌کند. عمق اغلب نمایش را بسیار فشرده‌تر می‌کند.</p>
+${co('note','ReLU و مشتق','ReLU برای $z>0$ مشتق ۱ دارد (گرادیان محو نمی‌شود) و ارزان است؛ ولی نورونی که همیشه $z<0$ بماند «می‌میرد». tanh/سیگموید در ناحیه‌ی سیر گرادیان کوچک دارند.')}`,
+mis:['«شبکه‌ی عمیق‌تر همیشه بهتر است.» ← بیش‌برازش و دشواری آموزش؛ باید اعتبارسنجی شود.','«بدون تابع فعال‌سازی شبکه‌ی عمیق هم می‌تواند XOR را حل کند.» ← ترکیب خطی‌ها خطی است.','«قضیه‌ی تقریب جهانی یعنی هر شبکه‌ی کوچک هر تابعی را یاد می‌گیرد.» ← فقط وجود را تضمین می‌کند.'],
+ex:[{t:'num',l:1,q:'نورون با $\\mathbf w=(0.5,-1)$, $b=0.2$ و $\\mathbf x=(2,1)$: مقدار $z$ چند است؟',a:0.2,tol:0.001,e:'$1-1+0.2=0.2$.'},
+{t:'num',l:2,q:'شبکه‌ی $2\\to4\\to1$ (با بایاس) چند پارامتر دارد؟',a:17,tol:0.001,e:'$2\\cdot4+4+4\\cdot1+1=17$.'},
+{t:'num',l:2,q:'شبکه‌ی $784\\to128\\to10$ (با بایاس) چند پارامتر دارد؟',a:101770,tol:0.5,e:'$784\\cdot128+128+128\\cdot10+10=100352+128+1280+10=101770$.'},
+{t:'mcq',l:1,q:'چرا بدون تابع فعال‌سازی غیرخطی، شبکه‌ی چندلایه فقط یک مدل خطی است؟',o:['چون وزن‌ها کم‌اند','چون ترکیب نگاشت‌های خطی خطی است','چون زیان محدب است','چون داده کم است'],a:1,e:'$W_2(W_1\\mathbf x)=(W_2W_1)\\mathbf x$.'},
+{t:'tf',l:2,q:'XOR را می‌توان با رگرسیون لجستیک روی ویژگی‌های اصلی جدا کرد.',a:false,e:'مرز تصمیم خطی است و XOR جداپذیر خطی نیست.'},
+{t:'think',l:3,q:'چرا ReLU نسبت به سیگموید در شبکه‌های عمیق معمولاً بهتر آموزش می‌بیند؟',a:'مشتق سیگموید حداکثر ۰٫۲۵ است و در ناحیه‌ی سیر نزدیک صفر؛ ضرب چندین لایه گرادیان را به‌شدت کوچک می‌کند (گرادیان محو‌شونده). ReLU برای ورودی‌های مثبت مشتق دقیقاً ۱ دارد، گرادیان بدون کاهش عبور می‌کند، محاسبه‌اش ارزان است و تُنُکی فعال‌سازی ایجاد می‌کند. معایب: نورون‌های مرده.'}],
+sum:['نورون: $\\phi(\\mathbf w^\\top\\mathbf x+b)$؛ غیرخطی‌ساز ضروری است.','لایه‌ی پنهان مرز غیرخطی (مثل XOR) می‌سازد؛ تعداد پارامترها را می‌شماریم.','آموزش با backprop؛ تقریب جهانی وجود را تضمین می‌کند، نه یادگیری را.']});
+
+LESSONS.push({id:'d5-2',mod:'D',g:'D5',t:'شبکه‌های کانولوشنی (CNN)',en:'Convolutional Neural Networks',lvl:3,min:50,pre:['d5-1','c1-1'],kw:'cnn convolution kernel filter stride padding pooling feature map receptive field weight sharing parameters image',
+obj:['عمل کانولوشن دوبعدی را روی یک تصویر کوچک با دست محاسبه کنید.','اندازه‌ی خروجی و تعداد پارامترهای یک لایه‌ی کانولوشنی را به‌دست آورید.','اشتراک وزن، pooling و میدان دید را توضیح دهید.'],
+body:R`
+<h2>۱. چرا لایه‌ی Dense برای تصویر مناسب نیست؟</h2>
+<p>تصویر $28\times28$ حتی با یک لایه‌ی پنهان ۱۲۸تایی بیش از $100{,}000$ وزن می‌خواهد و ساختار مکانی را نادیده می‌گیرد: یک لبه در هر نقطه باید جدا یاد گرفته شود. CNN دو فرض را به شبکه می‌دهد: <b>محلی‌بودن</b> (الگوها در نواحی کوچک) و <b>اشتراک وزن</b> (همان آشکارساز در همه‌جا).</p>
+<h2>۲. کانولوشن (در واقع همبستگی متقابل)</h2>
+<p>هسته‌ی $3\times3$ را روی تصویر می‌لغزانیم؛ در هر مکان ضرب درایه‌به‌درایه و جمع:</p>
+$$Y_{ij}=b+\sum_{u,v}K_{uv}\,X_{i s+u-p,\ j s+v-p}$$
+<p>$s$ گام (stride) و $p$ حاشیه‌ی صفر (padding) است. نقشه‌ی خروجی را <b>نقشه‌ی ویژگی</b> می‌نامیم. هسته‌ی «لبه‌ی عمودی» $\begin{pmatrix}-1&0&1\\-1&0&1\\-1&0&1\end{pmatrix}$ فقط جایی که روشنایی چپ‌به‌راست تغییر کند پاسخ بزرگ می‌دهد.</p>
+${wd('conv2d','کانولوشن: تصویر ۸×۸، هسته‌ی ۳×۳، padding و stride')}
+<h2>۳. اندازه‌ی خروجی و پارامترها</h2>
+$$n_{\text{out}}=\left\lfloor\frac{n+2p-k}{s}\right\rfloor+1,\qquad \#\text{params}=(k\cdot k\cdot C_{in}+1)\,C_{out}$$
+<p>مثال‌ها: $n=32,k=5,p=2,s=1\Rightarrow32$ (همان اندازه). $n=28,k=3,p=0,s=2\Rightarrow\lfloor25/2\rfloor+1=13$. لایه‌ی $3\times3$ با ورودی ۱۶ کانال و خروجی ۳۲ کانال: $(9\cdot16+1)\cdot32=4640$ پارامتر، مستقل از اندازه‌ی تصویر.</p>
+<h2>۴. Pooling، میدان دید و معماری</h2>
+<p><b>Max pooling</b> $2\times2$ با گام ۲ اندازه را نصف می‌کند و کمی مقاومت به جابه‌جایی می‌دهد. با لایه‌های پشت‌سرهم <b>میدان دید</b> هر نورون رشد می‌کند (دو لایه‌ی $3\times3$ میدان $5\times5$ دارند). معماری رایج: [کانولوشن→ReLU→pooling]×چند بار → Flatten → Dense → softmax. لایه‌های اول لبه‌ها، بعدی‌ها بافت‌ها و اجزا و آخری‌ها اشیا را آشکار می‌کنند.</p>
+${co('note','هم‌ورداها','کانولوشن نسبت به جابه‌جایی هم‌وردا (equivariant) است: تصویر جابه‌جا شود، نقشه‌ی ویژگی همان‌قدر جابه‌جا می‌شود. Pooling کمی ناوردایی (invariance) اضافه می‌کند.')}`,
+mis:['«CNN فقط برای تصویر است.» ← برای هر داده‌ی با ساختار شبکه‌ای/ترتیبی (صوت، متن، ۱بعدی) نیز.','«هر فیلتر یک مکان خاص را می‌بیند.» ← همان فیلتر در همه‌ی مکان‌ها اعمال می‌شود.','«padding اندازه را همیشه حفظ می‌کند.» ← فقط وقتی $p=(k-1)/2$ و $s=1$ باشد.'],
+ex:[{t:'num',l:1,q:'ورودی $n=32$, هسته $k=5$, $p=2$, $s=1$. اندازه‌ی خروجی؟',a:32,tol:0.001,e:'$\\lfloor(32+4-5)/1\\rfloor+1=32$.'},
+{t:'num',l:2,q:'ورودی $28$, هسته $3$, $p=0$, $s=2$. اندازه‌ی خروجی؟',a:13,tol:0.001,e:'$\\lfloor25/2\\rfloor+1=13$.'},
+{t:'num',l:2,q:'یک لایه‌ی کانولوشن $3\\times3$ با ۱۶ کانال ورودی و ۳۲ کانال خروجی (با بایاس) چند پارامتر دارد؟',a:4640,tol:0.5,e:'$(9\\cdot16+1)\\cdot32=145\\cdot32=4640$.'},
+{t:'mcq',l:2,q:'میدان دید دو لایه‌ی $3\\times3$ متوالی (گام ۱) چند است؟',o:['$3\\times3$','$5\\times5$','$6\\times6$','$9\\times9$'],a:1,e:'هر لایه‌ی اضافه $k-1=2$ تا اضافه می‌کند: $3+2=5$.'},
+{t:'tf',l:1,q:'در لایه‌ی کانولوشن، یک هسته با وزن‌های یکسان در همه‌ی مکان‌های تصویر به‌کار می‌رود.',a:true,e:'اشتراک وزن.'},
+{t:'think',l:3,q:'تعداد پارامترهای یک لایه‌ی Dense از تصویر $28\\times28$ به ۱۲۸ نورون را با یک لایه‌ی کانولوشن $3\\times3$ با ۱۲۸ فیلتر مقایسه کنید.',a:'Dense: $784\\cdot128+128=100{,}480$. کانولوشن (۱ کانال ورودی): $(9\\cdot1+1)\\cdot128=1280$. کانولوشن پارامترها را حدود ۸۰ برابر کمتر نگه می‌دارد، چون وزن‌ها بین مکان‌ها مشترک‌اند و فقط محلی عمل می‌کنند؛ این هم از بیش‌برازش می‌کاهد و هم ساختار مکانی را استفاده می‌کند. بهای آن بیشتر شدن عملیات (هر هسته در هر مکان محاسبه می‌شود).'}],
+sum:['کانولوشن: هسته‌ی محلی با وزن مشترک؛ $n_{out}=\\lfloor(n+2p-k)/s\\rfloor+1$.','پارامترها $(k^2C_{in}+1)C_{out}$ و مستقل از اندازه‌ی تصویر.','pooling اندازه را کم و میدان دید را زیاد می‌کند؛ معماری: [conv→ReLU→pool]×چند + Dense.']});
 /* ===================== CONTENT: Connecting the Foundations ===================== */
 LESSONS.push({id:'x1',mod:'X',g:'X',t:'آرایه، ماتریس، بردار و تانسور: یک ساختار، چند نگاه',en:'Arrays, Matrices, Vectors & Tensors',lvl:2,min:30,pre:['a2-1','c1-1'],kw:'array tensor shape strides row major contiguous reshape transpose numpy memory layout',
 obj:['نشان دهید بردار، ماتریس و تانسور همان آرایه‌ی پیوسته‌ی حافظه با Shape و Strides‌اند.','آدرس‌دهی چندبعدی را با فرمول Offset محاسبه کنید.','تفاوت «نما» (View) و «کپی» و اثر Contiguous‌بودن را بر کارایی بفهمید.'],
@@ -3174,6 +3529,241 @@ ex:[{t:'mcq',l:2,q:'شکل ماتریس امتیازها $S=QK^T$ برای $n=10
 {t:'tf',l:2,q:'در softmax سطری ماتریس توجه، مجموع هر سطر برابر ۱ است.',a:true,e:'هر سطر یک توزیع احتمال روی توکن‌هاست.'},
 {t:'think',l:3,q:'نشان دهید اگر $\\mathbf q,\\mathbf k$ مؤلفه‌های مستقل با میانگین ۰ و واریانس ۱ داشته باشند، $\\mathrm{Var}(\\mathbf q\\cdot\\mathbf k)=d_k$ و نتیجه برای مقیاس‌دهی چیست.',a:'$\\mathbf q\\cdot\\mathbf k=\\sum_{i=1}^{d_k}q_ik_i$. هر جمله $E[q_ik_i]=0$ و $\\mathrm{Var}(q_ik_i)=E[q_i^2]E[k_i^2]=1$ (استقلال)؛ جمله‌ها مستقل‌اند پس $\\mathrm{Var}(\\mathbf q\\cdot\\mathbf k)=d_k$ و انحراف معیار $\\sqrt{d_k}$. بدون تقسیم، امتیازها با رشد $d_k$ بزرگ می‌شوند و softmax تقریباً one-hot (گرادیان ناچیز) می‌شود؛ تقسیم بر $\\sqrt{d_k}$ واریانس امتیاز را ۱ نگه می‌دارد.'}],
 sum:['Attention = softmax(QKᵀ/√d_k)·V؛ همگی ضرب ماتریسی و softmax.','ماسک علّی آینده را پنهان می‌کند؛ Multi-Head چند الگو را موازی می‌آموزد.','هزینه‌ی $O(n^2d)$ طول متن را محدود می‌کند.']});
+/* ===================== ENGLISH OVERLAY: Module D (Machine Learning) ===================== */
+addEN('d1-1',{obj:['Describe supervised learning in terms of data, model, loss and optimizer.','Fit a line by least squares with the closed form and with gradient descent.','Interpret $R^2$ and the residuals.'],
+body:R`
+<h2>1. Supervised learning at a glance</h2>
+<p>We have training data $\{(\mathbf x_i,y_i)\}_{i=1}^n$ and want a function $f_\theta$ that predicts $y$ well on <i>new</i> data too. Every ML algorithm has four parts: <b>data</b>, a <b>model</b> (a space of functions), a <b>loss</b> (a measure of error) and an <b>optimizer</b> (a way to find the parameters). Regression means a continuous numeric output.</p>
+<h2>2. The linear model and the squared loss</h2>
+<p>Model: $\hat y=\mathbf w^\top\mathbf x+b$. Appending a column of ones to $X$ folds $b$ into $\mathbf w$: $\hat{\mathbf y}=X\mathbf w$. The residual of a sample is $r_i=\hat y_i-y_i$, and the mean squared error (MSE) is</p>
+$$J(\mathbf w)=\frac1n\|X\mathbf w-\mathbf y\|_2^2$$
+<p>Why squares? (a) smooth and convex, (b) it penalizes the biggest errors most, (c) it equals maximum likelihood under Gaussian noise (see the MLE lesson).</p>
+<h2>3. Two ways to minimize $J$</h2>
+<p><b>Normal equation:</b> set the gradient $\nabla J=\tfrac2n X^\top(X\mathbf w-\mathbf y)$ to zero:</p>
+$$X^\top X\,\mathbf w=X^\top\mathbf y\ \Rightarrow\ \mathbf w^\*=(X^\top X)^{-1}X^\top\mathbf y$$
+<p>Geometry: $X\mathbf w^\*$ is the orthogonal projection of $\mathbf y$ onto the column space of $X$ and the residual is perpendicular to it. If the columns are linearly dependent, $X^\top X$ is singular (the solution is not unique).</p>
+<p><b>Gradient descent:</b> $\mathbf w\leftarrow\mathbf w-\eta\,\tfrac2nX^\top(X\mathbf w-\mathbf y)$. One step costs $O(nd)$ while the normal equation costs $O(nd^2+d^3)$; for large $d$, GD (or SGD) is cheaper. Because $J$ is convex, GD with a suitable $\eta$ reaches the same solution.</p>
+${wd('linreg','Interactive linear regression: add points and watch w from the normal equation')}
+<h2>4. Worked example</h2>
+<p>Data $(1,2),(2,3),(3,5)$. Means $\bar x=2$ and $\bar y=10/3$. Slope $a=\frac{\sum(x-\bar x)(y-\bar y)}{\sum(x-\bar x)^2}=\frac{3}{2}=1.5$ and intercept $b=\bar y-a\bar x=1/3$. Predictions $1.83,\,3.33,\,4.83$; residuals $0.17,-0.33,0.17$ and $\mathrm{SSE}=0.1667$.</p>
+<h2>5. $R^2$: how much of the variation do we explain?</h2>
+$$R^2=1-\frac{\mathrm{SSE}}{\mathrm{SST}},\qquad \mathrm{SST}=\sum(y_i-\bar y)^2$$
+<p>Here $\mathrm{SST}=4.667$, so $R^2\approx0.964$. $R^2=1$ is a perfect fit; $R^2=0$ means the model is no better than predicting the mean (on training data it is never negative; on test data it can be).</p>
+${co('warn','Look at the residuals','A high $R^2$ alone is not enough: a curved pattern in the residuals means a linear model is wrong, and one outlier can drag the line strongly (leverage).')}`,
+mis:['"Linear regression means the model can only draw a line." ← It is linear in the <i>parameters</i>; with features $x,x^2,\\log x$ it fits curves too.','"A high $R^2$ means good predictions on new data." ← Training $R^2$ says nothing about generalization.','"The normal equation is always the best way." ← For large $d$ or a badly conditioned $X^\\top X$, GD/SGD or QR/SVD is better.'],
+ex:[{q:'Points $(1,2),(2,3),(3,5)$. What is the least-squares slope?',e:'$\\bar x=2,\\bar y=10/3$; $S_{xy}=3$, $S_{xx}=2$ ⇒ $a=1.5$.'},
+{q:'For the same data and the line $y=1.5x+1/3$, what is the SSE (sum of squared residuals)?',e:'Residuals $0.1667,-0.3333,0.1667$ ⇒ $0.0278+0.1111+0.0278=0.1667$.'},
+{q:'For the same data with $w=0,b=0$ and $\\eta=0.1$ (model $\\hat y=wx$ and MSE), what is $w$ after one GD step?',e:'$\\partial J/\\partial w=\\frac2n\\sum(\\hat y-y)x=\\frac23(-23)=-15.33$ ⇒ $w=0-0.1(-15.33)=1.5333$.'},
+{q:'In the normal equation, when is $X^\\top X$ singular?',o:['When $n$ is large','When the columns of $X$ are linearly dependent','When $\\eta$ is large','Never'],e:'Dependent columns (e.g. two identical features) ⇒ rank deficiency ⇒ infinitely many solutions.'},
+{q:'The least-squares residual is perpendicular to every column of $X$.',e:'From $X^\\top(X\\mathbf w-\\mathbf y)=0$.'},
+{q:'Why is MSE sensitive to outliers, and what alternative do you have?',a:'The error is squared, so one very distant point contributes a lot to $J$ and pulls the line toward itself. Alternatives: the MAE loss ($|r|$), the Huber loss (quadratic near zero, linear far away), or removing/weighting outliers. These correspond to assuming heavier-tailed noise (Laplace).'}],
+sum:['Supervised ML = data + model + loss + optimizer; regression has a continuous output.','Least squares: $\\mathbf w^*=(X^\\top X)^{-1}X^\\top\\mathbf y$ (orthogonal projection) or GD on the convex MSE.','$R^2=1-\\mathrm{SSE}/\\mathrm{SST}$; always inspect the residuals.']});
+
+addEN('d1-2',{obj:['Diagnose overfitting and underfitting from the training and test error.','Explain the error curves as capacity and regularization ($\\lambda$) change.','Use learning curves to decide between more data and a simpler model.'],
+body:R`
+<h2>1. The goal: generalization</h2>
+<p>We fit the model on training data but want it for <i>unseen</i> data. We estimate the <b>generalization error</b> with a test set never used in training. Training error is optimistic.</p>
+<h2>2. Model capacity: from underfitting to overfitting</h2>
+<p>Fit a degree-$d$ polynomial to $n$ noisy points. Small $d$: the model cannot capture the pattern (<b>underfitting</b>, high bias). Large $d$: it memorizes noise (<b>overfitting</b>, high variance): with $d=n-1$ it passes through every point and training error is zero. Training error always falls with capacity; test error is <b>U-shaped</b>.</p>
+${wd('biasvar','Polynomial fit: underfit, overfit and the U-shaped test error')}
+<h2>3. Regularization: tame the capacity</h2>
+<p>Instead of shrinking the model, penalize the weights: $J_\lambda=J+\lambda\|\mathbf w\|_2^2$ (ridge). Closed form: $\mathbf w=(X^\top X+\lambda I)^{-1}X^\top\mathbf y$. $\lambda=0$ is unregularized; $\lambda\to\infty$ drives all weights to zero (underfitting). L1 (lasso) sets some weights exactly to zero.</p>
+${wd('biasvar','Effect of λ (ridge) on a high-degree polynomial fit',{lam:true})}
+<h2>4. Learning curves</h2>
+<p>Plot training and test error against the number of samples. If both are high and close ⇒ <b>high bias</b>: more data will not help; enrich the model. If there is a big gap between training (low) and test (high) ⇒ <b>high variance</b>: more data or regularization helps.</p>
+${ft(['Symptom','Diagnosis','Remedy'],[['Training and test error both high','Underfitting (bias)','Higher-capacity model, better features, smaller $\\lambda$'],['Training low, test high','Overfitting (variance)','More data, larger $\\lambda$, simpler model, early stopping'],['Both low and close','Good generalization','—']])}`,
+mis:['"Zero training error means the model is excellent." ← It is often a sign of memorized noise.','"Regularization always improves accuracy." ← Too large a $\\lambda$ causes underfitting; it must be chosen by validation.','"We choose λ on the training error." ← On training data $\\lambda=0$ always wins; choose it on validation data.'],
+ex:[{q:'How many parameters (coefficients) does a degree-9 polynomial have?',e:'Coefficients of $x^0$ to $x^9$ ⇒ 10.'},
+{q:'Ridge regression without an intercept: $x=(1,2)$, $y=(2,4)$, $\\lambda=5$. What is $w=\\dfrac{\\sum x_iy_i}{\\sum x_i^2+\\lambda}$?',e:'$\\sum xy=2+8=10$ and $\\sum x^2=5$ ⇒ $10/(5+5)=1$ (without regularization $w=2$).'},
+{q:'Training error 2% and test error 25%. What is the best first move?',o:['Make the model higher-capacity','More data or stronger regularization','Add many more features','Set $\\lambda$ to zero'],e:'A large gap ⇒ high variance ⇒ data or regularization.'},
+{q:'As model capacity grows, the training error (with perfect optimization) never increases.',e:'The models are nested; more capacity contains the smaller model.'},
+{q:'On a learning curve, training and test error have both converged at 30%. What helps?',o:['More data','A richer model or better features','More regularization','Early stopping'],e:'High bias: the model cannot capture the pattern; more data gives the same error.'},
+{q:'Why does ridge shrink weights but not make them exactly zero, while lasso does?',a:'The gradient of the L2 penalty is $2\\lambda w$ and shrinks as $w$ shrinks, so no constant force pushes a weight to zero. The L1 penalty has subgradient $\\lambda\\,\\mathrm{sign}(w)$, independent of the size of $w$, which can drive unimportant weights exactly to zero. Geometrically, the L2 disc has no corners while the L1 diamond has corners on the axes.'}],
+sum:['Training error falls with capacity and test error is U-shaped; the goal is the test minimum.','Regularization with $\\lambda$ reduces effective capacity; choose $\\lambda$ by validation.','Learning curves tell you whether the problem is bias or variance.']});
+
+addEN('d2-1',{obj:['Build a class probability from a linear model and the sigmoid.','Derive and compute the cross-entropy loss and its gradient.','Interpret the decision boundary and train the model with GD.'],
+body:R`
+<h2>1. From regression to classification</h2>
+<p>For a binary label $y\in\{0,1\}$ we want to predict $P(y=1\mid\mathbf x)$. The linear output $z=\mathbf w^\top\mathbf x+b$ is any real number, so we squash it into $(0,1)$ with the <b>sigmoid</b>:</p>
+$$\hat p=\sigma(z)=\frac{1}{1+e^{-z}},\qquad z=\ln\frac{\hat p}{1-\hat p}\ (\text{logit})$$
+<p>$\sigma(0)=0.5$; the decision boundary $z=0$ is a hyperplane (a linear boundary). We predict class 1 when $\hat p>0.5$.</p>
+<h2>2. The cross-entropy loss</h2>
+<p>The likelihood of a sample is $\hat p^{\,y}(1-\hat p)^{1-y}$. The mean negative log-likelihood:</p>
+$$J(\mathbf w)=-\frac1n\sum_i\big[y_i\ln\hat p_i+(1-y_i)\ln(1-\hat p_i)\big]$$
+<p>If the model is confidently wrong ($y=1$ and $\hat p\to0$) the loss goes to $\infty$. This is the MLE of the Bernoulli model. <b>Why not MSE?</b> With a sigmoid, MSE has almost zero gradient when the model is wrong but saturated (slow learning); cross-entropy removes that problem.</p>
+<h2>3. A beautiful gradient</h2>
+<p>For one sample $\partial J/\partial\mathbf w=(\hat p-y)\,\mathbf x$ and $\partial J/\partial b=\hat p-y$: "error times input", exactly like linear regression. The GD step is $\mathbf w\leftarrow\mathbf w-\eta\,\tfrac1n\sum_i(\hat p_i-y_i)\mathbf x_i$. $J$ is convex, and on separable data the weights grow without bound (regularization is needed).</p>
+${wd('logreg','Logistic regression: GD steps, decision boundary and loss')}
+<h2>4. Multiclass: softmax</h2>
+<p>For $K$ classes we compute $K$ scores $z_k$ and $\hat p_k=e^{z_k}/\sum_je^{z_j}$. The loss is $-\ln\hat p_{y}$ and the gradient is $\hat{\mathbf p}-\mathbf y_{\text{one-hot}}$; the same is used in the last layer of neural networks.</p>
+${co('note','The threshold is a choice','0.5 is only the default. In disease detection we lower the threshold to reduce false negatives (see the evaluation-metrics lesson).')}`,
+mis:['"Logistic regression is a regression algorithm." ← The name is historical; it is a probabilistic classifier.','"The sigmoid output is always a calibrated probability." ← It can be overconfident; calibration is checked separately.','"The logistic decision boundary can be curved." ← Only with non-linear features; in the original feature space it is linear.'],
+ex:[{q:'What is $\\sigma(z)$ for $z=\\ln 3$?',e:'$\\sigma(\\ln3)=3/(1+3)=0.75$.'},
+{q:'A sample with $y=1$ and prediction $\\hat p=0.8$. What is the cross-entropy (natural log)?',e:'$-\\ln0.8=0.2231$.'},
+{q:'For a sample with $x=2$, $y=1$, $\\hat p=0.8$, what is $\\partial J/\\partial w$?',e:'$(\\hat p-y)x=(0.8-1)\\cdot2=-0.4$.'},
+{q:'The decision boundary $\\hat p=0.5$ is equivalent to which condition?',o:['$z=1$','$z=0$','$z=0.5$','$\\mathbf w=0$'],e:'$\\sigma(z)=0.5\\iff z=0$.'},
+{q:'Cross-entropy goes to infinity for $y=1$ and $\\hat p\\to0$.',e:'$-\\ln\\hat p\\to\\infty$; a confident mistake is punished severely.'},
+{q:'Show that the gradient of cross-entropy + sigmoid with respect to $z$ is $\\hat p-y$ and explain why that is good for learning.',a:'$\\partial J/\\partial\\hat p=-y/\\hat p+(1-y)/(1-\\hat p)$ and $\\partial\\hat p/\\partial z=\\hat p(1-\\hat p)$. Multiplying: $-y(1-\\hat p)+(1-y)\\hat p=\\hat p-y$. Because the factor $\\hat p(1-\\hat p)$ cancels, even when the sigmoid is saturated (and its derivative tiny) the gradient is still proportional to the error, so learning does not stall; with MSE this cancellation does not happen.'}],
+sum:['$\\hat p=\\sigma(\\mathbf w^\\top\\mathbf x+b)$; the decision boundary is linear.','Cross-entropy = Bernoulli MLE; gradient $(\\hat p-y)\\mathbf x$.','Multiclass: softmax with gradient $\\hat{\\mathbf p}-\\mathbf y$.']});
+
+addEN('d2-2',{obj:['Run k-NN and explain the effect of $k$ and of feature scale.','Compute Gini impurity and information gain for a split.','Relate tree depth to overfitting and state the idea of a random forest.'],
+body:R`
+<h2>1. k-NN: the most similar samples vote</h2>
+<p>For a new point $\mathbf x$, find the $k$ nearest training samples (Euclidean distance) and return the majority vote (or the mean for regression). There is no training; all the work happens at prediction time ($O(nd)$). $k=1$ memorizes the training data (high variance, jagged boundary); large $k$ smooths the boundary and in the limit $k=n$ always predicts the majority class (high bias).</p>
+${wd('knn','k-NN: decision boundary and train/test accuracy versus k')}
+${co('warn','Feature scale and the curse of dimensionality','Distance is dominated by large-scale features; standardize the features before k-NN. In high dimensions all points become nearly equidistant and "nearest" loses meaning.')}
+<h2>2. Decision tree: a chain of questions</h2>
+<p>The tree splits space into rectangles with axis-aligned cuts ($x_j<t$?) and predicts the majority in each leaf. We choose the best cut greedily by the drop in <b>impurity</b>. For a node with class proportions $p_c$:</p>
+$$G=1-\sum_cp_c^2,\qquad H=-\sum_cp_c\ln p_c$$
+<p>Example: a node with 6 positives and 2 negatives has $G=1-(0.75^2+0.25^2)=0.375$. A split into $(4^+,0^-)$ and $(2^+,2^-)$ has weighted Gini $\tfrac48\cdot0+\tfrac48\cdot0.5=0.25$; the <b>gain</b> is $0.375-0.25=0.125$.</p>
+${wd('dtree','Decision tree on ring data: depth, leaves, and train/test accuracy')}
+<h2>3. Overfitting and the random forest</h2>
+<p>An unrestricted tree memorizes every sample (high variance). Controls: maximum depth, minimum samples per leaf, pruning. A <b>random forest</b> trains hundreds of trees on bootstrap samples with random feature subsets and takes a vote; averaging reduces variance without raising bias much.</p>
+${ft(['','k-NN','Decision tree'],[['Training','None (memory)','Greedy, $O(nd\\log n)$'],['Boundary','Any shape; sensitive to scale','Rectangular; no scaling needed'],['Interpretability','Low','High (if-then rules)'],['Weakness','High dimensions, slow prediction','Unstable; overfits']])}`,
+mis:['"k=1 is best because training accuracy is 100%." ← That is memorized noise; look at test accuracy.','"A deeper tree is always better." ← Beyond a suitable depth the test error rises.','"Gini and entropy give very different results." ← In practice they are almost identical.'],
+ex:[{q:'What is the Gini impurity of a node with 6 positives and 2 negatives?',e:'$1-(0.75^2+0.25^2)=0.375$.'},
+{q:'The same node splits into $(4^+,0^-)$ and $(2^+,2^-)$. What is the Gini gain?',e:'Weighted $=0.5\\cdot0+0.5\\cdot0.5=0.25$; $0.375-0.25=0.125$.'},
+{q:'What does k-NN classification predict when $k=n$?',o:['The nearest neighbour','The majority class of all the data','A random class','The minority class'],e:'All samples vote.'},
+{q:'k-NN needs features on a comparable scale.',e:'Euclidean distance is scale-sensitive.'},
+{q:'Which method reduces the variance of trees?',o:['Increasing depth','Averaging bootstrap trees (random forest)','Removing features','Reducing data'],e:'Bagging; averaging fairly uncorrelated errors reduces them.'},
+{q:'Why does k-NN usually get worse in very high dimensions?',a:'In high dimensions volume grows so fast that fixed data is extremely sparse; the distances to the nearest and farthest points become nearly equal (distance concentration), so "nearest neighbour" carries little information. Remedies: dimensionality reduction (PCA), feature selection, or a learned metric.'}],
+sum:['k-NN: neighbours vote; $k$ sets the bias–variance trade-off; scaling is required.','Tree: greedy cuts with Gini/entropy; depth = capacity.','A random forest reduces variance by averaging.']});
+
+addEN('d3-1',{obj:['Run Lloyd\'s algorithm (assign and update) step by step.','Explain the inertia objective and convergence to a local minimum.','Choose $k$ with the elbow method and list the limits of k-means.'],
+body:R`
+<h2>1. Unsupervised learning</h2>
+<p>There are no labels; we want to find hidden structure. <b>Clustering</b> partitions the samples into $k$ groups so that samples in a group are more similar to each other. k-means represents each group by a <b>centroid</b> $\boldsymbol\mu_c$ and minimizes</p>
+$$J=\sum_{i=1}^n\|\mathbf x_i-\boldsymbol\mu_{c(i)}\|^2\quad(\text{inertia})$$
+<h2>2. Lloyd's algorithm</h2>
+<ol><li><b>Initialize:</b> $k$ centroids (e.g. $k$ random samples).</li><li><b>Assign:</b> each sample to the nearest centroid.</li><li><b>Update:</b> each centroid = the mean of its members.</li><li>Repeat 2–3 until the assignments stop changing.</li></ol>
+<p>Each step lowers $J$ or leaves it unchanged (assignment is optimal for fixed centroids, and the mean minimizes $J$ for fixed assignments), so the algorithm converges, but only to a <b>local minimum</b>. Each iteration costs $O(nkd)$.</p>
+${wd('kmeans','k-means step by step: assign, update, inertia and k')}
+<h2>3. A one-dimensional example</h2>
+<p>Points $\{1,2,3,10,11\}$, initial centroids $\mu_1=0,\mu_2=5$. Assign: $\{1,2\}\to\mu_1$ and $\{3,10,11\}\to\mu_2$; new centroids $1.5$ and $8$. Reassign: 3 now goes to $\mu_1$ (distance $1.5<5$); centroids $2$ and $10.5$, $J=2+0.5=2.5$ and stable.</p>
+<h2>4. Choosing k and the limits</h2>
+<p>$J$ always decreases as $k$ grows (it is zero at $k=n$). Plot $J$ against $k$ and look for the "elbow", or maximize the <b>silhouette</b> score. Limits: it assumes spherical clusters of similar size, is sensitive to scale and outliers, and depends on initialization (remedy: k-means++ and several runs).</p>
+${co('note','k-means++','Chooses well-spread initial centroids: each next centroid is picked with probability proportional to the squared distance from the nearest existing centroid. It guarantees an $O(\\log k)$ approximation of the optimum.')}`,
+mis:['"k-means always finds the best clustering." ← Only a local minimum; it depends on initialization.','"Quality always improves as k grows." ← Inertia drops but clusters become meaningless.','"k-means works for any cluster shape." ← It cannot recognize non-spherical clusters (e.g. two moons).'],
+ex:[{q:'Points 1, 2, 3, 10, 11 and initial centroids 0 and 5. After the first update, what is the second centroid?',e:'$\\{3,10,11\\}\\to\\mu_2$ ⇒ $(3+10+11)/3=8$.'},
+{q:'For the same example, what is the final inertia after convergence?',e:'Centroids $2$ and $10.5$: $(1+0+1)+(0.25+0.25)=2.5$.'},
+{q:'In the update step of k-means, what does each centroid become?',o:['The median of its members','The mean of its members','The nearest member','A random member'],e:'The mean minimizes the sum of squared distances.'},
+{q:'k-means reaches the same solution from every initialization.',e:'It finds local minima; the solution depends on the initialization.'},
+{q:'In a plot of $J$ against $k$, what is the "elbow"?',o:['The point where $J$ becomes zero','The point where the decrease of $J$ clearly slows','The maximum of $J$','$k=n$'],e:'After the elbow an extra cluster adds little.'},
+{q:'Why do we standardize features before k-means?',a:'k-means relies on Euclidean distance. A large-scale feature (say income in a small currency unit) dominates the distance and small-scale features (say age) become irrelevant. Standardization (zero mean, unit variance) gives every feature an equal say, unless we deliberately want weights.'}],
+sum:['k-means: assign to the nearest centroid + average; objective inertia.','Converges to a local minimum; use k-means++ and several runs.','Choose $k$ by elbow/silhouette; scale the features.']});
+
+addEN('d3-2',{obj:['State PCA as maximizing the projected variance (and minimizing the reconstruction error).','Obtain the principal components from the covariance matrix or the SVD.','Compute the explained-variance ratio and choose a suitable $k$.'],
+body:R`
+<h2>1. Why reduce dimension?</h2>
+<p>$d$-dimensional data often lies close to a lower-dimensional subspace (correlated features). Dimensionality reduction helps visualization, denoising, compression and fighting the curse of dimensionality. PCA finds the best <b>linear subspace</b>.</p>
+<h2>2. The idea: the direction that maximizes variance</h2>
+<p>Center the data ($\bar{\mathbf x}=0$). The projection onto a unit direction $\mathbf u$ is $\mathbf u^\top\mathbf x$ with variance $\mathbf u^\top\Sigma\mathbf u$, where $\Sigma=\tfrac1nX^\top X$ is the covariance matrix. The problem:</p>
+$$\max_{\|\mathbf u\|=1}\mathbf u^\top\Sigma\mathbf u\ \Rightarrow\ \Sigma\mathbf u=\lambda\mathbf u$$
+<p>The solution is the eigenvector of the largest eigenvalue ($\lambda_1$ = the variance along $\mathbf u_1$). Later vectors are perpendicular to the earlier ones. Equivalently, maximizing projected variance minimizes the sum of squared distances from points to their projections (the reconstruction error), by Pythagoras: $\|\mathbf x\|^2=\text{projected variance}+\text{reconstruction error}$.</p>
+${wd('pca','PCA: rotate the projection angle and watch the variance; PC1 is the maximum')}
+<h2>3. Algorithm and explained variance</h2>
+<ol><li>Center (and standardize if needed).</li><li>$\Sigma$ or the SVD: $X=U S V^\top$; the columns of $V$ are the components and $\lambda_i=s_i^2/n$.</li><li>Keep the first $k$ components; reduced data $Z=XV_k\in\mathbb{R}^{n\times k}$.</li></ol>
+$$\text{explained variance ratio}=\frac{\sum_{i\le k}\lambda_i}{\sum_{i=1}^d\lambda_i}$$
+<p>Example: $\Sigma=\begin{pmatrix}4&2\\2&1\end{pmatrix}$ has $\mathrm{tr}=5$ and $\det=0$ ⇒ $\lambda=5,0$; the first component $(2,1)/\sqrt5$ captures all (100%) of the variance (the data lies exactly on a line).</p>
+${co('warn','Limitations','PCA is linear and scale-sensitive; high-variance directions are not necessarily "important for prediction"; it cannot see nonlinear structure (such as a spiral) (remedies: kernel PCA, t-SNE/UMAP for visualization).')}`,
+mis:['"Principal components are the main original features." ← They are linear combinations of all the features.','"PCA is fine without scaling." ← Features with large units take over the first component.','"High variance means useful information." ← High-variance noise exists too.'],
+ex:[{q:'Covariance matrix $\\begin{pmatrix}4&2\\\\2&1\\end{pmatrix}$. What is the largest eigenvalue?',e:'$\\mathrm{tr}=5$ and $\\det=0$ ⇒ $\\lambda=5,0$.'},
+{q:'The covariance eigenvalues are $6,3,1$. What fraction of the variance do the first two components explain?',e:'$(6+3)/10=0.9$.'},
+{q:'$100\\times5$ data is reduced to $k=2$ components with PCA. How many numbers are in the reduced data $Z$?',e:'$Z\\in\\mathbb R^{100\\times2}$ ⇒ 200.'},
+{q:'What is the first principal component?',o:['The direction of least variance','The direction of greatest projected variance','The $x$ axis','The data mean'],e:'The eigenvector of the largest eigenvalue of $\\Sigma$.'},
+{q:'Principal components are perpendicular to each other.',e:'Eigenvectors of a symmetric matrix with distinct eigenvalues are orthogonal.'},
+{q:'How are PCA and the SVD of the centered data matrix related?',a:'If $X=USV^\\top$ then $\\Sigma=\\tfrac1nX^\\top X=V\\,(S^2/n)\\,V^\\top$; so the columns of $V$ are the covariance eigenvectors (principal components) and $s_i^2/n$ are the eigenvalues. The SVD is more stable than forming $\\Sigma$ explicitly and is used for large matrices; the projection onto $k$ components is $XV_k=U_kS_k$.'}],
+sum:['PCA: orthogonal directions of greatest variance = eigenvectors of the covariance (or $V$ in the SVD).','Explained variance ratio: $\\sum_{i\\le k}\\lambda_i/\\sum\\lambda_i$.','Linear and scale-sensitive; maximum variance ≡ minimum reconstruction error.']});
+
+addEN('d4-1',{obj:['Explain the roles of the training, validation and test sets.','Run $K$-fold cross-validation and report the mean and standard deviation.','Choose a hyperparameter without looking at the test set.'],
+body:R`
+<h2>1. Three sets, three roles</h2>
+<ul><li><b>Training:</b> to fit the parameters.</li><li><b>Validation:</b> to choose hyperparameters ($\lambda$, $k$, depth…) and the model.</li><li><b>Test:</b> once, at the end, to report the generalization error. If you decide anything based on it, it is no longer unbiased.</li></ul>
+<h2>2. $K$-fold cross-validation</h2>
+<p>With little data a single fixed split is noisy. Split the data into $K$ folds; $K$ times validate on one fold and train on the rest, and average the error:</p>
+$$\mathrm{CV}_K=\frac1K\sum_{k=1}^K\mathrm{err}_k$$
+<p>Cost: $K$ trainings. Typically $K=5$ or 10. For imbalanced classification use stratified folds. Example: the 5-fold scores $0.82,0.80,0.84,0.78,0.86$ have mean $0.82$ and sample standard deviation $0.0316$; that spread is the uncertainty of the estimate.</p>
+${wd('cvfold','Cross-validation: the best polynomial degree without seeing the test set')}
+<h2>3. Hyperparameter search</h2>
+<p><b>Grid search:</b> a grid of all combinations (with 4 values and $K=5$: 20 trainings per hyperparameter). <b>Random search:</b> random sampling; more efficient when only a few hyperparameters matter. After choosing, refit the final model on training+validation and evaluate once on the test set.</p>
+<h2>4. Data leakage</h2>
+<p>Any information from validation/test that gets into training makes the error optimistic. Examples: standardizing on all the data before the split; duplicate samples in two sets; a feature that gives the answer away. Fix: learn every preprocessing step <b>inside</b> each training fold (a pipeline).</p>
+${co('warn','CV and temporal data','Time-series samples are not independent; use a temporal split (train on the past, validate on the future), not a random shuffle.')}`,
+mis:['"I can compare several models on the test error and pick the best." ← The test set then becomes a validation set and is optimistic.','"I\'ll standardize before the split to keep it simple." ← Leakage: test mean/variance reach training.','"A larger $K$ is always better." ← The cost grows and the variance of the estimate may not shrink.'],
+ex:[{q:'5-fold scores: $0.82,0.80,0.84,0.78,0.86$. What is the mean?',e:'The sum 4.10 divided by 5 = 0.82.'},
+{q:'For the same scores, what is the sample standard deviation (denominator $K-1$)?',e:'Deviations $0,-0.02,0.02,-0.04,0.04$; sum of squares $0.004$; variance $0.001$; root $0.0316$.'},
+{q:'How many times does a grid search with 4 hyperparameter values and 5-fold CV train the model?',e:'$4\\times5=20$.'},
+{q:'Which is data leakage?',o:['Standardizing on training data and applying the same parameters to the test set','Standardizing with the mean of all data before the split','A stratified split','5-fold CV'],e:'Test statistics entered the training.'},
+{q:'The test set should be used to choose hyperparameters.',e:'Use validation/CV for choosing.'},
+{q:'Why use stratified CV for classification with 5% positives?',a:'With a plain random split some folds may contain almost no positives, so their scores become meaningless or highly variable. Stratification keeps the class proportions about equal in every fold, giving a more stable, unbiased estimate.'}],
+sum:['Training for parameters, validation for hyperparameters, test once for the final report.','$K$-fold CV: mean and spread of the error; stratified for small and imbalanced data.','Learn preprocessing inside the folds so nothing leaks.']});
+
+addEN('d4-2',{obj:['Build the confusion matrix and compute precision, recall, F1 and accuracy.','Explain why accuracy is insufficient on imbalanced data.','Interpret the effect of the threshold with ROC and AUC.'],
+body:R`
+<h2>1. The confusion matrix</h2>
+<p>For binary classification: TP (true positive), FP (false positive), FN (false negative), TN (true negative).</p>
+$$\text{Precision}=\frac{TP}{TP+FP},\quad \text{Recall}=\frac{TP}{TP+FN},\quad F_1=\frac{2PR}{P+R},\quad \text{Accuracy}=\frac{TP+TN}{n}$$
+<p>Precision: "of the positives I announced, how many were right?" Recall: "of the real positives, how many did I catch?" $F_1$ is their harmonic mean and needs both to be high.</p>
+<p>Example: $TP=40,FP=10,FN=20,TN=930$ ⇒ $P=0.8$, $R=0.667$, $F_1=0.727$, accuracy $=0.97$.</p>
+<h2>2. The accuracy trap on imbalanced data</h2>
+<p>If 5% of samples are positive, a model that always says "negative" has 95% accuracy but finds no positive ($R=0$). For rare-event problems (fraud, disease) report precision, recall and the PR curve.</p>
+<h2>3. Threshold, ROC and AUC</h2>
+<p>The model outputs a probability and a threshold $\tau$ decides. Lowering $\tau$ raises recall and usually lowers precision. The <b>ROC</b> curve plots the true-positive rate $TPR=R$ against the false-positive rate $FPR=FP/(FP+TN)$ for all thresholds; the <b>AUC</b> is the area under it and equals the probability that a random positive gets a higher score than a random negative ($0.5$ = random guessing, $1$ = perfect).</p>
+${wd('confusion','Confusion matrix, precision/recall and ROC with threshold, separation and prevalence')}
+${co('note','Which metric?','Fraud/disease: high recall (and acceptable precision). Spam filter: high precision (mistaking an important message is costly). Always choose the metric from the business cost of each error.')}`,
+mis:['"99% accuracy means an excellent model." ← On imbalanced data it can be worthless.','"AUC is insensitive to imbalance so it is always fine." ← AUC becomes optimistic; PR-AUC is more informative for rare events.','"A threshold of 0.5 is optimal." ← It is tuned to costs and prevalence.'],
+ex:[{q:'$TP=40,FP=10$. What is the precision?',e:'$40/50=0.8$.'},
+{q:'$TP=40,FN=20$. What is the recall?',e:'$40/60=0.667$.'},
+{q:'With $P=0.8$ and $R=2/3$, what is $F_1$?',e:'$2\\cdot0.8\\cdot0.6667/(1.4667)=0.7273$.'},
+{q:'In a data set with 1000 samples and 50 positives a model says negative for everything. What is its accuracy?',e:'$950/1000=0.95$ but recall is 0.'},
+{q:'For detecting a dangerous disease which metric do you weight more?',o:['Precision','Recall','Accuracy','None'],e:'A false negative (missing a patient) is costlier.'},
+{q:'What does AUC = 0.5 mean, and when can AUC be high while precision is low?',a:'AUC = 0.5: the model ranks positives and negatives no better than chance (the ROC is the diagonal). If the positive class is very rare, even a small FPR produces many false positives (there are so many negatives), so precision is low while ROC/AUC looks high. That is why we also look at the PR curve for very imbalanced data.'}],
+sum:['Precision, recall, $F_1$ and accuracy come from the confusion matrix; accuracy misleads on imbalanced data.','The threshold trades precision against recall; ROC/AUC summarize all thresholds.','Choose the metric from the cost of errors.']});
+
+addEN('d5-1',{obj:['Compute the output of a neuron and of a 2-layer network (the forward pass).','Explain why XOR is not separable by a linear model but is with one hidden layer.','Count a network\'s parameters and state the role of the activation function.'],
+body:R`
+<h2>1. A neuron = a linear model + a nonlinearity</h2>
+<p>A neuron is $a=\phi(\mathbf w^\top\mathbf x+b)$. With $\phi=\sigma$ it is logistic regression. Common activations: $\tanh$, ReLU ($\max(0,z)$), sigmoid. Without $\phi$ any stack of linear layers is again linear, so depth adds nothing.</p>
+<h2>2. XOR: a linear boundary is not enough</h2>
+<p>The XOR points ($(\pm1,\pm1)$ labelled by whether the signs differ) cannot be separated by any line. A hidden layer with several neurons builds one linear boundary each and the output layer combines them; the result is a nonlinear boundary.</p>
+${wd('mlp2d','2D MLP: try 0 hidden units, then 2 and 4; XOR, rings and moons')}
+<h2>3. The MLP</h2>
+<p>For $L$ layers: $\mathbf a^{(l)}=\phi\big(W^{(l)}\mathbf a^{(l-1)}+\mathbf b^{(l)}\big)$ with $\mathbf a^{(0)}=\mathbf x$. A $2\to4\to1$ network has $2\cdot4+4+4\cdot1+1=17$ parameters. A one-neuron numeric example: $\mathbf w=(0.5,-1)$, $b=0.2$, $\mathbf x=(2,1)$ ⇒ $z=1-1+0.2=0.2$; $\tanh(0.2)=0.197$ and ReLU$(0.2)=0.2$.</p>
+<h2>4. Training and capacity</h2>
+<p>We minimize the loss with backprop (the chain rule) and GD/SGD (see the optimization lessons and X7). <b>The universal approximation theorem:</b> one hidden layer with enough neurons can approximate any continuous function on a compact set arbitrarily well; but it does not say how many neurons are needed or that training will find it. Depth often makes the representation far more compact.</p>
+${co('note','ReLU and its derivative','ReLU has derivative 1 for $z>0$ (the gradient does not vanish) and is cheap; but a neuron stuck at $z<0$ "dies". tanh/sigmoid have small gradients in the saturated region.')}`,
+mis:['"A deeper network is always better." ← Overfitting and harder training; validate.','"Without an activation function a deep network can still solve XOR." ← A composition of linear maps is linear.','"The universal approximation theorem means any small network learns any function." ← It guarantees only existence.'],
+ex:[{q:'A neuron with $\\mathbf w=(0.5,-1)$, $b=0.2$ and $\\mathbf x=(2,1)$: what is $z$?',e:'$1-1+0.2=0.2$.'},
+{q:'How many parameters (with biases) does a $2\\to4\\to1$ network have?',e:'$2\\cdot4+4+4\\cdot1+1=17$.'},
+{q:'How many parameters (with biases) does a $784\\to128\\to10$ network have?',e:'$784\\cdot128+128+128\\cdot10+10=100352+128+1280+10=101770$.'},
+{q:'Why is a multi-layer network without a nonlinear activation just a linear model?',o:['Because the weights are small','Because a composition of linear maps is linear','Because the loss is convex','Because there is little data'],e:'$W_2(W_1\\mathbf x)=(W_2W_1)\\mathbf x$.'},
+{q:'XOR can be separated by logistic regression on the original features.',e:'The decision boundary is linear and XOR is not linearly separable.'},
+{q:'Why does ReLU usually train better than sigmoid in deep networks?',a:'The sigmoid derivative is at most 0.25 and near zero in the saturated region; multiplying many layers shrinks the gradient severely (vanishing gradient). ReLU has derivative exactly 1 for positive inputs, so the gradient passes without shrinking, it is cheap to compute and it creates sparse activations. Drawback: dead neurons.'}],
+sum:['A neuron is $\\phi(\\mathbf w^\\top\\mathbf x+b)$; the nonlinearity is essential.','A hidden layer builds nonlinear boundaries (like XOR); we count parameters.','Training is backprop; universal approximation guarantees existence, not learning.']});
+
+addEN('d5-2',{obj:['Compute a 2D convolution on a small image by hand.','Find the output size and the parameter count of a convolutional layer.','Explain weight sharing, pooling and the receptive field.'],
+body:R`
+<h2>1. Why a Dense layer is wrong for images</h2>
+<p>A $28\times28$ image with even a single 128-unit hidden layer needs over $100{,}000$ weights and ignores spatial structure: an edge at each position would have to be learned separately. A CNN builds two assumptions into the network: <b>locality</b> (patterns live in small regions) and <b>weight sharing</b> (the same detector everywhere).</p>
+<h2>2. Convolution (really cross-correlation)</h2>
+<p>Slide a $3\times3$ kernel over the image; at each position multiply element-wise and sum:</p>
+$$Y_{ij}=b+\sum_{u,v}K_{uv}\,X_{i s+u-p,\ j s+v-p}$$
+<p>$s$ is the stride and $p$ the zero padding. The output is a <b>feature map</b>. The "vertical edge" kernel $\begin{pmatrix}-1&0&1\\-1&0&1\\-1&0&1\end{pmatrix}$ responds strongly only where brightness changes from left to right.</p>
+${wd('conv2d','Convolution: 8×8 image, 3×3 kernel, padding and stride')}
+<h2>3. Output size and parameters</h2>
+$$n_{\text{out}}=\left\lfloor\frac{n+2p-k}{s}\right\rfloor+1,\qquad \#\text{params}=(k\cdot k\cdot C_{in}+1)\,C_{out}$$
+<p>Examples: $n=32,k=5,p=2,s=1\Rightarrow32$ (same size). $n=28,k=3,p=0,s=2\Rightarrow\lfloor25/2\rfloor+1=13$. A $3\times3$ layer with 16 input and 32 output channels: $(9\cdot16+1)\cdot32=4640$ parameters, independent of the image size.</p>
+<h2>4. Pooling, receptive field and architecture</h2>
+<p>$2\times2$ <b>max pooling</b> with stride 2 halves the size and adds a little shift tolerance. With stacked layers the <b>receptive field</b> of a neuron grows (two $3\times3$ layers see $5\times5$). A common architecture: [convolution→ReLU→pooling]×several → Flatten → Dense → softmax. Early layers detect edges, middle ones textures and parts, late ones objects.</p>
+${co('note','Equivariance','Convolution is translation-equivariant: shift the image and the feature map shifts by the same amount. Pooling adds a little invariance.')}`,
+mis:['"CNNs are only for images." ← Also for any grid-like/sequential data (audio, text, 1D).','"Each filter sees one specific location." ← The same filter is applied at every location.','"Padding always preserves the size." ← Only when $p=(k-1)/2$ and $s=1$.'],
+ex:[{q:'Input $n=32$, kernel $k=5$, $p=2$, $s=1$. Output size?',e:'$\\lfloor(32+4-5)/1\\rfloor+1=32$.'},
+{q:'Input $28$, kernel $3$, $p=0$, $s=2$. Output size?',e:'$\\lfloor25/2\\rfloor+1=13$.'},
+{q:'How many parameters (with bias) does a $3\\times3$ convolution with 16 input channels and 32 output channels have?',e:'$(9\\cdot16+1)\\cdot32=145\\cdot32=4640$.'},
+{q:'What is the receptive field of two stacked $3\\times3$ layers (stride 1)?',o:['$3\\times3$','$5\\times5$','$6\\times6$','$9\\times9$'],e:'Each extra layer adds $k-1=2$: $3+2=5$.'},
+{q:'In a convolutional layer one kernel with the same weights is used at every image position.',e:'Weight sharing.'},
+{q:'Compare the parameter count of a Dense layer from a $28\\times28$ image to 128 units with a $3\\times3$ convolution with 128 filters.',a:'Dense: $784\\cdot128+128=100{,}480$. Convolution (1 input channel): $(9\\cdot1+1)\\cdot128=1280$. The convolution keeps the parameters about 80 times smaller because weights are shared across positions and act only locally; this reduces overfitting and exploits spatial structure. The price is more computation (each kernel is evaluated at every position).'}],
+sum:['Convolution: a local kernel with shared weights; $n_{out}=\\lfloor(n+2p-k)/s\\rfloor+1$.','Parameters $(k^2C_{in}+1)C_{out}$, independent of image size.','Pooling shrinks the map and grows the receptive field; architecture: [conv→ReLU→pool]×several + Dense.']});
 /* ===================== LABS: Module A (Data Structures & Algorithms) ===================== */
 /* A1 · Growth beats constants */
 LAB({id:'a1',mod:'A',g:'A1',lessons:['a1-1','a1-2'],
@@ -3887,6 +4477,174 @@ LAB({id:'c5',mod:'C',g:'C5',lessons:['c5-1','c5-2','c5-3'],
    ok:st=>{let x=6,y=1,vx=0,vy=0;for(let i=0;i<50;i++){vx=st.beta*vx-0.025*x;vy=st.beta*vy-0.025*25*y;x+=vx;y+=vy}return .5*(x*x+25*y*y)<0.01},
    hints:[['β=۰ همان GD ساده است و کافی نیست.','β = 0 is plain GD and is not enough.'],['β=۰٫۹۵ بیش از حد شتاب می‌دهد؛ حد وسط را بگیرید.','β = 0.95 over-accelerates; aim for the middle.'],['بازه‌ی خوب حدود ۰٫۶۵ تا ۰٫۸ است؛ عدد خطا را دنبال کنید.','The good range is about 0.65 to 0.8; follow the loss number.']],
    win:['β≈۰٫۷–۰٫۸: مومنتوم حرکت آرام در x را شتاب می‌دهد و نوسان y را به‌خوبی خنثی می‌کند. Adam و SGD+momentum در عمل از همین استفاده می‌کنند.','β ≈ 0.7 to 0.8: momentum speeds up the gentle x motion and damps the y oscillation. Adam and SGD with momentum use this in practice.']}}});
+/* ===================== LABS: Module D (Machine Learning) ===================== */
+const D1X=[0,1,2,3,4,5,6,7],D1Y=[0.9,2.3,2.8,4.4,4.6,6.3,6.8,8.4];
+const d1mse=(a,b)=>D1X.reduce((s,x,i)=>s+(a*x+b-D1Y[i])**2,0)/D1X.length;
+
+/* D1 · Least squares as squares */
+LAB({id:'d1',mod:'D',g:'D1',lessons:['d1-1','d1-2'],
+ t:['بهترین خط، کمترین مساحت مربع‌ها','The best line has the smallest squares'],
+ aha:['خطای هر نقطه یک مربع است؛ بهترین خط مجموع مساحت این مربع‌ها را کمینه می‌کند و زیان MSE دقیقاً همین مساحت است.','Each point\'s error is a square; the best line minimizes the total area of those squares, and the MSE is exactly that area.'],
+ big:{had:['می‌دانیم یادگیری نظارت‌شده یعنی یافتن تابعی که خروجی را از ورودی پیش‌بینی کند.','We know supervised learning means finding a function that predicts the output from the input.'],
+  miss:['«بهترین» خط یعنی چه؟ با چه عددی خطا را می‌سنجیم و چگونه آن را کم کنیم؟','What does "best" line mean? Which number measures the error and how do we reduce it?'],
+  fix:['خط را با دو لغزنده تنظیم می‌کنید و مربع باقیمانده‌ها و MSE را زنده می‌بینید.','You set the line with two sliders and watch the residual squares and the MSE live.'],
+  close:['MSE=(۱/n)Σ(ŷ−y)² و کمینه‌ی آن w*=(XᵀX)⁻¹Xᵀy است. درس بعد می‌پرسد: آیا کمینه‌ی خطای آموزش همیشه خوب است؟ (بیش‌برازش)','MSE = (1/n)Σ(ŷ−y)² and its minimizer is w* = (XᵀX)⁻¹Xᵀy. The next lab asks: is minimum training error always good? (overfitting)']},
+ sol:{a:1.02,b:0.99},fail:{a:1,b:0},
+ st:()=>({a:0.3,b:3,sq:true}),
+ stage(host,st,A){return k=>{host.innerHTML='';const P=chart(560,300,-0.5,8,-0.5,9.5,{l:30,b:24});P.axes(8,5,v=>String(Math.round(v)),v=>String(Math.round(v)));P.line(-0.5,st.a*-0.5+st.b,8,st.a*8+st.b,'var(--ac)',null,2.6);
+   if(k==='name'){const n=D1X.length,mx=3.5,my=D1Y.reduce((p,q)=>p+q)/n;let sxy=0,sxx=0;D1X.forEach((x,i)=>{sxy+=(x-mx)*(D1Y[i]-my);sxx+=(x-mx)**2});const a0=sxy/sxx,b0=my-a0*mx;P.line(-0.5,a0*-0.5+b0,8,a0*8+b0,'var(--ok)','6 4',2.2);P.text(0,9,t2('خط کمترین مربعات (سبز خط‌چین): ','least-squares line (green, dashed): ')+'y = '+fmt(a0,2)+'x + '+fmt(b0,2),'var(--ok)','start',12)}
+   D1X.forEach((x,i)=>{const y=D1Y[i],yh=st.a*x+st.b,r=yh-y,side=Math.abs(P.Y(0)-P.Y(Math.abs(r)));if(st.sq)P.svg.append(sv('rect',{x:r>=0?P.X(x)-0:P.X(x),y:Math.min(P.Y(y),P.Y(yh)),width:side,height:Math.abs(P.Y(y)-P.Y(yh)),fill:'var(--bad)',opacity:.28,stroke:'var(--bad)'}));else P.line(x,y,x,yh,'var(--bad)',null,2);P.dot(x,y,4.5,'var(--fg)')});
+   const m=d1mse(st.a,st.b);host.append(P.svg,h('div',{class:'stat'},h('span',{},'ŷ = ',h('b',{},fmt(st.a,2)+'·x + '+fmt(st.b,2))),h('span',{},'MSE = ',h('b',{style:{color:m<=0.2?'var(--ok)':'var(--fg)'}},fmt(m,3))),h('span',{},t2('جمع مساحت مربع‌ها: ','Total area of the squares: '),h('b',{},fmt(m*D1X.length,2)))),h('div',{class:'wn'},t2('مربع‌های قرمز: هر مربع به‌اندازه‌ی باقیمانده‌ی یک نقطه است (ضلع = |ŷ−y|)؛ مساحتش خطای مربعی آن نقطه است. داده‌ها ساختگی‌اند.','Red squares: each has the size of one point\'s residual (side = |ŷ−y|); its area is that point\'s squared error. The data are made up.')))}},
+ screens:{
+  puzzle:{ask:['۸ نقطه داریم. خطی بکشید که «به‌خوبی» از آن‌ها بگذرد. چه معیاری می‌گوید یک خط از دیگری بهتر است؟','We have 8 points. Draw a line that fits them "well". What criterion says one line is better than another?'],
+   do:['شیب a و عرض از مبدأ b را عوض کنید و به مجموع مساحت مربع‌ها نگاه کنید.','Change the slope a and the intercept b and watch the total area of the squares.'],
+   ctl:(st,A)=>[rng('a',-1,3,0.01,st.a,v=>{st.a=v;A.upd()},v=>fmt(v,2)),rng('b',-2,4,0.01,st.b,v=>{st.b=v;A.upd()},v=>fmt(v,2))]},
+  explore:{claim:['MSE نسبت به a و b یک کاسه‌ی محدب است؛ فقط یک کمینه دارد و گرادیان به آن اشاره می‌کند.','The MSE is a convex bowl in (a, b): it has a single minimum and the gradient points toward it.'],
+   ask:['اگر فقط یکی از a یا b را بهینه کنید و دیگری را رها کنید، آیا به کمینه می‌رسید؟ چرا مربع‌ها هیچ‌وقت صفر نمی‌شوند؟','If you optimize only a or only b and leave the other, do you reach the minimum? Why can the squares never all vanish?'],
+   do:['مربع‌ها را خاموش کنید تا فقط پاره‌خط‌های باقیمانده را ببینید، و یکی‌یکی a و b را بهبود دهید.','Turn the squares off to see only the residual segments, and improve a and b one at a time.'],
+   ctl:(st,A)=>[btn(t2('مربع‌ها روشن/خاموش','Squares on/off'),()=>{st.sq=!st.sq;A.upd()}),rng('a',-1,3,0.01,st.a,v=>{st.a=v;A.upd()},v=>fmt(v,2)),rng('b',-2,4,0.01,st.b,v=>{st.b=v;A.upd()},v=>fmt(v,2))],
+   see:['MSE در یک کمینه‌ی یکتا (a≈۱٫۰۲، b≈۰٫۹۹) به ≈۰٫۰۹ می‌رسد؛ حرکت در هر جهت دیگر مجموع مساحت را بیشتر می‌کند.','The MSE reaches ≈ 0.09 at a unique minimum (a ≈ 1.02, b ≈ 0.99); moving in any direction raises the total area.']},
+  name:{says:[['خط سبز بهترین خط است؛ به زبان ریاضی:','The green line is the best line; in math:']],tex:['J(a,b)=\\frac1n\\sum_i(ax_i+b-y_i)^2,\\qquad \\mathbf w^\\*=(X^\\top X)^{-1}X^\\top\\mathbf y'],
+   legend:[['J',['میانگین مساحت مربع‌های باقیمانده = MSE.','The mean area of the residual squares = the MSE.']],['\\mathbf w^\\*',['(a،b) بهینه؛ گرادیان J در آن صفر است.','The optimal (a, b); the gradient of J is zero there.']],['X^\\top X',['اگر وارون‌پذیر باشد جواب یکتاست.','If it is invertible the solution is unique.']]]},
+  challenge:{ask:['یک خط پیدا کنید که MSE آن حداکثر ۰٫۲ باشد.','Find a line whose MSE is at most 0.2.'],
+   do:['MSE وقتی سبز می‌شود که پیروز شوید. ابتدا شیب را بیابید، بعد عرض از مبدأ را.','The MSE turns green when you succeed. Find the slope first, then the intercept.'],ctl:(st,A)=>{st.a=0.3;st.b=3;return[rng('a',-1,3,0.01,st.a,v=>{st.a=v;A.upd()},v=>fmt(v,2)),rng('b',-2,4,0.01,st.b,v=>{st.b=v;A.upd()},v=>fmt(v,2))]},
+   ok:st=>d1mse(st.a,st.b)<=0.2,hints:[['اگر مربع‌ها بالای نقطه‌ها هستند خط را پایین ببرید و برعکس.','If the squares sit above the points lower the line, and vice versa.'],['نقطه‌ها تقریباً روی خطی با شیب نزدیک ۱ قرار دارند.','The points lie roughly on a line with slope near 1.'],['وقتی شیب را درست کردید، b را طوری بگذارید که مربع‌های بالا و پایین هم‌اندازه شوند.','Once the slope is right, set b so the squares above and below balance.']],
+   win:['MSE کوچک شد: خط نزدیک به کمینه‌ی کاسه است. معادله‌ی نرمال همین نقطه را مستقیم و بدون جست‌وجو می‌دهد.','The MSE is small: the line is near the bottom of the bowl. The normal equation gives that point directly, without searching.']}}});
+
+/* D2 · Logistic boundary and cross-entropy */
+const D2P=MLX.blobs(5,30,[[-1.2,-1],[1.2,1]],0.9);
+function d2eval(st){const cs=Math.cos(st.th*Math.PI/180),sn=Math.sin(st.th*Math.PI/180);let L=0,ac=0;D2P.forEach(p=>{const z=st.s*(p.x*cs+p.y*sn-st.c),q=MLX.sig(z);L-=p.c?Math.log(q+1e-9):Math.log(1-q+1e-9);if((z>0)===!!p.c)ac++});return{L:L/D2P.length,acc:ac/D2P.length}}
+LAB({id:'d2',mod:'D',g:'D2',lessons:['d2-1','d2-2'],
+ t:['مرز تصمیم و اطمینان','The boundary and the confidence'],
+ aha:['رگرسیون لجستیک دو چیز می‌آموزد: کجا مرز بگذارد (جهت و جابه‌جایی) و چقدر مطمئن باشد (شیب)؛ Cross-Entropy اشتباهِ مطمئن را به‌شدت جریمه می‌کند.','Logistic regression learns two things: where to put the boundary (direction and offset) and how confident to be (steepness); cross-entropy punishes a confident mistake severely.'],
+ big:{had:['می‌دانیم رگرسیون خطی عدد پیوسته پیش‌بینی می‌کند و با MSE آموزش می‌بیند.','We know linear regression predicts a number and is trained with the MSE.'],
+  miss:['برای برچسب دودویی به احتمال نیاز داریم. چگونه خروجی خطی را احتمال کنیم و زیان مناسب کدام است؟','For a binary label we need a probability. How do we turn a linear output into one, and which loss fits?'],
+  fix:['جهت، جابه‌جایی و شیب مرز را می‌چرخانید و دقت و Cross-Entropy را می‌بینید.','You rotate, shift and steepen the boundary and read the accuracy and the cross-entropy.'],
+  close:['p=σ(z) با z=s(‌ـn·x−c)؛ دقت فقط جهت مرز را می‌سنجد ولی Cross-Entropy اطمینان را هم. درس بعد (k-NN و درخت) مرزهای غیرخطی می‌سازد.','p = σ(z) with z = s(n·x − c); accuracy only measures the boundary direction but cross-entropy also measures confidence. The next lessons (k-NN and trees) build nonlinear boundaries.']},
+ sol:{th:37,c:0,s:6},fail:{th:0,c:0,s:0.2},
+ st:()=>({th:90,c:0.8,s:1}),
+ stage(host,st,A){return()=>{host.innerHTML='';const P=chart(560,330,-4,4,-4,4,{l:28,b:22});P.axes(8,8,v=>String(Math.round(v)),v=>String(Math.round(v)));const cs=Math.cos(st.th*Math.PI/180),sn=Math.sin(st.th*Math.PI/180);
+   const line=(k,col,dash,wd)=>{const o=st.c+k;const dx=-sn,dy=cs,bx=o*cs,by=o*sn;P.line(bx-8*dx,by-8*dy,bx+8*dx,by+8*dy,col,dash,wd)};line(0,'var(--ok)',null,2.6);if(st.s>0.5){line(2.197/st.s,'var(--mut)','5 4',1.2);line(-2.197/st.s,'var(--mut)','5 4',1.2)}
+   D2P.forEach(p=>{const z=st.s*(p.x*cs+p.y*sn-st.c),wrong=(z>0)!==!!p.c;if(p.c)P.svg.append(sv('path',{d:`M${P.X(p.x)} ${P.Y(p.y)-6} l6 10 h-12z`,fill:'var(--bad)',stroke:wrong?'var(--hl)':'#fff','stroke-width':wrong?2.4:.8}));else P.svg.append(sv('circle',{cx:P.X(p.x),cy:P.Y(p.y),r:4.5,fill:'var(--ac)',stroke:wrong?'var(--hl)':'#fff','stroke-width':wrong?2.4:.8}))});
+   const e=d2eval(st);host.append(P.svg,h('div',{class:'stat'},h('span',{},t2('دقت: ','Accuracy: '),h('b',{},Math.round(e.acc*100)+'%')),h('span',{},t2('Cross-Entropy: ','Cross-entropy: '),h('b',{style:{color:e.acc>=0.95&&e.L<=0.12?'var(--ok)':'var(--fg)'}},fmt(e.L,3))),h('span',{},'θ=',h('b',{},Math.round(st.th)+'°'),'  c=',h('b',{},fmt(st.c,2)),'  s=',h('b',{},fmt(st.s,1)))),
+    h('div',{class:'wn'},t2('خط سبز: p=۰٫۵؛ خط‌چین‌ها: p≈۰٫۱ و ۰٫۹ (هرچه s بزرگ‌تر، نزدیک‌تر). نقطه‌ی اشتباه‌طبقه‌بندی‌شده کادر زرد دارد. ▲ کلاس ۱، ● کلاس ۰.','Green line: p = 0.5; dashed: p ≈ 0.1 and 0.9 (closer when s is larger). A misclassified point has a yellow outline. ▲ class 1, ● class 0.')))}},
+ screens:{
+  puzzle:{ask:['دو دسته نقطه (● و ▲) داریم. یک مرز خطی بگذارید. آیا فقط «کجا» مرز را گذاشتن کافی است یا «چقدر مطمئن» بودن هم اهمیت دارد؟','Two groups of points (● and ▲). Place a linear boundary. Is it enough to choose where the boundary goes, or does how confident we are matter too?'],
+   do:['θ و c را عوض کنید تا دقت زیاد شود، بعد s را تغییر دهید.','Change θ and c until the accuracy is high, then change s.'],
+   ctl:(st,A)=>[rng('θ°',0,180,1,st.th,v=>{st.th=v;A.upd()},v=>Math.round(v)+'°'),rng('c',-3,3,0.05,st.c,v=>{st.c=v;A.upd()},v=>fmt(v,2)),rng('s',0.1,6,0.1,st.s,v=>{st.s=v;A.upd()},v=>fmt(v,1))]},
+  explore:{claim:['با مرز درست، بزرگ‌کردن s زیان را کم می‌کند؛ با مرز غلط، همان s زیان را بسیار زیاد می‌کند.','With the right boundary a larger s lowers the loss; with a wrong boundary the same s makes the loss much larger.'],
+   ask:['یک بار مرز را عمداً خراب کنید و s را زیاد کنید. Cross-Entropy چه می‌شود ولی دقت چه؟','Break the boundary on purpose, then raise s. What happens to the cross-entropy, and to the accuracy?'],
+   do:['θ را روی ۱۰۰° ببرید و s را از ۱ تا ۶ بکشید؛ بعد θ را به ≈۳۷° برگردانید.','Move θ to 100° and drag s from 1 to 6; then return θ to ≈ 37°.'],
+   ctl:(st,A)=>[rng('θ°',0,180,1,st.th,v=>{st.th=v;A.upd()},v=>Math.round(v)+'°'),rng('c',-3,3,0.05,st.c,v=>{st.c=v;A.upd()},v=>fmt(v,2)),rng('s',0.1,6,0.1,st.s,v=>{st.s=v;A.upd()},v=>fmt(v,1))],
+   see:['با مرز غلط افزایش s زیان را بالا می‌برد (اشتباه مطمئن). با مرز درست (θ≈۳۷°، c≈۰) زیان تا ≈۰٫۰۵ می‌افتد.','With a wrong boundary raising s increases the loss (confident mistakes). With the right one (θ ≈ 37°, c ≈ 0) the loss falls to ≈ 0.05.']},
+  name:{says:[['مدل شما:','Your model:']],tex:['\\hat p=\\sigma\\big(s(\\mathbf n^\\top\\mathbf x-c)\\big),\\qquad J=-\\frac1n\\sum_i\\big[y_i\\ln\\hat p_i+(1-y_i)\\ln(1-\\hat p_i)\\big]'],
+   legend:[['\\mathbf n=(\\cos\\theta,\\sin\\theta)',['جهت بردار وزن (عمود بر مرز).','The weight direction (perpendicular to the boundary).']],['c',['جابه‌جایی مرز (همان −b/‖w‖).','The boundary offset (that is −b/‖w‖).']],['s',['‖w‖: شیب سیگموید = اطمینان مدل.','‖w‖: the steepness of the sigmoid = the model\'s confidence.']]]},
+  challenge:{ask:['دقت دست‌کم ۹۵٪ و Cross-Entropy حداکثر ۰٫۱۲ بگیرید. هر سه متغیر را تنظیم کنید.','Reach at least 95% accuracy and a cross-entropy of at most 0.12. Tune all three variables.'],
+   do:['اول مرز، بعد اطمینان؛ Cross-Entropy سبز می‌شود.','Boundary first, then confidence; the cross-entropy turns green.'],ctl:(st,A)=>{Object.assign(st,{th:90,c:0.8,s:1});return[rng('θ°',0,180,1,st.th,v=>{st.th=v;A.upd()},v=>Math.round(v)+'°'),rng('c',-3,3,0.05,st.c,v=>{st.c=v;A.upd()},v=>fmt(v,2)),rng('s',0.1,6,0.1,st.s,v=>{st.s=v;A.upd()},v=>fmt(v,1))]},
+   ok:st=>{const e=d2eval(st);return e.acc>=0.95&&e.L<=0.12},hints:[['نقاط زرد‌کادر اشتباه‌اند؛ مرز را بچرخانید تا کم شوند.','Yellow-outlined points are wrong; rotate the boundary until they disappear.'],['مرز باید تقریباً از وسط دو خوشه بگذرد (نزدیک c=۰).','The boundary should pass roughly through the middle of the two clusters (near c = 0).'],['وقتی مرز درست شد، s را بالا ببرید تا Cross-Entropy کم شود.','Once the boundary is right, raise s to lower the cross-entropy.']],
+   win:['مرز درست و اطمینان بالا: مدل هم درست است و هم مطمئن. در آموزش، GD همین دو چیز را هم‌زمان با گرادیان (p−y)x می‌آموزد.','A right boundary and high confidence: the model is both correct and sure. In training, GD learns both at once using the gradient (p − y)x.']}}});
+
+/* D3 · k-means initialization */
+const D3P=(()=>{const P=MLX.blobs(3,25,[[-7,0],[-2.5,0],[2.5,0],[7,0]],0.8);return P})();
+function d3lloyd(C0){let C=C0.map(c=>[...c]),asg=[];for(let it=0;it<60;it++){const a=D3P.map(p=>C.reduce((b,c,i)=>{const d=(p.x-c[0])**2+(p.y-c[1])**2;return d<b[0]?[d,i]:b},[1e9,0])[1]);if(asg.join()===a.join())break;asg=a;C=C.map((c,i)=>{const m=D3P.filter((p,j)=>asg[j]===i);return m.length?[m.reduce((s,p)=>s+p.x,0)/m.length,m.reduce((s,p)=>s+p.y,0)/m.length]:c})}const J=D3P.reduce((s,p,j)=>s+(p.x-C[asg[j]][0])**2+(p.y-C[asg[j]][1])**2,0);return{J,C,asg}}
+const D3BEST=d3lloyd([[-7,0],[-2.5,0],[2.5,0],[7,0]]).J;
+LAB({id:'d3',mod:'D',g:'D3',lessons:['d3-1','d3-2'],
+ t:['k-means به مقداردهی اولیه وابسته است','k-means depends on its start'],
+ aha:['k-means همیشه پایین می‌آید ولی فقط به نزدیک‌ترین کمینه؛ جای مراکز اولیه تعیین می‌کند به کمینه‌ی خوب برسید یا بد.','k-means always goes downhill, but only to the nearest minimum; where the initial centroids sit decides whether you reach a good one.'],
+ big:{had:['می‌دانیم خوشه‌بندی نمونه‌ها را بدون برچسب گروه می‌کند و k-means بین «انتساب» و «میانگین» تکرار می‌کند.','We know clustering groups samples without labels and k-means alternates between assignment and averaging.'],
+  miss:['آیا این تکرار همیشه به بهترین خوشه‌بندی می‌رسد؟','Does this alternation always reach the best clustering?'],
+  fix:['خودتان ۴ مرکز اولیه را روی نمودار می‌گذارید و نتیجه‌ی همگرایی را می‌بینید.','You place 4 initial centroids on the plot yourself and see where the algorithm converges.'],
+  close:['هر تکرار J را کم می‌کند ولی J چندکمینه‌ای است؛ پس k-means++ (پراکنده‌چینی) و چند اجرا استفاده می‌شود. درس بعد (PCA) بُعد داده را کم می‌کند.','Every iteration lowers J but J has several minima; hence k-means++ (spread-out seeding) and several runs. PCA next reduces the data\'s dimension.']},
+ sol:{C:[[-7,0],[-2.5,0],[2.5,0],[7,0]]},fail:{C:[[-7,0.2],[-7,-0.3],[-2.5,0],[7,0]]},
+ st:()=>({C:[]}),
+ stage(host,st,A){A.add=(x,y)=>{if(st.C.length<4){st.C.push([x,y]);A.upd()}};
+  return()=>{host.innerHTML='';const P=chart(560,230,-10,10,-3.5,3.5,{l:26,b:22});P.axes(10,2,v=>String(Math.round(v)),v=>String(Math.round(v)));const run=st.C.length===4?d3lloyd(st.C):null;const pal=['var(--ac)','var(--bad)','var(--ok)','var(--warn)'],sh=['●','■','▲','◆'];
+   D3P.forEach((p,j)=>{if(run)P.svg.append(sv('text',{x:P.X(p.x),y:P.Y(p.y)+4,'text-anchor':'middle','font-size':11,fill:pal[run.asg[j]]},sh[run.asg[j]]));else P.dot(p.x,p.y,3.2,'var(--mut)')});
+   st.C.forEach((c,i)=>{P.svg.append(sv('circle',{cx:P.X(c[0]),cy:P.Y(c[1]),r:9,fill:'none',stroke:pal[i],'stroke-width':2.4,'stroke-dasharray':'3 3'}),sv('text',{x:P.X(c[0]),y:P.Y(c[1])+4,'text-anchor':'middle','font-size':9,'font-weight':700},String(i+1)))});
+   if(run)run.C.forEach((c,i)=>{P.svg.append(sv('path',{d:`M${P.X(c[0])-7} ${P.Y(c[1])} h14 M${P.X(c[0])} ${P.Y(c[1])-7} v14`,stroke:pal[i],'stroke-width':4}));if(st.C[i])P.line(st.C[i][0],st.C[i][1],c[0],c[1],pal[i],'2 3',1.4)});
+   const ov=P.svg;ov.style.touchAction='none';ov.style.cursor=st.C.length<4?'crosshair':'default';ov.addEventListener('pointerdown',e=>{const r=ov.getBoundingClientRect(),vx=(e.clientX-r.left)/r.width*560,vy=(e.clientY-r.top)/r.height*230;const x=-10+(vx-26)/(560-26-10)*20,y=3.5-(vy-8)/(230-8-22)*7;A.add(x,y)});
+   const bad=run&&run.J>D3BEST*1.02;host.append(P.svg,h('div',{class:'stat'},h('span',{},t2('مراکز اولیه‌ی گذاشته‌شده: ','Initial centroids placed: '),h('b',{},st.C.length+'/4')),h('span',{},t2('inertia نهایی: ','Final inertia: '),h('b',{style:{color:run?(bad?'var(--bad)':'var(--ok)'):'var(--fg)'}},run?fmt(run.J,1):'—')),h('span',{},t2('بهترین شناخته‌شده: ','Best known: '),h('b',{},fmt(D3BEST,1)))),
+    h('div',{class:'wn'},t2('روی نمودار کلیک کنید تا مرکز اولیه بگذارید (دایره‌ی خط‌چین). با چهارمی k-means خودکار اجرا می‌شود؛ ✚ = مرکز نهایی. ۴ خوشه‌ی واقعی روی یک خط: x≈−۷، −۲٫۵، ۲٫۵، ۷.','Click the plot to place an initial centroid (dashed circle). With the fourth, k-means runs automatically; ✚ = final centroid. Four true clusters on a line: x ≈ −7, −2.5, 2.5, 7.')))}},
+ screens:{
+  puzzle:{ask:['چهار خوشه‌ی واضح داریم. ۴ مرکز اولیه را بگذارید. آیا هر چینشی به خوشه‌بندی درست می‌رسد؟','There are four obvious clusters. Place 4 initial centroids. Does every placement reach the right clustering?'],
+   do:['روی نمودار چهار بار کلیک کنید و نتیجه را ببینید؛ «پاک‌کردن» را بزنید و دوباره امتحان کنید.','Click the plot four times and look at the result; press "Clear" and try again.'],ctl:(st,A)=>[btn(t2('پاک‌کردن','Clear'),()=>{st.C.length=0;A.upd()}),btn(t2('بازگشت یک مرکز','Undo last'),()=>{st.C.pop();A.upd()})]},
+  explore:{claim:['وقتی دو مرکز اولیه در یک خوشه بیفتند و خوشه‌ای بی‌مرکز بماند، k-means به کمینه‌ی بدتری می‌رسد.','When two initial centroids fall in one cluster and another cluster gets none, k-means ends in a worse minimum.'],
+   ask:['کدام چینش‌ها به inertia ≈ ۱۰۸ می‌رسند و کدام به عدد بزرگ‌تر؟ چه الگویی می‌بینید؟','Which placements reach an inertia of about 108 and which end larger? What pattern do you see?'],
+   do:['دو مرکز را کنار هم در خوشه‌ی چپ بگذارید، بعد یکی را به خوشه‌ی دیگر منتقل کنید.','Put two centroids together in the left cluster, then move one to another cluster.'],ctl:(st,A)=>[btn(t2('نمونه‌ی بد','Bad example'),()=>{st.C=[[-7,0.2],[-7,-0.3],[-2.5,0],[7,0]];A.upd()}),btn(t2('نمونه‌ی خوب','Good example'),()=>{st.C=[[-7,0],[-2.5,0],[2.5,0],[7,0]];A.upd()}),btn(t2('پاک‌کردن','Clear'),()=>{st.C.length=0;A.upd()}),btn(t2('بازگشت یک مرکز','Undo last'),()=>{st.C.pop();A.upd()})],
+   see:['در نمونه‌ی بد، دو مرکز یک خوشه را تقسیم می‌کنند و یک مرکز دو خوشه‌ی مجاور را می‌بلعد: inertia ≈ ۳ برابر.','In the bad example, two centroids split one cluster while one centroid swallows two neighbouring clusters: the inertia is about 3× larger.']},
+  name:{says:[['k-means هدف زیر را کم می‌کند ولی هدف نامحدب است:','k-means lowers the objective below, which is non-convex:']],tex:['J(\\boldsymbol\\mu)=\\sum_i\\min_c\\|\\mathbf x_i-\\boldsymbol\\mu_c\\|^2'],
+   legend:[['\\min_c',['هر نمونه فقط به نزدیک‌ترین مرکز تعلق دارد؛ همین min هدف را چندکمینه‌ای می‌کند.','Each sample belongs only to its nearest centroid; this min makes the objective multi-minimum.']],['\\boldsymbol\\mu_c',['مرکز خوشه‌ی c؛ در هر تکرار برابر میانگین اعضا.','The centroid of cluster c; in each iteration the mean of its members.']]]},
+  challenge:{ask:['۴ مرکز اولیه بگذارید که k-means به بهترین inertia (حداکثر ۲٪ بالاتر) همگرا شود.','Place 4 initial centroids so that k-means converges to the best inertia (at most 2% above it).'],
+   do:['inertia نهایی سبز می‌شود.','The final inertia turns green.'],ctl:(st,A)=>{st.C=[];return[btn(t2('پاک‌کردن','Clear'),()=>{st.C.length=0;A.upd()}),btn(t2('بازگشت یک مرکز','Undo last'),()=>{st.C.pop();A.upd()})]},
+   ok:st=>st.C.length===4&&d3lloyd(st.C).J<=D3BEST*1.02,hints:[['هر خوشه‌ی واقعی باید یک مرکز اولیه داشته باشد.','Every real cluster should get one initial centroid.'],['اگر جایی دو مرکز می‌گذارید، جای دیگر خوشه‌ای بی‌مرکز می‌ماند.','If you put two centroids somewhere, another cluster stays without one.'],['چهار خوشه حدود x=−۷، −۲٫۵، ۲٫۵ و ۷ هستند؛ یکی را نزدیک هرکدام بگذارید.','The four clusters are near x = −7, −2.5, 2.5 and 7; put one near each.']],
+   win:['هر خوشه یک مرکز اولیه گرفت و k-means به کمینه‌ی خوب رسید. k-means++ همین «پراکنده‌چینی» را خودکار می‌کند.','Each cluster got one initial centroid and k-means reached the good minimum. k-means++ automates this "spread-out" seeding.']}}});
+
+/* D4 · Validation error picks the model */
+const D4f=x=>Math.sin(1.5*x),D4mk=(n,seed)=>{const q=mulberry(seed);return Array.from({length:n},()=>{const x=-2+4*q();return{x,y:D4f(x)+0.3*MLX.gauss(q)}})};
+const D4TR=D4mk(12,5),D4VA=D4mk(40,77);
+function d4eval(st){const w=Lib.polyfit(D4TR.map(p=>p.x),D4TR.map(p=>p.y),st.deg,Math.pow(10,st.ll));const m=S=>S.reduce((s,p)=>s+(Lib.polyval(w,p.x)-p.y)**2,0)/S.length;return{w,tr:m(D4TR),va:m(D4VA)}}
+LAB({id:'d4',mod:'D',g:'D4',lessons:['d4-1','d4-2'],
+ t:['خطای اعتبارسنجی مدل را انتخاب می‌کند','Validation error picks the model'],
+ aha:['خطای آموزش با پیچیدگی همیشه کم می‌شود و دروغ می‌گوید؛ خطای داده‌ی کنارگذاشته (اعتبارسنجی) نشان می‌دهد مدل واقعاً تعمیم می‌دهد یا نه.','Training error always falls with complexity and lies; the error on held-out (validation) data shows whether the model really generalizes.'],
+ big:{had:['می‌دانیم مدل با داده‌ی آموزشی برازش می‌شود و ظرفیت (درجه) و منظم‌سازی (λ) را می‌توان تنظیم کرد.','We know a model is fit on training data and its capacity (degree) and regularization (λ) can be tuned.'],
+  miss:['با چه عددی بین مدل‌ها انتخاب کنیم؟ خطای آموزش را باور کنیم؟','Which number do we use to choose between models? Do we trust the training error?'],
+  fix:['۱۲ نقطه‌ی آموزش و ۴۰ نقطه‌ی اعتبارسنجی؛ درجه و λ را تغییر می‌دهید و هر دو خطا را می‌بینید.','12 training and 40 validation points; you change degree and λ and watch both errors.'],
+  close:['مدل را با خطای اعتبارسنجی (یا CV) انتخاب می‌کنیم و آزمون را فقط یک‌بار می‌خوانیم. درس بعد ارزیابی مدل‌های طبقه‌بندی با معیارهای دیگر را می‌گوید.','We choose the model by validation (or CV) error and read the test set only once. The next lessons cover other evaluation metrics for classifiers.']},
+ sol:{deg:9,ll:0.5},fail:{deg:9,ll:-4},
+ st:()=>({deg:9,ll:-6}),
+ stage(host,st,A){return()=>{host.innerHTML='';const P=chart(560,300,-2.2,2.2,-1.8,1.8,{l:30,b:24});P.axes(8,6,v=>fmt(v,1),v=>fmt(v,1));P.path(D4f,'var(--ok)',-2.2,2.2,100,1.6);const e=d4eval(st);P.path(x=>Lib.polyval(e.w,x),'var(--ac)',-2.2,2.2,220,2.6);
+   D4VA.forEach(p=>P.svg.append(sv('circle',{cx:P.X(p.x),cy:P.Y(Math.max(-1.8,Math.min(1.8,p.y))),r:3,fill:'none',stroke:'var(--mut)'})));D4TR.forEach(p=>P.dot(p.x,p.y,4.8,'var(--bad)'));
+   host.append(P.svg,h('div',{class:'stat'},h('span',{},t2('درجه: ','Degree: '),h('b',{},st.deg)),h('span',{},'log₁₀ λ = ',h('b',{},fmt(st.ll,1))),h('span',{},t2('خطای آموزش: ','Training MSE: '),h('b',{},fmt(e.tr,3))),h('span',{},t2('خطای اعتبارسنجی: ','Validation MSE: '),h('b',{style:{color:e.va<=0.4?'var(--ok)':e.va>2?'var(--bad)':'var(--fg)'}},fmt(e.va,3)))),
+    h('div',{class:'wn'},t2('● قرمز = ۱۲ نقطه‌ی آموزش · ◯ خاکستری = ۴۰ نقطه‌ی اعتبارسنجی · منحنی سبز = تابع واقعی sin(1.5x) · آبی = مدل. داده‌ها شبیه‌سازی‌شده‌اند.','● red = 12 training points · ◯ grey = 40 validation points · green curve = the true function sin(1.5x) · blue = the model. The data are simulated.')))}},
+ screens:{
+  puzzle:{ask:['یک چندجمله‌ای درجه‌ی ۹ می‌تواند ۱۲ نقطه‌ی آموزش را تقریباً کامل برازش کند. آیا این مدل خوب است؟','A degree-9 polynomial can fit 12 training points almost perfectly. Is that a good model?'],
+   do:['درجه را از ۱ تا ۹ ببرید (λ≈۰) و هر دو عدد خطا را مقایسه کنید.','Move the degree from 1 to 9 (λ ≈ 0) and compare both error numbers.'],ctl:(st,A)=>{st.ll=-6;return[rng(t2('درجه','Degree'),1,9,1,st.deg,v=>{st.deg=Math.round(v);A.upd()},v=>String(Math.round(v)))]}},
+  explore:{claim:['منظم‌سازی ظرفیت مؤثر را کم می‌کند: درجه‌ی ۹ با λ مناسب هم‌چون مدل ساده رفتار می‌کند.','Regularization lowers the effective capacity: degree 9 with a suitable λ behaves like a simpler model.'],
+   ask:['خطای آموزش و اعتبارسنجی با افزایش λ (برای درجه‌ی ۹) چه می‌شوند؟ کجا خطای اعتبارسنجی کمینه است؟','As λ grows (degree 9), what do the training and validation errors do? Where is the validation error smallest?'],
+   do:['درجه را ۹ نگه دارید و log₁₀ λ را از −۶ تا ۲ ببرید.','Keep the degree at 9 and sweep log₁₀ λ from −6 to 2.'],
+   ctl:(st,A)=>[rng(t2('درجه','Degree'),1,9,1,st.deg,v=>{st.deg=Math.round(v);A.upd()},v=>String(Math.round(v))),rng('log₁₀ λ',-6,2,0.1,st.ll,v=>{st.ll=v;A.upd()},v=>fmt(v,1))],
+   see:['خطای آموزش با λ همیشه بالا می‌رود؛ خطای اعتبارسنجی ابتدا از ≈۸۵ به ≈۰٫۲ می‌افتد و بعد دوباره کمی بالا می‌رود (U‌شکل).','Training error always rises with λ; validation error first falls from ≈ 85 to ≈ 0.2 and then rises slightly again (U-shaped).']},
+  name:{says:[['انتخاب مدل = کمینه‌ی خطای اعتبارسنجی:','Model selection = minimizing the validation error:']],tex:['(d^\\*,\\lambda^\\*)=\\arg\\min_{d,\\lambda}\\ \\mathrm{MSE}_{\\text{val}}\\big(\\hat w_{d,\\lambda}\\big),\\qquad \\hat w_{d,\\lambda}=\\arg\\min_w\\ \\mathrm{MSE}_{\\text{train}}(w)+\\lambda\\|w\\|^2'],
+   legend:[['\\mathrm{MSE}_{\\text{val}}',['خطا روی داده‌ای که در برازش نبوده.','The error on data that was not used for fitting.']],['\\lambda',['ابرپارامتر منظم‌سازی؛ با اعتبارسنجی انتخاب می‌شود نه با آموزش.','The regularization hyperparameter; chosen by validation, not by training.']]]},
+  challenge:{ask:['درجه ثابت ۹ است. log₁₀ λ را طوری بگذارید که خطای اعتبارسنجی از ۰٫۴ کمتر شود.','The degree is fixed at 9. Set log₁₀ λ so that the validation error drops below 0.4.'],
+   do:['به خطای اعتبارسنجی نگاه کنید (سبز = موفق)؛ نه به خطای آموزش.','Watch the validation error (green = success), not the training error.'],ctl:(st,A)=>{st.deg=9;st.ll=-6;return[rng('log₁₀ λ',-6,1.5,0.1,st.ll,v=>{st.ll=v;A.upd()},v=>fmt(v,1))]},
+   ok:st=>st.deg===9&&d4eval(st).va<0.4,hints:[['λ=۰ (لگاریتم خیلی منفی) یعنی بدون منظم‌سازی؛ منحنی آبی نوسان می‌کند.','λ ≈ 0 (very negative log) means no regularization; the blue curve wiggles.'],['λ را آن‌قدر زیاد کنید که نوسان‌ها هموار شوند.','Raise λ until the wiggles are smoothed.'],['جایی حدود log₁₀ λ ≈ ۰ تا ۱ را امتحان کنید و خطای اعتبارسنجی را دنبال کنید.','Try around log₁₀ λ ≈ 0 to 1 and follow the validation error.']],
+   win:['λ مناسب نوسان را مهار کرد: خطای اعتبارسنجی چند صد برابر کم شد، در حالی که خطای آموزش فقط کمی بالا رفت. λ را همیشه با اعتبارسنجی انتخاب کنید.','A suitable λ tamed the wiggles: validation error dropped several hundredfold while training error rose only a little. Always choose λ by validation.']}}});
+
+/* D5 · A hidden layer bends the boundary */
+LAB({id:'d5',mod:'D',g:'D5',lessons:['d5-1','d5-2'],
+ t:['لایه‌ی پنهان مرز را خمیده می‌کند','A hidden layer bends the boundary'],
+ aha:['بدون لایه‌ی پنهان مدل فقط یک مرز خطی دارد؛ هر نورون پنهان یک مرز خطی می‌افزاید و خروجی آن‌ها را ترکیب می‌کند، پس مرز می‌تواند خم شود.','Without a hidden layer the model has only a linear boundary; each hidden neuron adds a linear boundary and the output combines them, so the boundary can bend.'],
+ big:{had:['می‌دانیم رگرسیون لجستیک یک مرز خطی می‌سازد و به‌خوبی با Cross-Entropy آموزش می‌بیند.','We know logistic regression builds a linear boundary and trains well with cross-entropy.'],
+  miss:['داده‌هایی مثل XOR یا حلقه‌ها با هیچ خطی جدا نمی‌شوند. چگونه مدل را غنی‌تر کنیم؟','Data like XOR or rings cannot be separated by any line. How do we make the model richer?'],
+  fix:['شبکه‌ی ۲→H→۱ را در مرورگر آموزش می‌دهید و H را تغییر می‌دهید.','You train a 2 → H → 1 network in the browser and vary H.'],
+  close:['H نورون tanh H مرز خطی می‌سازند و خروجی آن‌ها را ترکیب می‌کند. برای ساختار مکانی تصاویر، CNN وزن‌ها را به‌اشتراک می‌گذارد (درس بعد در همین بخش).','H tanh neurons build H linear boundaries and the output combines them. For the spatial structure of images, a CNN shares weights (the next lesson in this section).']},
+ sol:{ds:'rings',H:3,epochs:400},fail:{ds:'rings',H:1,epochs:400},
+ st:()=>({ds:'xor',H:0,epochs:0,acc:0}),
+ stage(host,st,A){const sets={xor:()=>MLX.xor(2,25,0.25),rings:()=>MLX.rings(3,50,0.12)};A.data={};const get=ds=>A.data[ds]||(A.data[ds]=sets[ds]());A.models={};
+  const mkModel=H=>{const r=mulberry(7),g=()=>MLX.gauss(r)*0.8;return H===0?{H,lin:true,w:[0,0],b:0,ep:0}:{H,w1:Array.from({length:H},()=>[g(),g()]),b1:Array(H).fill(0),w2:Array.from({length:H},g),b2:0,ep:0}};
+  const fwd=(m,x,y)=>{if(m.lin)return{a:[],p:MLX.sig(m.w[0]*x+m.w[1]*y+m.b)};const a=m.w1.map((w,i)=>Math.tanh(w[0]*x+w[1]*y+m.b1[i]));return{a,p:MLX.sig(a.reduce((s,v,i)=>s+v*m.w2[i],m.b2))}};
+  const train=(m,pts,n)=>{for(let e=0;e<n;e++){const N=pts.length,eta=0.5;if(m.lin){let g0=0,g1=0,gb=0;pts.forEach(p=>{const d=fwd(m,p.x,p.y).p-p.c;g0+=d*p.x;g1+=d*p.y;gb+=d});m.w[0]-=eta*g0/N;m.w[1]-=eta*g1/N;m.b-=eta*gb/N}else{const H=m.H,g1=m.w1.map(()=>[0,0]),gb1=Array(H).fill(0),g2=Array(H).fill(0);let gb2=0;pts.forEach(p=>{const{a,p:q}=fwd(m,p.x,p.y),d=q-p.c;gb2+=d;a.forEach((v,i)=>{g2[i]+=d*v;const dh=d*m.w2[i]*(1-v*v);g1[i][0]+=dh*p.x;g1[i][1]+=dh*p.y;gb1[i]+=dh})});for(let i=0;i<H;i++){m.w1[i][0]-=eta*g1[i][0]/N;m.w1[i][1]-=eta*g1[i][1]/N;m.b1[i]-=eta*gb1[i]/N;m.w2[i]-=eta*g2[i]/N}m.b2-=eta*gb2/N}m.ep++}};
+  A.model=()=>{const key=st.ds+':'+st.H;let m=A.models[key];if(!m)m=A.models[key]=mkModel(st.H);if(m.ep>st.epochs){m=A.models[key]=mkModel(st.H)}if(m.ep<st.epochs)train(m,get(st.ds),st.epochs-m.ep);return m};
+  return()=>{host.innerHTML='';const pts=get(st.ds),m=A.model(),ex=[-2.6,2.6,-2.6,2.6];MLX.map(host,520,300,ex,(x,y)=>fwd(m,x,y).p,pts,6);st.acc=pts.filter(p=>(fwd(m,p.x,p.y).p>.5)===!!p.c).length/pts.length;
+   host.append(h('div',{class:'stat'},h('span',{},t2('نورون‌های پنهان H = ','Hidden units H = '),h('b',{},st.H)),h('span',{},t2('دوره‌های آموزش: ','Epochs: '),h('b',{},st.epochs)),h('span',{},t2('دقت: ','Accuracy: '),h('b',{style:{color:st.acc>=0.97?'var(--ok)':'var(--fg)'}},Math.round(st.acc*100)+'%')),h('span',{},t2('پارامترها: ','Parameters: '),h('b',{},st.H?st.H*4+1:3))),
+    h('div',{class:'wn'},t2('نقشه‌ی رنگی = احتمال پیش‌بینی‌شده؛ ● کلاس ۰ و ▲ کلاس ۱. H=۰ یعنی رگرسیون لجستیک. آموزش: گرادیان کامل، η=۰٫۵، مقداردهی ثابت؛ داده‌ها ساختگی‌اند.','Colour map = predicted probability; ● class 0 and ▲ class 1. H = 0 means logistic regression. Training: full-batch gradient descent, η = 0.5, fixed initialization; the data are made up.')))}},
+ screens:{
+  puzzle:{ask:['XOR: چهار گوشه، دو به دو هم‌رنگ در قطر. آیا هیچ خطی آن‌ها را جدا می‌کند؟ پس با H=۰ چقدر دقت می‌گیریم؟','XOR: four corners, same colours on the diagonals. Does any line separate them? So what accuracy do we get with H = 0?'],
+   do:['H را ۰ بگذارید و چند بار «آموزش +۱۰۰» بزنید؛ بعد H را ۲ کنید و دوباره.','Set H = 0 and press "Train +100" a few times; then H = 2 and again.'],
+   ctl:(st,A)=>{st.ds='xor';st.H=0;st.epochs=0;return[rng('H',0,6,1,st.H,v=>{st.H=Math.round(v);st.epochs=0;A.upd()},v=>String(Math.round(v))),btn(t2('آموزش +۱۰۰','Train +100'),()=>{st.epochs+=100;A.upd()}),btn(t2('↺ از نو','↺ Restart'),()=>{st.epochs=0;A.upd()})]}},
+  explore:{claim:['H=۱ هنوز فقط یک مرز خطی است؛ از H=۲ به بعد مرز می‌تواند خم شود و پیچیده‌تر شود.','H = 1 is still only one linear boundary; from H = 2 on the boundary can bend and get more complex.'],
+   ask:['روی «حلقه‌ها» حداقل چند نورون لازم است؟ آیا نورون بیشتر همیشه لازم است؟','How many neurons do the rings need at minimum? Are more always necessary?'],
+   do:['داده را عوض کنید و H را از ۰ تا ۶ ببرید؛ هر بار ۴۰۰ دوره آموزش دهید.','Switch the data and sweep H from 0 to 6; train 400 epochs each time.'],
+   ctl:(st,A)=>[sel(t2('داده','Data'),[{v:'xor',t:'XOR'},{v:'rings',t:t2('حلقه‌ها','Rings')}],st.ds,v=>{st.ds=v;st.epochs=0;A.upd()}),rng('H',0,6,1,st.H,v=>{st.H=Math.round(v);st.epochs=0;A.upd()},v=>String(Math.round(v))),btn(t2('آموزش +۱۰۰','Train +100'),()=>{st.epochs+=100;A.upd()}),btn(t2('آموزش تا ۴۰۰','Train to 400'),()=>{st.epochs=400;A.upd()})],
+   see:['XOR با H≥۲ و حلقه‌ها با H≥۳ تقریباً کامل جدا می‌شوند (H=۲ روی حلقه‌ها حدود ۸۸٪).','XOR is separated almost perfectly with H ≥ 2 and the rings with H ≥ 3 (H = 2 reaches about 88% on the rings).']},
+  name:{says:[['شبکه‌ی شما:','Your network:']],tex:['\\hat p=\\sigma\\Big(b_2+\\sum_{j=1}^{H}v_j\\tanh(\\mathbf w_j^\\top\\mathbf x+b_j)\\Big),\\qquad \\#\\text{params}=4H+1'],
+   legend:[['\\tanh(\\mathbf w_j^\\top\\mathbf x+b_j)',['نورون پنهان j: یک مرز خطی که نرم شده است.','Hidden neuron j: one linear boundary, softened.']],['v_j',['وزن خروجی؛ ترکیب خطی مرزها.','The output weight; a linear combination of the boundaries.']],['H',['تعداد نورون‌های پنهان = ظرفیت مدل.','The number of hidden neurons = the model\'s capacity.']]]},
+  challenge:{ask:['روی «حلقه‌ها» با حداکثر ۳ نورون پنهان به دقت دست‌کم ۹۷٪ برسید. H و تعداد دوره‌ها را انتخاب کنید.','On the "rings" reach at least 97% accuracy with at most 3 hidden units. Choose H and the number of epochs.'],
+   do:['دقت وقتی سبز می‌شود که موفق شده باشید.','The accuracy turns green when you succeed.'],
+   ctl:(st,A)=>{st.ds='rings';st.H=1;st.epochs=0;return[rng('H',0,6,1,st.H,v=>{st.H=Math.round(v);st.epochs=0;A.upd()},v=>String(Math.round(v))),btn(t2('آموزش +۱۰۰','Train +100'),()=>{st.epochs+=100;A.upd()}),btn(t2('آموزش تا ۴۰۰','Train to 400'),()=>{st.epochs=400;A.upd()}),btn(t2('↺ از نو','↺ Restart'),()=>{st.epochs=0;A.upd()})]},
+   ok:st=>st.ds==='rings'&&st.H>=1&&st.H<=3&&st.acc>=0.97,hints:[['یک خط نمی‌تواند حلقه‌ی داخلی را از بیرونی جدا کند؛ دست‌کم چند مرز لازم است؟','No single line separates the inner ring from the outer one; how many boundaries are needed at least?'],['یک چندضلعی دست‌کم ۳ ضلع دارد.','A polygon has at least 3 sides.'],['H=۳ را بگذارید و تا ۴۰۰ دوره آموزش دهید.','Set H = 3 and train to 400 epochs.']],
+   win:['سه نورون مرز سه‌ضلعی‌مانند می‌سازند که حلقه‌ی داخلی را در بر می‌گیرد. ظرفیت لازم است ولی بیشتر از لازم بی‌فایده و بیش‌برازش‌زا است.','Three neurons build a triangle-like boundary that encloses the inner ring. Capacity is needed, but more than needed is useless and invites overfitting.']}}});
 boot();
 </script>
 </body>

@@ -12,6 +12,7 @@ function schema(l,x,lang){const tag=l.id+'/'+lang;
   if(e.t==='mcq'){if(!Array.isArray(e.o)||e.o.length!==b.o.length)R.schema.push(w+' option count');if(!(e.a>=0&&e.a<e.o.length))R.schema.push(w+' bad answer idx')}
   if(e.t==='tf'&&typeof e.a!=='boolean')R.schema.push(w+' tf answer');
   if(e.t==='num'&&typeof e.a!=='number')R.schema.push(w+' num answer');
+  if(e.t==='think'&&!(typeof e.a==='string'&&e.a.length>20||typeof e.e==='string'&&e.e.length>20))R.schema.push(w+' think has no sample answer');
   if(!e.q||!String(e.q).trim())R.schema.push(w+' empty q');
   if(e.t==='sql'){try{const d=SQL.clone(SQL.sampleDB());SQL.runAll(e.sol,d)}catch(er){R.schema.push(w+' sql sol fails: '+er.message)}if(e.sol!==b.sol)R.schema.push(w+' sql sol drift')}});
  if(!x.obj.length||!x.sum.length)R.schema.push(tag+' empty obj/sum')}
