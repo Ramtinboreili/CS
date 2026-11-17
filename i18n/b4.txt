@@ -1,0 +1,244 @@
+@@ b7-2|body#0
+1. OLTP versus OLAP
+@@ b7-2|body#1
+OLTP (transactional)
+@@ b7-2|body#2
+OLAP (analytical)
+@@ b7-2|body#3
+Workload
+@@ b7-2|body#4
+Short, point transactions: placing an order, a payment
+@@ b7-2|body#5
+Heavy aggregation queries over large volumes
+@@ b7-2|body#6
+Access
+@@ b7-2|body#7
+Whole row, small reads/writes
+@@ b7-2|body#8
+A few columns of billions of rows
+@@ b7-2|body#9
+Storage
+@@ b7-2|body#10
+Row-oriented, B+tree, normalized
+@@ b7-2|body#11
+Columnar, compressed, denormalized (star/snowflake)
+@@ b7-2|body#12
+Priority
+@@ b7-2|body#13
+Low latency, transaction throughput, ACID
+@@ b7-2|body#14
+Scan throughput, analysis
+@@ b7-2|body#15
+Example
+@@ b7-2|body#16
+Usually data is moved from OLTP to a <b>data warehouse</b> by an <b>ETL/ELT</b> process. <b>Star schema</b>: a central <i>fact</i> table (events/measures: sales) joined to <i>dimension</i> tables (time, product, customer). Aggregations become fast with simple joins and columnar scans. <b>HTAP</b> is the attempt to do both in one system.
+@@ b7-2|body#17
+Row versus columnar layout for OLTP and OLAP
+@@ b7-2|body#18
+2. Backup and recovery
+@@ b7-2|body#19
+<b>Full / incremental / differential:</b> complete, only changes since the last backup, changes since the last full backup.
+@@ b7-2|body#20
+<b>Logical (pg_dump) versus physical (copying files + WAL):</b> physical is faster for large volumes.
+@@ b7-2|body#21
+<b>Point-in-time recovery (PITR):</b> a base backup + continuous WAL archiving ⇒ return to any moment (for example one minute before an accidental DELETE).
+@@ b7-2|body#22
+<b>RPO</b> (recovery point objective): the maximum data that may be lost (time). <b>RTO</b> (recovery time objective): the maximum acceptable downtime.
+@@ b7-2|body#23
+A backup whose <b>restore has not been tested</b> is not a backup. The 3-2-1 rule: 3 copies, 2 media, 1 off-site.
+@@ b7-2|body#24
+3. Connection pooling
+@@ b7-2|body#25
+Creating a database connection is expensive (TCP, TLS, authentication, and in PostgreSQL a new process). A <b>connection pool</b> keeps some connections open and lends them between requests (HikariCP, PgBouncer). Estimate a suitable size with <b>Little's law</b>: $L=\lambda W$ (concurrency = arrival rate × time held). A bigger pool is not better: the database's CPU/disk is limited and many connections only create contention and memory use.
+@@ b7-2|body#26
+Computing the pool size
+@@ b7-2|body#27
+4. Prepared statements and the plan cache
+@@ b7-2|body#28
+A <b>prepared statement</b> parses/plans the SQL text once and runs it with different parameters (<code>WHERE id = $1</code>); it gives speed and also defeats <b>SQL injection</b> (a parameter is never interpreted as code). Warning: a "generic plan" may not be optimal for values with a skewed distribution (parameter sniffing).
+@@ b7-2|obj:0#0
+Compare OLTP and OLAP and the related structures (star schema, columnar).
+@@ b7-2|obj:1#0
+Know backup strategies and the RPO/RTO metrics.
+@@ b7-2|obj:2#0
+Estimate the connection-pool size with Little's law and know the role of prepared statements.
+@@ b7-2|mis:0#0
+"Having a backup means having a replica." ← A replica replicates an accidental delete too.
+@@ b7-2|mis:1#0
+"The bigger the pool, the faster." ← Beyond CPU/IO capacity, queueing and overhead only make it worse.
+@@ b7-2|mis:2#0
+"Running OLAP on the same OLTP database is fine." ← Heavy queries slow down OLTP.
+@@ b7-2|sum:0#0
+OLTP: short transactions with row storage; OLAP: heavy aggregation with columnar storage and star schema.
+@@ b7-2|sum:1#0
+Backup + WAL archiving = PITR; RPO and RTO define the goals.
+@@ b7-2|sum:2#0
+Size the pool with Little's law; prepared statements are both faster and safer.
+@@ b7-2|ex:0:q#0
+Which workload suits columnar storage better?
+@@ b7-2|ex:0:e#0
+Only the needed column is read and compressed.
+@@ b7-2|ex:0:o:0#0
+Reading one whole row by PK
+@@ b7-2|ex:0:o:1#0
+Aggregating total sales over one column of billions of rows
+@@ b7-2|ex:0:o:2#0
+Frequent single-row inserts
+@@ b7-2|ex:0:o:3#0
+Updating one row
+@@ b7-2|ex:1:q#0
+A service has 200 requests per second and each request holds a connection for 50 ms. What is the average number of concurrent connections needed?
+@@ b7-2|ex:2:q#0
+A prepared statement with a parameter is one of the most effective defences against SQL injection.
+@@ b7-2|ex:2:e#0
+User input is passed as a parameter value, not as part of the SQL text.
+@@ b7-2|ex:3:q#0
+An organization wants RPO = 5 minutes and RTO = 30 minutes. What backup/replication architecture do you suggest?
+@@ b7-2|ex:3:a#0
+RPO = 5 minutes means continuous WAL archiving (shipping interval under 5 minutes, or synchronous/semi-synchronous replication) for PITR; a periodic (say nightly) base backup with compression, kept off-site. RTO = 30 minutes means restoring from a backup may be too slow for large volumes; so a ready replica (hot standby) with automatic/semi-automatic failover, and periodic restore tests to confirm the RTO is met. Backups are also needed for logical errors (accidental deletion).
+@@ b8-1|body#0
+1. Storage hierarchy and the page
+@@ b8-1|body#1
+A DBMS stores and moves data on disk in fixed blocks called <b>pages</b> (8 KB in PostgreSQL, 16 KB in InnoDB). The I/O unit is the page, not the row. Each page has an identifier (file, page number). A table is usually a <b>heap file</b> of pages and indexes are other files.
+@@ b8-1|body#2
+The slotted page
+@@ b8-1|body#3
+Rows have variable length. In the slotted-page structure: a <b>header</b> (id, the LSN of the last change, slot count, free space), a <b>slot array</b> from the start that points to each row, and the <b>rows</b> growing from the end of the page toward the middle; the free space is between them. The row identifier is the <b>RID = (page no., slot no.)</b>; moving a row within a page only changes the slot and the RID stays fixed. Very large rows (TOAST/overflow) are stored separately.
+@@ b8-1|body#4
+2. The buffer pool
+@@ b8-1|body#5
+The <b>buffer pool</b> is a region of RAM that keeps copies of recent pages. A page request: if it is in the pool (<b>hit</b>) it is returned directly; otherwise (<b>miss</b>) it is read from disk and, if there is no room, a <b>victim</b> page is chosen; if it is dirty (changed but not yet written to disk) it must be written to disk before removal. A page in use is <b>pinned</b> and not evicted.
+@@ b8-1|body#6
+The crucial effect: RAM access ≈ 100 ns, SSD ≈ 100 µs (1000×), HDD ≈ 10 ms (100,000×). With hit ratio $h$ the average access time is $h\cdot t_{RAM}+(1-h)\cdot t_{disk}$; so 99% versus 90% hits means about 10× fewer misses.
+@@ b8-1|body#7
+<b>Replacement policies:</b> LRU (least recently used), clock (a cheap LRU approximation), LRU-K / 2Q / ARC which are more robust. The problem with plain LRU: <b>sequential flooding</b> — one big full table scan flushes out all the "hot" pages. Remedies: a small ring buffer for large scans (PostgreSQL) or a "young/old" region (InnoDB midpoint insertion).
+@@ b8-1|body#8
+Buffer-pool simulator with LRU
+@@ b8-1|body#9
+Note: DBMSs usually have a dedicated buffer pool and bypass the operating-system file cache (<code>O_DIRECT</code>) because they know better which pages are valuable and must control the order of writes (WAL).
+@@ b8-1|obj:0#0
+Explain the structure of a data page (slotted page) and the heap file.
+@@ b8-1|obj:1#0
+Describe the role of the buffer pool, replacement policies and dirty pages.
+@@ b8-1|obj:2#0
+Understand the effect of the hit ratio on performance and the sequential-flooding phenomenon.
+@@ b8-1|mis:0#0
+"More RAM always increases performance." ← Only until the working set fits; after that the gain diminishes.
+@@ b8-1|mis:1#0
+"The row is the unit of reading from disk." ← It is the page; reading one byte = reading one page.
+@@ b8-1|mis:2#0
+"A dirty page must be written to disk immediately." ← Delaying the write (with WAL) improves performance.
+@@ b8-1|sum:0#0
+The I/O unit is the page; a slotted page keeps variable rows with a stable RID.
+@@ b8-1|sum:1#0
+The buffer pool raises the hit ratio with a replacement policy; dirty pages are written lazily.
+@@ b8-1|sum:2#0
+Sequential flooding is a problem for plain LRU and has remedies.
+@@ b8-1|ex:0:q#0
+With a hit ratio of 90%, $t_{RAM}=0.0001$ ms and $t_{disk}=1$ ms, what is the average access time in ms?
+@@ b8-1|ex:1:q#0
+What is sequential flooding?
+@@ b8-1|ex:1:e#0
+A scan brings in pages used only once and LRU evicts the really hot pages.
+@@ b8-1|ex:1:o:0#0
+A large scan flushes the hot pages out of the buffer pool
+@@ b8-1|ex:1:o:1#0
+The disk fills up
+@@ b8-1|ex:1:o:3#0
+The hit ratio increases
+@@ b8-1|ex:2:q#0
+In a slotted page, a row's RID does not change when it is moved within the same page.
+@@ b8-1|ex:2:e#0
+RID = (page, slot); only the slot's content points to the new location.
+@@ b8-1|ex:3:q#0
+What is the risk of writing a dirty page to disk before the corresponding log record has reached the disk?
+@@ b8-1|ex:3:a#0
+If the system crashes after the page is written and before the log is written, and the transaction has not committed, the change remains on disk but there is no log to undo it; recovery cannot revert it and atomicity is violated. That is why the write-ahead logging rule says: the log record must be durable before the data page.
+@@ b8-2|body#0
+1. The problem
+@@ b8-2|body#1
+For speed, changes are first applied in the buffer pool (RAM). If the power fails after COMMIT and the page has not yet reached disk, durability is violated; if a page of an uncommitted transaction has reached disk, atomicity is violated. Four cases based on two policies:
+@@ b8-2|body#2
+Policy
+@@ b8-2|body#3
+Meaning
+@@ b8-2|body#4
+Needs
+@@ b8-2|body#5
+The buffer manager may write an uncommitted transaction's page to disk (to free memory)
+@@ b8-2|body#6
+Undo is needed
+@@ b8-2|body#7
+Never writes it; simple but needs lots of memory
+@@ b8-2|body#8
+At commit the data pages need not go to disk (only the log)
+@@ b8-2|body#9
+Redo is needed
+@@ b8-2|body#10
+At commit all pages must be written; simple but slow random I/O
+@@ b8-2|body#11
+Real DBMSs choose <b>steal + no-force</b> for performance and solve both problems with a <b>log</b>.
+@@ b8-2|body#12
+2. Write-ahead logging
+@@ b8-2|body#13
+<b>The WAL rule:</b> (1) each change's log record must be durable <u>before</u> the changed page is written to disk (guarantees undo); (2) all of a transaction's log records must be durable <u>before</u> the COMMIT reply (guarantees redo/durability). Writing the log is <b>sequential (append-only)</b> and much faster than random page writes (made durable with <code>fsync</code>; <i>group commit</i> gathers several commits into one fsync).
+@@ b8-2|body#14
+Each log record has a sequence number, the <b>LSN</b>, and contains: transaction id, page, <b>before-image</b> (for undo) and <b>after-image</b> (for redo), or a physiological form. Each page keeps the LSN of its last change so that redo is <b>idempotent</b>.
+@@ b8-2|body#15
+3. Checkpoints
+@@ b8-2|body#16
+Without a limit, recovery would have to replay the whole log from the beginning. A <b>checkpoint</b> writes dirty pages to disk (or records in the log a list of them and of the active transactions) so that recovery starts only from the last checkpoint. The trade-off: frequent checkpoints ⇒ fast recovery but more background I/O; rare ⇒ the opposite. (A <i>fuzzy checkpoint</i> is taken without stopping transactions.)
+@@ b8-2|body#17
+4. Crash recovery (the ARIES pattern)
+@@ b8-2|body#18
+<b>Analysis:</b> the log is read from the last checkpoint to identify the "winner" transactions (committed), the "loser" ones (active at the crash) and the possibly dirty pages.
+@@ b8-2|body#19
+<b>Redo:</b> <i>history is repeated</i> — all logged changes (even of loser transactions) are re-applied (if the page's LSN is lower than the record's LSN). The exact state at the moment of the crash is rebuilt.
+@@ b8-2|body#20
+<b>Undo:</b> the changes of loser transactions are reverted with the before-images, from last to first (each undo itself writes a compensation log record, CLR, so that a crash during recovery is also tolerable).
+@@ b8-2|body#21
+Crash-recovery simulator: choose the crash moment
+@@ b8-2|body#22
+<b class="t">Other uses of the log</b>The same log is used for <b>replication</b> (streaming replication), <b>PITR</b> and CDC (change data capture); the log is the database's "source of truth" and the tables are structures derived from it.
+@@ b8-2|obj:0#0
+Explain the WAL rule and the steal/no-force policies.
+@@ b8-2|obj:1#0
+Follow the analysis, redo and undo stages of recovery.
+@@ b8-2|obj:2#0
+Know the role of the checkpoint and the transaction log in durability and recovery time.
+@@ b8-2|mis:0#0
+"Commit means the pages have gone to disk." ← Only the log is made durable; the pages come later.
+@@ b8-2|mis:1#0
+"Redo is only for committed transactions." ← In ARIES everything is redone and then the losers are undone.
+@@ b8-2|mis:2#0
+"fsync does not matter." ← Without it the data is only in the OS cache and is lost in a crash.
+@@ b8-2|sum:0#0
+WAL: the log before the data, and the whole transaction log before COMMIT, made durable.
+@@ b8-2|sum:1#0
+Steal + no-force is efficient and is compensated by undo/redo.
+@@ b8-2|sum:2#0
+ARIES: analysis ← redo (repeat history) ← undo the losers; checkpoints bound the recovery time.
+@@ b8-2|ex:0:q#0
+The WAL rule says:
+@@ b8-2|ex:0:e#0
+Write-ahead: the log record before the corresponding change on disk.
+@@ b8-2|ex:0:o:0#0
+The log is written to disk before the data page
+@@ b8-2|ex:0:o:1#0
+The data page is written before the log
+@@ b8-2|ex:0:o:2#0
+The log is never written
+@@ b8-2|ex:0:o:3#0
+Writing is allowed only at a checkpoint
+@@ b8-2|ex:1:q#0
+Which buffer-manager policies are common in DBMSs?
+@@ b8-2|ex:1:e#0
+Steal + no-force gives the best performance and is made safe by WAL (undo + redo).
+@@ b8-2|ex:2:q#0
+In ARIES recovery, the redo stage re-applies only the changes of committed transactions.
+@@ b8-2|ex:2:e#0
+All logged changes are redone (repeating history) and then the loser transactions are undone.
+@@ b8-2|ex:3:q#0
+Using the simulator widget, find a scenario in which page C (a change by the uncommitted T2) is on disk, and explain how recovery fixes it.
+@@ b8-2|ex:3:a#0
+If the crash happens after event 5 (the flush of page C), the disk has C=7 although T2 never committed (a consequence of steal). The durable log contains the record T2: C 5→7 (WAL). In analysis T2 is identified as a loser; redo re-applies the value 7 (if needed); undo uses the before-image to put C back to 5. The final state has only T1's effect (or nothing if T1 has not committed either).
