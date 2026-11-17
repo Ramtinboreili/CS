@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="fa" dir="rtl" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>کتاب تعاملی علوم کامپیوتر — ساختمان داده، پایگاه داده، ریاضیات هوش مصنوعی</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css" onerror="this.remove()">
+<style>
+:root{--bg:#0f1420;--panel:#171e2e;--panel2:#1d2639;--fg:#e6eaf2;--mut:#93a0b8;--bd:#2a3550;--ac:#5aa9ff;--ac2:#b48cff;--ok:#38c98a;--bad:#ff6b6b;--warn:#f5b74a;--code:#0b1019;--hl:#ffd166;--shadow:0 4px 18px rgba(0,0,0,.25)}
+[data-theme=light]{--bg:#f5f7fb;--panel:#fff;--panel2:#eef2f9;--fg:#1b2333;--mut:#5b6882;--bd:#d5ddec;--ac:#1d6fdc;--ac2:#7a4fd6;--ok:#12975f;--bad:#d33b3b;--warn:#b97a0a;--code:#f0f3f9;--hl:#e09b00;--shadow:0 4px 14px rgba(30,50,90,.10)}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.95 "Vazirmatn","Noto Naskh Arabic","Segoe UI",Tahoma,"DejaVu Sans",sans-serif}
+a{color:var(--ac)}
+#app{display:flex;min-height:100vh}
+#side{width:310px;flex:none;background:var(--panel);border-inline-end:1px solid var(--bd);position:sticky;top:0;height:100vh;overflow-y:auto;padding:14px 12px 30px;z-index:30}
+.brand{display:flex;align-items:center;gap:10px;padding:4px 6px 12px;font-weight:700;font-size:17px;cursor:pointer}
+.brand i{display:grid;place-items:center;width:34px;height:34px;border-radius:9px;background:linear-gradient(135deg,var(--ac),var(--ac2));color:#fff;font-style:normal;font-size:15px;direction:ltr}
+.srch{position:relative;margin-bottom:10px}
+.srch input{width:100%;padding:9px 12px;border-radius:10px;border:1px solid var(--bd);background:var(--panel2);color:var(--fg);font:inherit;font-size:14px}
+#res{position:absolute;inset-inline:0;top:100%;margin-top:4px;background:var(--panel);border:1px solid var(--bd);border-radius:10px;box-shadow:var(--shadow);max-height:60vh;overflow:auto;z-index:50;display:none}
+#res a{display:block;padding:8px 12px;text-decoration:none;color:var(--fg);border-bottom:1px solid var(--bd);font-size:14px;line-height:1.7}
+#res a:hover{background:var(--panel2)}#res small{color:var(--mut);display:block}
+#res mark{background:transparent;color:var(--hl);font-weight:700}
+.nlink{display:flex;align-items:center;gap:8px;padding:6px 10px;border-radius:8px;text-decoration:none;color:var(--fg);font-size:14px;line-height:1.6;cursor:pointer}
+.nlink:hover{background:var(--panel2)}
+.nlink.act{background:color-mix(in srgb,var(--ac) 18%,transparent);color:var(--ac);font-weight:700}
+.nlink .tick{margin-inline-start:auto;color:var(--ok);font-size:13px}
+.nlink .dot{width:7px;height:7px;border-radius:50%;background:var(--bd);flex:none}
+.nlink .dot.v{background:var(--warn)}.nlink .dot.d{background:var(--ok)}
+details.nm{margin:6px 0;border-radius:10px}
+details.nm>summary{cursor:pointer;list-style:none;padding:8px 10px;font-weight:700;border-radius:10px;display:flex;align-items:center;gap:8px;font-size:15px}
+details.nm>summary::-webkit-details-marker{display:none}
+details.nm>summary:hover{background:var(--panel2)}
+details.nm>summary:after{content:"▾";margin-inline-start:auto;color:var(--mut);transition:.2s}
+details.nm:not([open])>summary:after{transform:rotate(90deg)}
+.mpct{font-size:12px;color:var(--mut);font-weight:400;direction:ltr}
+details.ng{margin:2px 0 2px 0;padding-inline-start:8px}
+details.ng>summary{cursor:pointer;color:var(--mut);font-size:13px;padding:4px 8px;list-style:none;direction:ltr;text-align:left;font-weight:600}
+details.ng>summary::-webkit-details-marker{display:none}
+details.ng>summary:before{content:"▸ "}details.ng[open]>summary:before{content:"▾ "}
+#main{flex:1;min-width:0}
+#top{position:sticky;top:0;z-index:20;display:flex;align-items:center;gap:10px;padding:10px 22px;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(8px);border-bottom:1px solid var(--bd)}
+#crumb{font-size:13.5px;color:var(--mut);display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+#crumb a{color:var(--mut);text-decoration:none;cursor:pointer}#crumb a:hover{color:var(--ac)}
+.sp{flex:1}
+.ib{border:1px solid var(--bd);background:var(--panel);color:var(--fg);border-radius:10px;padding:6px 11px;cursor:pointer;font:inherit;font-size:14px}
+.ib:hover{border-color:var(--ac)}
+#burger{display:none}
+#view{max-width:980px;margin:0 auto;padding:26px 22px 80px}
+h1{font-size:30px;line-height:1.5;margin:6px 0 4px}
+h2{font-size:23px;margin:36px 0 10px;padding-bottom:6px;border-bottom:2px solid var(--bd)}
+h3{font-size:18.5px;margin:26px 0 6px;color:var(--ac)}
+h4{margin:18px 0 4px}
+p{margin:10px 0}
+li{margin:4px 0}
+.en{direction:ltr;unicode-bidi:isolate;display:inline-block;font-family:"Segoe UI",system-ui,sans-serif}
+.sub{color:var(--mut);direction:ltr;text-align:right;font-size:15px}
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}
+.chip{font-size:12.5px;border:1px solid var(--bd);border-radius:20px;padding:1px 11px;color:var(--mut);background:var(--panel);line-height:1.9}
+.chip.b1{color:var(--ok);border-color:var(--ok)}.chip.b2{color:var(--warn);border-color:var(--warn)}.chip.b3{color:var(--bad);border-color:var(--bad)}
+.card{background:var(--panel);border:1px solid var(--bd);border-radius:14px;padding:16px 18px;box-shadow:var(--shadow)}
+.grid{display:grid;gap:14px}.g2{grid-template-columns:repeat(auto-fit,minmax(300px,1fr))}.g3{grid-template-columns:repeat(auto-fit,minmax(250px,1fr))}
+.callout{border-inline-start:4px solid var(--ac);background:var(--panel);padding:10px 16px;border-radius:10px;margin:14px 0}
+.callout.warn{border-color:var(--warn)}.callout.bad{border-color:var(--bad)}.callout.ok{border-color:var(--ok)}
+.callout b.t{display:block;margin-bottom:2px}
+code{direction:ltr;unicode-bidi:isolate;font-family:"JetBrains Mono","Fira Code",Consolas,monospace;font-size:.88em;background:var(--code);border:1px solid var(--bd);padding:0 5px;border-radius:5px}
+pre.code{direction:ltr;text-align:left;background:var(--code);border:1px solid var(--bd);border-radius:12px;padding:14px 16px;overflow:auto;margin:14px 0;line-height:1.65;font-size:13.5px}
+pre.code code{border:0;background:none;padding:0;font-size:inherit;white-space:pre}
+.k{color:var(--ac2);font-weight:600}.s{color:var(--ok)}.n{color:var(--warn)}.c{color:var(--mut);font-style:italic}
+.tex.d{direction:ltr;text-align:center;overflow-x:auto;margin:12px 0;padding:6px 0}
+.tex{direction:ltr;unicode-bidi:isolate}.tex.raw{font-family:monospace;color:var(--ac2)}
+table.dt{border-collapse:collapse;direction:ltr;font-size:13.5px;margin:8px 0;background:var(--panel)}
+table.dt th,table.dt td{border:1px solid var(--bd);padding:4px 10px;text-align:left;white-space:nowrap}
+table.dt th{background:var(--panel2)}
+table.dt td.nl{color:var(--mut);font-style:italic}
+table.dt tr.hl td{background:color-mix(in srgb,var(--hl) 28%,transparent)}
+table.dt td.hl{background:color-mix(in srgb,var(--hl) 35%,transparent)}
+table.fa{direction:rtl}table.fa th,table.fa td{text-align:right;white-space:normal}
+.tw{overflow:auto;max-width:100%}
+.btn{border:1px solid var(--bd);background:var(--panel2);color:var(--fg);border-radius:9px;padding:4px 13px;cursor:pointer;font:inherit;font-size:14px;line-height:1.7}
+.btn:hover{border-color:var(--ac)}.btn.pri{background:var(--ac);border-color:var(--ac);color:#fff}.btn.on{border-color:var(--ac);color:var(--ac)}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.wbox{background:var(--panel);border:1px solid var(--bd);border-radius:14px;margin:20px 0;overflow:hidden;box-shadow:var(--shadow)}
+.wbox>.wt{padding:8px 16px;background:var(--panel2);border-bottom:1px solid var(--bd);font-weight:700;font-size:14.5px;display:flex;gap:8px;align-items:center}
+.wbox>.wt:before{content:"◈";color:var(--ac)}
+.wbox>.wb{padding:12px 16px}
+.wn{color:var(--mut);font-size:13.5px;margin:6px 0 0}
+.ctl{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:8px 0;font-size:14px}
+.ctl label{display:flex;gap:6px;align-items:center;color:var(--mut)}
+.ctl input[type=range]{accent-color:var(--ac);width:140px}
+.ctl input[type=text],.ctl input[type=number],.ctl select,textarea.in,input.in{background:var(--panel2);color:var(--fg);border:1px solid var(--bd);border-radius:8px;padding:3px 9px;font:inherit;font-size:14px;direction:ltr;max-width:100%}
+.ctl input[type=number]{width:80px}
+textarea.in{width:100%;font-family:Consolas,monospace;font-size:13.5px;min-height:90px;display:block;direction:ltr;text-align:left;padding:8px 10px}
+.stage{direction:ltr;overflow:auto;max-width:100%}
+.stage svg,.sv{display:block;max-width:100%;height:auto;margin:auto}
+.desc{min-height:26px;padding:6px 10px;border-radius:8px;background:var(--panel2);font-size:14px;margin:6px 0;border-inline-start:3px solid var(--ac)}
+.stat{display:flex;gap:16px;flex-wrap:wrap;font-size:13.5px;color:var(--mut);margin:6px 0}.stat b{color:var(--fg);direction:ltr;unicode-bidi:isolate}
+canvas.cv{display:block;max-width:100%;border-radius:10px;background:var(--code);border:1px solid var(--bd);touch-action:none}
+svg text{font-family:Consolas,"Segoe UI",monospace;fill:var(--fg)}
+svg .mut{fill:var(--mut)}
+.bar{height:9px;background:var(--panel2);border-radius:6px;overflow:hidden}.bar>i{display:block;height:100%;background:linear-gradient(90deg,var(--ac),var(--ac2));transition:width .4s}
+.bar.ok>i{background:var(--ok)}
+.ex{background:var(--panel);border:1px solid var(--bd);border-radius:14px;padding:14px 18px;margin:14px 0}
+.ex.right{border-color:var(--ok)}.ex.wrong{border-color:var(--bad)}
+.ex .qh{display:flex;gap:8px;align-items:center;margin-bottom:4px;font-size:13px;color:var(--mut)}
+.opt{display:block;width:100%;text-align:right;border:1px solid var(--bd);background:var(--panel2);color:var(--fg);padding:7px 14px;margin:6px 0;border-radius:10px;cursor:pointer;font:inherit;font-size:15px}
+.opt:hover{border-color:var(--ac)}.opt.c{border-color:var(--ok);background:color-mix(in srgb,var(--ok) 18%,transparent)}.opt.w{border-color:var(--bad);background:color-mix(in srgb,var(--bad) 16%,transparent)}
+.fb{margin-top:8px;padding:10px 14px;border-radius:10px;background:var(--panel2);font-size:15px}
+.fb.ok{border-inline-start:4px solid var(--ok)}.fb.no{border-inline-start:4px solid var(--bad)}
+.hero{background:linear-gradient(135deg,color-mix(in srgb,var(--ac) 22%,var(--panel)),color-mix(in srgb,var(--ac2) 20%,var(--panel)));border:1px solid var(--bd);border-radius:18px;padding:26px 28px;margin-bottom:20px}
+.mcard{cursor:pointer;transition:.2s}.mcard:hover{transform:translateY(-3px);border-color:var(--ac)}
+.mcard h3{margin:0 0 4px;color:var(--fg)}
+.lnav{display:flex;justify-content:space-between;gap:10px;margin-top:30px;flex-wrap:wrap}
+.tabs{display:flex;gap:6px;flex-wrap:wrap;margin:6px 0}
+.cell{fill:var(--panel2);stroke:var(--bd)}
+.nd{fill:var(--panel2);stroke:var(--ac);stroke-width:2}.nd.hi{fill:var(--hl);stroke:var(--hl)}.nd.ok{fill:var(--ok);stroke:var(--ok)}.nd.bad{fill:var(--bad);stroke:var(--bad)}.nd.pr{fill:var(--ac2);stroke:var(--ac2)}
+.nd.hi~text,.nd.ok~text,.nd.bad~text,.nd.pr~text{fill:#111}
+.lnk{stroke:var(--mut);stroke-width:1.6;fill:none}
+#toast{position:fixed;bottom:20px;inset-inline-start:20px;background:var(--panel);border:1px solid var(--ok);padding:8px 16px;border-radius:10px;box-shadow:var(--shadow);opacity:0;transition:.3s;pointer-events:none;z-index:99;font-size:14px}
+#toast.on{opacity:1}
+mark.f{background:color-mix(in srgb,var(--hl) 40%,transparent);color:inherit}
+@media(max-width:900px){#side{position:fixed;inset-block:0;inset-inline-start:0;transform:translateX(105%);transition:.25s;box-shadow:var(--shadow)}
+[dir=rtl] #side{transform:translateX(105%)}body.nav #side{transform:none}#burger{display:inline-block}#view{padding:18px 14px 70px}h1{font-size:24px}#top{padding:8px 12px}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
+</style>
+</head>
+<body>
+<div id="app">
+<aside id="side">
+ <div class="brand" onclick="location.hash='#/'"><i>CS</i><span>کتاب تعاملی علوم کامپیوتر</span></div>
+ <div class="srch"><input id="q" type="search" placeholder="جست‌وجو در همه درس‌ها…" autocomplete="off"><div id="res"></div></div>
+ <nav id="nav"></nav>
+</aside>
+<div id="main">
+ <header id="top"><button class="ib" id="burger" aria-label="منو">☰</button><nav id="crumb"></nav><div class="sp"></div>
+  <button class="ib" id="progBtn" title="پیشرفت و یادداشت‌ها">📊 پیشرفت</button><button class="ib" id="themeBtn" title="تغییر تم">☀</button></header>
+ <main id="view"></main>
+</div>
+</div>
+<div id="toast"></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js" defer onerror="window.__nokatex=1"></script>
+<script>
