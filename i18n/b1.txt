@@ -1,0 +1,450 @@
+@@ b1-1|body#0
+1. The database and the DBMS
+@@ b1-1|body#1
+A <b>database</b> is an organized, related collection of data, and a <b>database management system (DBMS)</b> is the software that manages the storage, retrieval, updating and protection of that data against many concurrent users and failures (PostgreSQL, MySQL, SQLite, Oracle, MongoDB, ...).
+@@ b1-1|body#2
+Why plain files are not enough
+@@ b1-1|body#3
+<b>Redundancy and inconsistency:</b> one fact is repeated in several files and drifts out of sync.
+@@ b1-1|body#4
+<b>Concurrency:</b> two programs update one file at the same time and corrupt each other.
+@@ b1-1|body#5
+<b>Atomicity:</b> if a money transfer between two accounts is left half-done, money vanishes.
+@@ b1-1|body#6
+<b>Integrity and security:</b> rules (such as "no negative balance") and access control.
+@@ b1-1|body#7
+<b>Performance:</b> searching gigabytes without an index.
+@@ b1-1|body#8
+<b>Programs depend on the file format.</b>
+@@ b1-1|body#9
+2. Three-level architecture and data independence
+@@ b1-1|body#10
+The ANSI/SPARC architecture sees data at three levels: the <b>external level (view)</b> for each user/application, the <b>conceptual (logical) level</b> that describes the whole structure (tables, constraints), and the <b>internal (physical) level</b> which is how data is stored on disk (pages, indexes). This separation gives two kinds of <b>data independence</b>: <i>physical independence</i> (changing indexes/file layout without changing the tables and queries) and <i>logical independence</i> (changing tables without breaking views). The foundation of "declarative" SQL is the same: you say <i>what</i> you want, not <i>how</i>.
+@@ b1-1|body#11
+3. The parts of a DBMS
+@@ b1-1|body#12
+The path of a query through the DBMS architecture
+@@ b1-1|body#13
+4. Data models
+@@ b1-1|body#14
+Model
+@@ b1-1|body#15
+Structure
+@@ b1-1|body#16
+Example
+@@ b1-1|body#17
+Strength
+@@ b1-1|body#18
+Relational
+@@ b1-1|body#19
+Tables with rows/columns and keys
+@@ b1-1|body#20
+SQL, ACID transactions, powerful joins
+@@ b1-1|body#21
+Document
+@@ b1-1|body#22
+Nested JSON documents
+@@ b1-1|body#23
+Flexible schema, hierarchical data
+@@ b1-1|body#24
+Key-value
+@@ b1-1|body#25
+A map from key to an opaque value
+@@ b1-1|body#26
+Speed and simple scalability
+@@ b1-1|body#27
+Wide-column
+@@ b1-1|body#28
+Column families
+@@ b1-1|body#29
+Heavy writes, large scale
+@@ b1-1|body#30
+Graph
+@@ b1-1|body#31
+Nodes and edges
+@@ b1-1|body#32
+Traversing deep relationships
+@@ b1-1|body#33
+Analytical columnar
+@@ b1-1|body#34
+Column-by-column storage
+@@ b1-1|body#35
+Heavy aggregations (OLAP)
+@@ b1-1|body#36
+A <b>schema</b> describes the structure and an <b>instance</b> is the data at a moment in time. A relational database is usually <i>schema-on-write</i> (the structure is enforced before insertion), many NoSQL stores are <i>schema-on-read</i>.
+@@ b1-1|body#37
+<b class="t">Relational versus non-relational: choose by need</b>NoSQL is not "better" or "faster"; it makes different trade-offs. If your data is highly relational and needs multi-table transactions, relational is usually the right choice. If you need very high horizontal scale, a flexible structure or a simple access pattern (by key), NoSQL options fit. Many modern systems (NewSQL, PostgreSQL with JSONB) blur the line.
+@@ b1-1|body#38
+5. Table terminology
+@@ b1-1|body#39
+A <b>table (relation)</b> consists of <b>columns (attributes)</b> with a defined data type and <b>rows (tuples)</b>. You can experiment with this book's sample tables (employees, departments, projects, assignments) in the SQL Sandbox.
+@@ b1-1|body#40
+A look at the sample tables
+@@ b1-1|obj:0#0
+Define the database and the DBMS and state why files are not enough.
+@@ b1-1|obj:1#0
+Explain the three-level architecture and the concept of data independence.
+@@ b1-1|obj:2#0
+Know the relational and non-relational data models and the criteria for choosing between them.
+@@ b1-1|obj:3#0
+Follow a query through the internal components of a DBMS.
+@@ b1-1|pre:0#0
+Basic familiarity with tables and files
+@@ b1-1|mis:0#0
+"A DBMS is the same as a database." ← Database = the data; DBMS = the software that manages it.
+@@ b1-1|mis:1#0
+"NoSQL means no structure and no transactions." ← Many have structure and transactions (limited or full).
+@@ b1-1|mis:2#0
+"The application must manage indexes and tables." ← Physical independence means the DBMS manages them.
+@@ b1-1|sum:0#0
+A DBMS solves the problems of files (redundancy, concurrency, atomicity, security).
+@@ b1-1|sum:1#0
+The three-level architecture and declarative SQL provide data independence.
+@@ b1-1|sum:2#0
+Data models make different trade-offs; choose by need, not by fashion.
+@@ b1-1|ex:0:q#0
+Which of these is a benefit of physical data independence?
+@@ b1-1|ex:0:e#0
+Physical independence means changing the storage organization (such as adding an index) without changing the logical schema and the queries.
+@@ b1-1|ex:0:o:0#0
+Adding an index without changing the application code
+@@ b1-1|ex:0:o:1#0
+Removing the need for SQL
+@@ b1-1|ex:0:o:2#0
+Storing the data in RAM
+@@ b1-1|ex:0:o:3#0
+Reducing the number of tables
+@@ b1-1|ex:1:q#0
+SQL is a "declarative" language: we specify what we want, not how to get it.
+@@ b1-1|ex:1:e#0
+The query optimizer chooses the execution plan (the "how").
+@@ b1-1|ex:2:q#0
+Which DBMS component is responsible for choosing the cheapest execution plan?
+@@ b1-1|ex:2:e#0
+The optimizer picks one of the equivalent plans using a cost model and table statistics.
+@@ b1-1|ex:3:q#0
+Write the name and salary of employees whose salary is above 4500 (columns: name, salary).
+@@ b1-1|ex:3:e#0
+<code>SELECT name, salary FROM employees WHERE salary &gt; 4500</code> — four rows: Ali, Omid, Lida (and Maryam = 4500 is not included).
+@@ b1-1|ex:3:hint#0
+Only two columns and the condition WHERE salary > 4500.
+@@ b1-1|ex:4:q#0
+For systems like a shop's shopping cart and logging of sensor readings, suggest a suitable data model (with the reason).
+@@ b1-1|ex:4:a#0
+Shopping cart and orders: relational (ACID transactions, customer–order–item relationships, integrity constraints). Sensor logs: very heavy writes with a simple structure and time-range queries; a time-series/columnar database (TimescaleDB, InfluxDB) or a wide-column store like Cassandra, which are optimized for sequential writes and horizontal scale. Criteria: access pattern, required consistency and volume.
+@@ b2-1|body#0
+1. The relational model
+@@ b2-1|body#1
+The relational model (Codd, 1970) sees data as a <b>relation</b>. If the attributes are $A_1,\dots,A_k$ with domains $D_1,\dots,D_k$, a relation is a subset of the Cartesian product $D_1\times\dots\times D_k$; that is, a <b>set</b> of tuples. Important consequences: the order of rows is meaningless; in the theoretical model there are no duplicate rows (SQL relaxes this and is a "bag"); and the order of columns is not intrinsic either. <b>Degree</b> = the number of columns, <b>cardinality</b> = the number of rows.
+@@ b2-1|body#2
+2. Keys
+@@ b2-1|body#3
+<b>Superkey:</b> a set of attributes whose value identifies every row uniquely.
+@@ b2-1|body#4
+<b>Candidate key:</b> a <i>minimal</i> superkey; removing any attribute destroys uniqueness.
+@@ b2-1|body#5
+<b>Primary key:</b> the chosen one among the candidate keys; it has no NULL. The others are <b>alternate keys</b> and are enforced with <code>UNIQUE</code>.
+@@ b2-1|body#6
+<b>Foreign key:</b> an attribute that references a candidate/primary key of another table and guarantees <b>referential integrity</b>.
+@@ b2-1|body#7
+A <b>surrogate key</b> like <code>id AUTO_INCREMENT/UUID</code> versus a <b>natural key</b> like a national ID number.
+@@ b2-1|body#8
+3. Integrity constraints
+@@ b2-1|body#9
+or CASCADE / RESTRICT
+@@ b2-1|body#10
+FK behaviour when deleting/changing a parent row: <code>RESTRICT/NO ACTION</code> (reject the operation), <code>CASCADE</code> (delete/change the children), <code>SET NULL</code>, <code>SET DEFAULT</code>. In this book's built-in engine the default behaviour is RESTRICT. Try it:
+@@ b2-1|body#11
+Experimenting with constraints (PK / FK / NOT NULL)
+@@ b2-1|body#12
+Note: in this sandbox each run accepts one statement; the "Reset" button returns the data to its initial state.
+@@ b2-1|body#13
+4. NULL and three-valued logic
+@@ b2-1|body#14
+<code>NULL</code> means "unknown/inapplicable value", not zero or an empty string. Comparing with NULL gives <b>UNKNOWN</b>: <code>NULL = NULL</code> is neither true nor false; to test you must write <code>IS NULL</code>. <code>WHERE</code> keeps only TRUE rows. The truth table: <code>TRUE AND UNKNOWN = UNKNOWN</code>, <code>FALSE AND UNKNOWN = FALSE</code>, <code>TRUE OR UNKNOWN = TRUE</code>. Note: <code>NOT IN (subquery)</code> returns no rows if the subquery contains NULL — a famous trap.
+@@ b2-1|body#15
+5. Kinds of relationships between tables
+@@ b2-1|body#16
+Type
+@@ b2-1|body#17
+Implementation
+@@ b2-1|body#18
+Example
+@@ b2-1|body#19
+One-to-many (1:N)
+@@ b2-1|body#20
+FK on the "many" side
+@@ b2-1|body#21
+One department ← many employees: <code>employees.dept_id</code>
+@@ b2-1|body#22
+One-to-one (1:1)
+@@ b2-1|body#23
+FK with a UNIQUE constraint (or a shared key)
+@@ b2-1|body#24
+User ← profile
+@@ b2-1|body#25
+Many-to-many (N:M)
+@@ b2-1|body#26
+A junction table with two FKs and a composite primary key
+@@ b2-1|body#27
+Employee ↔ project with <code>assignments(emp_id, project_id)</code>
+@@ b2-1|body#28
+Self-referencing
+@@ b2-1|body#29
+An FK to the same table
+@@ b2-1|obj:0#0
+Express relation, attribute, domain and tuple mathematically.
+@@ b2-1|obj:1#0
+Distinguish superkey, candidate key, primary key and foreign key.
+@@ b2-1|obj:2#0
+Know the integrity constraints and the behaviour of NULL, and implement 1:1, 1:N and N:M relationships.
+@@ b2-1|mis:0#0
+"A primary key must be one column." ← It can be composite (like assignments).
+@@ b2-1|mis:1#0
+"UNIQUE means PRIMARY KEY." ← UNIQUE allows NULL (depending on the DBMS) and you can have several UNIQUE constraints.
+@@ b2-1|mis:2#0
+"NULL equals zero or the empty string." ← It is unknown and has three-valued logic.
+@@ b2-1|mis:3#0
+"An FK without an index is fine." ← Deleting/joining on an unindexed FK becomes slow.
+@@ b2-1|sum:0#0
+A relation = a set of tuples; a candidate key = a minimal superkey.
+@@ b2-1|sum:1#0
+An FK preserves referential integrity; delete behaviour: RESTRICT/CASCADE/SET NULL.
+@@ b2-1|sum:2#0
+NULL has three-valued logic; test it with IS NULL.
+@@ b2-1|sum:3#0
+N:M is implemented with a junction table.
+@@ b2-1|ex:0:q#0
+Which option best describes a candidate key?
+@@ b2-1|ex:0:e#0
+A candidate key is a superkey none of whose proper subsets is a superkey.
+@@ b2-1|ex:0:o:0#0
+Any column with unique values
+@@ b2-1|ex:0:o:1#0
+A minimal superkey
+@@ b2-1|ex:0:o:2#0
+A key that references another table
+@@ b2-1|ex:0:o:3#0
+An AUTO_INCREMENT column
+@@ b2-1|ex:1:q#0
+What is needed to implement an N:M relationship between student and course?
+@@ b2-1|ex:1:e#0
+A junction table (Enrollment) with the composite key (student_id, course_id) and two FKs.
+@@ b2-1|ex:1:o:0#0
+One FK in the student table
+@@ b2-1|ex:1:o:1#0
+One FK in the course table
+@@ b2-1|ex:1:o:2#0
+A junction table with two foreign keys
+@@ b2-1|ex:1:o:3#0
+Two unrelated tables
+@@ b2-1|ex:2:q#0
+The expression <code>WHERE dept_id = NULL</code> returns the rows without a department.
+@@ b2-1|ex:2:e#0
+<code>= NULL</code> is always UNKNOWN and no row is returned. You must write <code>dept_id IS NULL</code>.
+@@ b2-1|ex:3:q#0
+Find the employees without a department (columns: id, name).
+@@ b2-1|ex:3:e#0
+Only Nima has no department.
+@@ b2-1|ex:3:hint#0
+Use IS NULL.
+@@ b2-1|ex:4:q#0
+Insert a new employee with id=20, name "Sima", department 2, salary 4000, hire year 2024 and no manager (NULL).
+@@ b2-1|ex:4:e#0
+The primary key is unique and the FK to department 2 is valid.
+@@ b2-1|ex:4:hint#0
+Column order: id, name, dept_id, salary, hire_year, manager_id.
+@@ b2-1|ex:5:q#0
+Why might a "natural key" such as an email or national ID be unsuitable as a PK?
+@@ b2-1|ex:5:a#0
+A natural key may change (email), may stop being unique or available in the future, may be long (bigger indexes and heavier FKs) or may reveal sensitive information. A surrogate key is immutable, short and meaningless; but the uniqueness of the natural key should still be enforced with a UNIQUE constraint.
+@@ b3-1|body#0
+1. Basic SELECT
+@@ b3-1|body#1
+columns (projection π)
+@@ b3-1|body#2
+data source
+@@ b3-1|body#3
+row filter (selection σ)
+@@ b3-1|body#4
+sorting
+@@ b3-1|body#5
+row limit
+@@ b3-1|body#6
+Operators: <code>= &lt;&gt; &lt; &gt; &lt;= &gt;=</code>, <code>BETWEEN a AND b</code>, <code>IN (...)</code>, <code>LIKE 'M%'</code> (<code>%</code> any string, <code>_</code> one character), <code>IS NULL</code>, combined with <code>AND OR NOT</code>. <code>DISTINCT</code> removes duplicate rows. Without <code>ORDER BY</code> the result order is <b>not</b> guaranteed.
+@@ b3-1|body#7
+Try SELECT
+@@ b3-1|body#8
+2. DML: INSERT / UPDATE / DELETE
+@@ b3-1|body#9
+Warning: <code>UPDATE</code> or <code>DELETE</code> <b>without WHERE</b> applies to all rows. A safe habit: first run the same WHERE with <code>SELECT</code> and check the row count, or run inside a transaction and then COMMIT.
+@@ b3-1|body#10
+3. JOIN
+@@ b3-1|body#11
+A JOIN combines the rows of two tables according to a condition. In the theoretical model: $R\bowtie_{\theta}S=\sigma_\theta(R\times S)$.
+@@ b3-1|body#12
+Type
+@@ b3-1|body#13
+Result
+@@ b3-1|body#14
+Only rows that have a partner in both tables
+@@ b3-1|body#15
+All left rows; if there is no partner, the right columns are NULL
+@@ b3-1|body#16
+The mirror image of LEFT
+@@ b3-1|body#17
+The union of LEFT and RIGHT
+@@ b3-1|body#18
+Cartesian product (all combinations)
+@@ b3-1|body#19
+A viewer for JOIN types on employees and departments
+@@ b3-1|body#20
+Employee name and department name (INNER)
+@@ b3-1|body#21
+Departments that have no employee (anti-join with LEFT JOIN)
+@@ b3-1|body#22
+Important notes
+@@ b3-1|body#23
+A <b>table alias</b> (<code>e</code>, <code>d</code>) improves readability and disambiguates same-named columns.
+@@ b3-1|body#24
+A <code>WHERE</code> condition on the right-hand table of a <code>LEFT JOIN</code> effectively turns it into an INNER JOIN (because NULLs are filtered out); put conditions on the right table in the <code>ON</code> clause.
+@@ b3-1|body#25
+Forgetting the JOIN condition creates a Cartesian product: $n\times m$ rows.
+@@ b3-1|body#26
+A <b>self join</b> handles relationships within a table (an employee and their manager) with two aliases of one table.
+@@ b3-1|body#27
+JOIN and self join
+@@ b3-1|obj:0#0
+Write SELECT queries with WHERE, ORDER BY and LIMIT.
+@@ b3-1|obj:1#0
+Use INSERT, UPDATE and DELETE respecting the constraints.
+@@ b3-1|obj:2#0
+Distinguish the JOIN types with examples and avoid an unintended join (Cartesian product).
+@@ b3-1|mis:0#0
+"A LEFT JOIN with WHERE on a right-hand column is the same as a condition in ON." ← It is not; WHERE filters after the join and removes the NULL rows.
+@@ b3-1|mis:1#0
+"The result order without ORDER BY is the table order." ← It is not guaranteed.
+@@ b3-1|mis:2#0
+"SELECT * is harmless." ← Extra data, dependence on column order and defeating covering indexes.
+@@ b3-1|mis:3#0
+Using <code>= NULL</code> instead of <code>IS NULL</code>.
+@@ b3-1|sum:0#0
+SELECT … FROM … WHERE … ORDER BY … LIMIT is the basis of queries.
+@@ b3-1|sum:1#0
+DML without WHERE is dangerous.
+@@ b3-1|sum:2#0
+INNER, LEFT, RIGHT, FULL and CROSS JOIN behave differently on unmatched rows.
+@@ b3-1|ex:0:q#0
+List the names of employees hired in 2020 or later, ordered by name (ascending). (column: name)
+@@ b3-1|ex:0:e#0
+Kian, Neda, Nima, Pouya.
+@@ b3-1|ex:0:hint#0
+WHERE hire_year >= 2020 and ORDER BY name.
+@@ b3-1|ex:1:q#0
+For every employee who has a department, give the employee's name and the city of the department (columns: name, city).
+@@ b3-1|ex:1:e#0
+An employee without a department (Nima) does not appear in an INNER JOIN.
+@@ b3-1|ex:1:hint#0
+INNER JOIN with ON e.dept_id = d.id.
+@@ b3-1|ex:2:q#0
+The names of departments that have no employee (column: name).
+@@ b3-1|ex:2:e#0
+Only Research.
+@@ b3-1|ex:2:hint#0
+LEFT JOIN and test whether the right table's column is NULL.
+@@ b3-1|ex:3:q#0
+Which JOIN keeps all rows of the left table even without a match?
+@@ b3-1|ex:3:e#0
+A LEFT (OUTER) JOIN puts NULL in the right table's columns for unmatched rows.
+@@ b3-1|ex:3:o:3#0
+Only SELF JOIN
+@@ b3-1|ex:4:q#0
+The name of each employee together with their manager's name (columns: employee, manager) for those who have a manager, ordered by employee.
+@@ b3-1|ex:4:e#0
+Self join: the employees table with itself on manager_id = id.
+@@ b3-1|ex:4:hint#0
+A self join with two aliases.
+@@ b3-2|body#0
+1. Aggregate functions and GROUP BY
+@@ b3-2|body#1
+<code>COUNT, SUM, AVG, MIN, MAX</code> summarize several rows into one value. <code>GROUP BY</code> splits the rows into groups with the same value of the grouping columns and computes the function in each group. <code>COUNT(*)</code> counts all rows but <code>COUNT(col)</code> does not count rows where that column is NULL. Aggregates ignore NULL (<code>AVG</code> is the mean of the non-NULL values).
+@@ b3-2|body#2
+filter on the aggregate result
+@@ b3-2|body#3
+<b>WHERE versus HAVING:</b> <code>WHERE</code> applies to rows <i>before</i> grouping and cannot take aggregates; <code>HAVING</code> applies to groups <i>after</i> grouping. The logical execution order of a SELECT (not the order of writing):
+@@ b3-2|body#4
+<code>FROM/JOIN → WHERE → GROUP BY → HAVING → SELECT (and windows) → DISTINCT → ORDER BY → LIMIT</code>
+@@ b3-2|body#5
+Aggregation and grouping
+@@ b3-2|body#6
+2. Subqueries
+@@ b3-2|body#7
+<b>Scalar:</b> returns one value and takes the place of a value: <code>WHERE salary &gt; (SELECT AVG(salary) FROM employees)</code>.
+@@ b3-2|body#8
+<b>EXISTS:</b> tests for at least one row; usually efficient and free of NULL problems.
+@@ b3-2|body#9
+<b>Correlated:</b> refers to columns of the outer query and is (conceptually) evaluated "again" for each outer row.
+@@ b3-2|body#10
+Highest salary in each department (correlated)
+@@ b3-2|body#11
+3. The CTE (common table expression)
+@@ b3-2|body#12
+<code>WITH</code> creates a "named temporary table" for that query and breaks complex queries into readable steps.
+@@ b3-2|body#13
+(In PostgreSQL <code>WITH RECURSIVE</code> makes hierarchy traversal possible; the book's built-in engine supports non-recursive CTEs.)
+@@ b3-2|body#14
+4. Window functions
+@@ b3-2|body#15
+Unlike GROUP BY they <b>do not merge</b> rows; for each row they compute a value over a "window" of related rows. Structure: <code>fn(...) OVER (PARTITION BY ... ORDER BY ...)</code>. Ranking functions: <code>ROW_NUMBER</code> (a unique number), <code>RANK</code> (ties get the same number with gaps), <code>DENSE_RANK</code> (no gaps); <code>LAG/LEAD</code> the previous/next row's value; aggregates with OVER give running totals.
+@@ b3-2|body#16
+Salary ranking within each department with RANK
+@@ b3-2|body#17
+<b class="t">Why a CTE for filtering on a window?</b>A window-function result cannot be used directly in the WHERE of the same SELECT (windows are computed after WHERE). The solution: compute it inside a CTE/subquery and filter outside.
+@@ b3-2|obj:0#0
+Use GROUP BY/HAVING, knowing the difference between WHERE and HAVING.
+@@ b3-2|obj:1#0
+Write scalar, IN, EXISTS and correlated subqueries.
+@@ b3-2|obj:2#0
+Use CTEs for structure and window functions for ranking and running totals without merging rows.
+@@ b3-2|mis:0#0
+"HAVING and WHERE are the same." ← The time of application and the ability to use aggregates differ.
+@@ b3-2|mis:1#0
+"A column in SELECT that is not in GROUP BY is fine." ← Standard SQL and most DBMSs give an error (old MySQL returned an arbitrary value).
+@@ b3-2|mis:2#0
+"NOT IN and NOT EXISTS are equivalent." ← With NULL in the subquery, NOT IN returns an empty result.
+@@ b3-2|mis:3#0
+"A window function is the same as GROUP BY." ← It does not collapse rows.
+@@ b3-2|sum:0#0
+GROUP BY collapses rows; HAVING filters groups.
+@@ b3-2|sum:1#0
+Subqueries (scalar, IN, EXISTS, correlated) and CTEs make queries modular.
+@@ b3-2|sum:2#0
+Window functions keep the rows and add rank, running totals and comparison with neighbouring rows alongside them.
+@@ b3-2|ex:0:q#0
+The number of employees in each department (only departments that have employees) as (dept_id, n), ordered by dept_id. Ignore employees without a department.
+@@ b3-2|ex:0:e#0
+The NULL group appears separately; we remove it with WHERE.
+@@ b3-2|ex:0:hint#0
+GROUP BY dept_id and remove NULL with WHERE.
+@@ b3-2|ex:1:q#0
+The names of employees whose salary is above the overall average salary (column: name).
+@@ b3-2|ex:1:e#0
+The average salary is 4290 ⇒ Ali, Maryam, Omid, Lida.
+@@ b3-2|ex:1:hint#0
+A scalar subquery for AVG.
+@@ b3-2|ex:2:q#0
+For each department, write the department name and the total working hours recorded in assignments for that department's projects (columns: dept, total_hours), keeping only totals above 200 hours.
+@@ b3-2|ex:2:e#0
+Engineering: 120+200+150+80+160=710; Sales: 90+110+60=260; HR: 170 (excluded).
+@@ b3-2|ex:2:hint#0
+A three-table join + GROUP BY + HAVING.
+@@ b3-2|ex:3:q#0
+The second-highest earner in each department (columns: name, dept_id, salary). Use a CTE and ROW_NUMBER.
+@@ b3-2|ex:3:e#0
+Second place: Ali (Eng), Reza or Kian (Sales; equal salary 3900 — ROW_NUMBER picks one arbitrarily), Pouya (HR). For ties DENSE_RANK is more appropriate.
+@@ b3-2|ex:3:hint#0
+Just add WHERE rn = 2.
+@@ b3-2|ex:4:q#0
+What is the difference between <code>NOT IN</code> and <code>NOT EXISTS</code> when the subquery returns NULL?
+@@ b3-2|ex:4:a#0
+<code>x NOT IN (a, b, NULL)</code> is equivalent to <code>x&lt;&gt;a AND x&lt;&gt;b AND x&lt;&gt;NULL</code>; the last term is UNKNOWN so the whole expression is never TRUE and no row is returned. <code>NOT EXISTS</code> only tests whether a matching row exists and does not count NULL as a "match"; so it is safer.

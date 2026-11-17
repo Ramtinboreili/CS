@@ -1,0 +1,434 @@
+@@ b5-2|body#0
+1. The composite (multi-column) index
+@@ b5-2|body#1
+An index on $(a,b,c)$ is sorted <i>lexicographically</i>: first by $a$, then within each $a$ by $b$, and so on. So it can seek only for <b>left prefixes</b> ($a$ or $a,b$ or $a,b,c$). Equality conditions on the first columns and at most <i>one</i> range condition (on the last usable column) are the best case; columns after the range condition are only filtered. The rule of thumb for column order: <b>equalities first, then the range, then ORDER BY</b>, and the column with higher selectivity usually earlier.
+@@ b5-2|body#2
+Column order and use of a composite index
+@@ b5-2|body#3
+2. The covering index and index-only scan
+@@ b5-2|body#4
+If all the columns a query needs are in the index itself (for example <code>CREATE INDEX ON t(a, b) INCLUDE (c)</code>), the DBMS does not need to go to the table pages: an <b>index-only scan</b>. This removes the second random access but makes the index bigger.
+@@ b5-2|body#5
+3. Other kinds of index
+@@ b5-2|body#6
+Type
+@@ b5-2|body#7
+Property
+@@ b5-2|body#8
+Suitable
+@@ b5-2|body#9
+Unsuitable
+@@ b5-2|body#10
+Sorted; equality, range, ORDER BY, prefix
+@@ b5-2|body#11
+The default in most cases
+@@ b5-2|body#12
+Equality only in $O(1)$; unordered
+@@ b5-2|body#13
+Exact-key lookup (as in memory engines)
+@@ b5-2|body#14
+Range, ORDER BY, prefix
+@@ b5-2|body#15
+For low-cardinality columns (gender, status)
+@@ b5-2|body#16
+Data warehouses, combining conditions with AND/OR
+@@ b5-2|body#17
+OLTP with heavy writes
+@@ b5-2|body#18
+Word ← list of documents
+@@ b5-2|body#19
+Text search, JSONB, arrays
+@@ b5-2|body#20
+Spatial/range data
+@@ b5-2|body#21
+Maps, nearest point
+@@ b5-2|body#22
+Only a subset or a computed value
+@@ b5-2|body#23
+<code>WHERE active</code>, <code>LOWER(email)</code>
+@@ b5-2|body#24
+4. Storage engines
+@@ b5-2|body#25
+The storage engine determines how data is kept and accessed (MySQL has several selectable engines). Two main families of storage structure:
+@@ b5-2|body#26
+<b>B+tree-based (in-place update):</b> InnoDB, PostgreSQL (heap + B-tree), SQL Server. Fast, predictable reads; random writes and fragmentation.
+@@ b5-2|body#27
+<b>LSM tree (log-structured merge):</b> RocksDB, Cassandra, LevelDB. Writes go first to the memtable and the WAL, then are flushed as immutable sorted files (SSTables) on disk and <b>compacted</b> in the background. Fast sequential writes; reads may touch several files (mitigated with Bloom filters) and there is write amplification from compaction.
+@@ b5-2|body#28
+<b>Row versus columnar storage:</b> columnar (Parquet, ClickHouse, Redshift) for aggregating a few columns over billions of rows; row storage for fetching a whole row and OLTP writes.
+@@ b5-2|body#29
+Row versus columnar storage: which pages are read?
+@@ b5-2|body#30
+The read/write trade-off (RUM conjecture)
+@@ b5-2|body#31
+You cannot optimize reads, writes and memory (read, update, memory overhead) at the same time; improving one costs another. A B+tree favours reads and an LSM favours writes.
+@@ b5-2|obj:0#0
+Design a composite index and the leftmost-prefix rule correctly.
+@@ b5-2|obj:1#0
+Compare the covering index, hash and LSM tree with the B+tree.
+@@ b5-2|obj:2#0
+Analyse storage engines and the read/write trade-off.
+@@ b5-2|mis:0#0
+"Index every column." ← Slow writes and lots of memory; only useful indexes.
+@@ b5-2|mis:1#0
+"An index $(a,b)$ also helps a condition on $b$ alone." ← No (it violates the leftmost prefix); except skip scan in some DBMSs.
+@@ b5-2|mis:2#0
+"A hash index is faster than a B+tree at everything." ← It has no range and no order.
+@@ b5-2|sum:0#0
+Composite index: leftmost prefix; equalities then the range.
+@@ b5-2|sum:1#0
+A covering index removes the table access.
+@@ b5-2|sum:2#0
+B+tree for reads/ranges, LSM for heavy writes, columnar for analytics; the RUM trade-off.
+@@ b5-2|ex:0:q#0
+For the query <code>WHERE country=? AND age BETWEEN ? AND ?</code> which index is better?
+@@ b5-2|ex:0:e#0
+Equality on the first column (country) and then a range on the second (age) is optimal for the seek.
+@@ b5-2|ex:0:o:2#0
+(country) only
+@@ b5-2|ex:1:q#0
+An index $(a,b,c)$ is usually ineffective for a query that has a condition only on $b$.
+@@ b5-2|ex:1:e#0
+The index is sorted on $a$ and $b$ is sorted only within each $a$.
+@@ b5-2|ex:2:q#0
+What advantage does an LSM tree have over a B+tree?
+@@ b5-2|ex:2:e#0
+Writes are first gathered in memory and the log and flushed sequentially to disk.
+@@ b5-2|ex:2:o:0#0
+Fast sequential writes
+@@ b5-2|ex:2:o:1#0
+Reads are always faster
+@@ b5-2|ex:2:o:2#0
+No compaction
+@@ b5-2|ex:2:o:3#0
+Zero memory use
+@@ b5-2|ex:3:q#0
+For the table <code>orders(id, customer_id, status, created_at, total)</code> and the frequent query "a customer's open orders sorted by date", design a suitable index (with the reason).
+@@ b5-2|ex:3:a#0
+<code>CREATE INDEX ON orders(customer_id, created_at) WHERE status='open'</code> (a partial index) or (customer_id, status, created_at). Order: equality on customer_id (and status), then created_at, which also provides the ORDER BY from the index without an extra sort. If the query only needs id and total you can INCLUDE them to get an index-only scan. Cost: writes and memory; it must be measured with EXPLAIN and the real workload.
+@@ b6-1|body#0
+1. What is a transaction?
+@@ b6-1|body#1
+A <b>transaction</b> is a sequence of operations that, from the outside, is one logical "all or nothing" unit. Example: transferring 100 units from account A to B:
+@@ b6-1|body#2
+or ROLLBACK on error
+@@ b6-1|body#3
+2. The ACID properties
+@@ b6-1|body#4
+Property
+@@ b6-1|body#5
+Meaning
+@@ b6-1|body#6
+Main mechanism
+@@ b6-1|body#7
+<b>A</b>tomicity
+@@ b6-1|body#8
+Either all changes are applied or none
+@@ b6-1|body#9
+<b>C</b>onsistency
+@@ b6-1|body#10
+A transaction takes the database from one valid state (constraints hold) to another valid state
+@@ b6-1|body#11
+Constraints + application logic; the result of the other properties
+@@ b6-1|body#12
+<b>I</b>solation
+@@ b6-1|body#13
+Concurrent transactions run as if they were sequential (in different degrees)
+@@ b6-1|body#14
+Locking / MVCC
+@@ b6-1|body#15
+<b>D</b>urability
+@@ b6-1|body#16
+After COMMIT the data is not lost even in a crash
+@@ b6-1|body#17
+<b>Life cycle:</b> active ← partially committed ← committed; on error failed ← aborted (rollback). After abort, the system can re-run (retry) the transaction or end it.
+@@ b6-1|body#18
+3. Concurrency and anomalies
+@@ b6-1|body#19
+<b>Dirty read:</b> reading uncommitted data of another transaction, which may be rolled back.
+@@ b6-1|body#20
+<b>Non-repeatable read:</b> a row is read twice in the same transaction and two different values are seen (because another transaction committed in between).
+@@ b6-1|body#21
+<b>Phantom read:</b> a range/conditional query is run twice and the set of rows (a new row) changes.
+@@ b6-1|body#22
+<b>Lost update:</b> two transactions read the old value and each writes on top of it; one of the updates is lost. <b>Write skew:</b> two transactions write separate but related data and a logical constraint is violated (for example two doctors take leave at the same time and nobody is left on call).
+@@ b6-1|body#23
+4. Isolation levels (standard SQL)
+@@ b6-1|body#24
+Simulator of isolation levels and anomalies
+@@ b6-1|body#25
+Level
+@@ b6-1|body#26
+Possible
+@@ b6-1|body#27
+Possible
+@@ b6-1|body#28
+Possible
+@@ b6-1|body#29
+Read Committed (the default of PostgreSQL, Oracle)
+@@ b6-1|body#30
+Prevented
+@@ b6-1|body#31
+Possible
+@@ b6-1|body#32
+Possible
+@@ b6-1|body#33
+Repeatable Read (the default of MySQL InnoDB)
+@@ b6-1|body#34
+Prevented
+@@ b6-1|body#35
+Prevented
+@@ b6-1|body#36
+Possible by the standard; usually prevented under MVCC
+@@ b6-1|body#37
+Prevented
+@@ b6-1|body#38
+Prevented
+@@ b6-1|body#39
+Prevented
+@@ b6-1|body#40
+fixed snapshot
+@@ b6-1|body#41
+<b class="t">A higher level = a higher cost</b>Serializable gives full isolation through more locking or conflict detection (SSI) and the possibility of aborts with a <code>serialization_failure</code> error; the application must be ready to <b>retry</b>. The "default" of each DBMS differs and the details of Repeatable Read (snapshot isolation versus gap locks) also depend on the implementation.
+@@ b6-1|obj:0#0
+Explain the ACID properties with examples.
+@@ b6-1|obj:1#0
+Describe the transaction life cycle.
+@@ b6-1|obj:2#0
+Relate the dirty, non-repeatable and phantom read anomalies to the isolation levels.
+@@ b6-1|mis:0#0
+"Consistency in ACID is the same as consistency in CAP." ← A different concept: integrity of constraints versus equivalence of replicas.
+@@ b6-1|mis:1#0
+"Serializable means transactions really run one at a time." ← It means the result is equivalent to some serial order; execution is still concurrent.
+@@ b6-1|mis:2#0
+"Read Committed prevents lost updates." ← No; you need an explicit lock (<code>SELECT … FOR UPDATE</code>) or version control.
+@@ b6-1|sum:0#0
+ACID: atomicity, consistency, isolation, durability.
+@@ b6-1|sum:1#0
+Anomalies: dirty, non-repeatable, phantom (plus lost update and write skew).
+@@ b6-1|sum:2#0
+Isolation levels ← a trade-off between concurrency and correctness; exact behaviour depends on the DBMS.
+@@ b6-1|ex:0:q#0
+Which ACID property is ensured by the write-ahead log?
+@@ b6-1|ex:0:e#0
+WAL with undo (atomicity) and redo/flush at commit (durability).
+@@ b6-1|ex:0:o:0#0
+Atomicity and durability
+@@ b6-1|ex:0:o:1#0
+Only isolation
+@@ b6-1|ex:0:o:2#0
+Only consistency
+@@ b6-1|ex:0:o:3#0
+None
+@@ b6-1|ex:1:q#0
+Transaction T1 reads a value, T2 changes it and commits, and T1 reads again and sees the new value. What is this?
+@@ b6-1|ex:1:e#0
+The same row shows two different values (a commit happened between the two reads).
+@@ b6-1|ex:2:q#0
+At the Read Committed level, dirty reads do not occur but non-repeatable reads are possible.
+@@ b6-1|ex:2:e#0
+Each statement sees only committed data but different statements of one transaction can see fresh commits.
+@@ b6-1|ex:3:q#0
+Explain the write-skew example (two on-call doctors) and say which level/tool prevents it.
+@@ b6-1|ex:3:a#0
+Constraint: at least one doctor must be on call. T1 and T2 both read "2 doctors are on call" and each takes only its own row off call. Since the rows written are different, snapshot isolation sees no conflict and both commit ⇒ no doctor remains on call. Solutions: the Serializable level (SSI/predicate locks), an explicit lock on the set that was read (<code>SELECT … FOR UPDATE</code> on all on-call rows), or a constraint/materialized row that turns the conflict into one shared row.
+@@ b6-2|body#0
+1. Pessimistic concurrency control: locking
+@@ b6-2|body#1
+A <b>shared lock (S)</b> for reading (several concurrent readers) and an <b>exclusive lock (X)</b> for writing. Compatibility matrix: S is compatible with S; X with nothing. Lock scope: row, page, table (<i>lock granularity</i> — finer locks give more concurrency but more overhead).
+@@ b6-2|body#2
+<b>Two-phase locking (2PL):</b> each transaction first only acquires locks (growing phase) and after its first release can no longer acquire any (shrinking phase). 2PL guarantees <b>serializability</b>. <b>Strict 2PL</b> keeps X locks until the end of the transaction to prevent cascading aborts and dirty reads (common in practice).
+@@ b6-2|body#3
+X lock on the row
+@@ b6-2|body#4
+release the locks
+@@ b6-2|body#5
+2. Deadlock
+@@ b6-2|body#6
+When several transactions wait for each other's locks in a cycle. Coffman's four necessary conditions: mutual exclusion, hold and wait, no preemption, circular wait. <b>Detection:</b> build a <i>wait-for graph</i> and look for a cycle; the DBMS picks one transaction as a victim and rolls it back. <b>Prevention:</b> a fixed lock order, short transactions, acquiring all resources at once, timeouts, or timestamp-based wait-die/wound-wait schemes.
+@@ b6-2|body#7
+Deadlock and the wait-for graph; prevention with a fixed lock order
+@@ b6-2|body#8
+3. MVCC — multi-version concurrency control
+@@ b6-2|body#9
+Instead of preventing reads during writes, the DBMS keeps <b>several versions</b> of each row. Each version is labelled with the creating transaction (<code>xmin</code>) and the deleting transaction (<code>xmax</code>). Each transaction takes a <b>snapshot</b> and sees only the versions committed up to that moment. Result: <b>readers do not block writers and vice versa.</b> Cost: memory for old versions and their <b>cleanup</b> (VACUUM in PostgreSQL; undo log and purge in InnoDB), and write–write conflicts still need locks.
+@@ b6-2|body#10
+The MVCC version chain and snapshot view
+@@ b6-2|body#11
+4. Optimistic control
+@@ b6-2|body#12
+Assumes conflicts are rare: a transaction works without locks and at commit checks that what it read has not changed; otherwise abort and retry. A common application-level implementation: a <code>version</code> column:
+@@ b6-2|body#13
+if 0 rows changed ⇒ a conflict occurred, read again and retry
+@@ b6-2|body#14
+Pessimistic (locks)
+@@ b6-2|body#15
+Optimistic (OCC/version)
+@@ b6-2|body#16
+Assumption
+@@ b6-2|body#17
+Conflicts are frequent
+@@ b6-2|body#18
+Conflicts are rare
+@@ b6-2|body#19
+Cost of a conflict
+@@ b6-2|body#20
+Waiting (blocking)
+@@ b6-2|body#21
+Abort and repeat
+@@ b6-2|body#22
+Suited to
+@@ b6-2|body#23
+High contention (a hot bank account)
+@@ b6-2|body#24
+Low contention, read-heavy
+@@ b6-2|body#25
+Risk
+@@ b6-2|body#26
+Deadlock, lower throughput
+@@ b6-2|body#27
+Livelock/frequent retries
+@@ b6-2|obj:0#0
+Explain S/X locks and the 2PL protocol.
+@@ b6-2|obj:1#0
+Detect and prevent deadlock.
+@@ b6-2|obj:2#0
+Compare MVCC and optimistic control with pessimistic locking.
+@@ b6-2|mis:0#0
+"MVCC means no locks are needed." ← Write–write conflicts still need locks.
+@@ b6-2|mis:1#0
+"A deadlock is a DBMS bug." ← It is a natural consequence of locking; the application must handle retries.
+@@ b6-2|mis:2#0
+"Optimistic locking is always faster." ← Under high contention frequent aborts are worse.
+@@ b6-2|sum:0#0
+S/X locks and 2PL (especially strict 2PL) give serializability but deadlock is possible.
+@@ b6-2|sum:1#0
+Deadlock is detected with a wait-for graph and prevented with a fixed lock order.
+@@ b6-2|sum:2#0
+MVCC keeps several versions so readers/writers do not block each other; OCC checks for conflicts at commit instead of locking.
+@@ b6-2|ex:0:q#0
+Which pair of locks is compatible?
+@@ b6-2|ex:0:e#0
+Several concurrent readers are allowed; X is incompatible with everything.
+@@ b6-2|ex:0:o:0#0
+S and S
+@@ b6-2|ex:0:o:1#0
+S and X
+@@ b6-2|ex:0:o:2#0
+X and X
+@@ b6-2|ex:0:o:3#0
+None
+@@ b6-2|ex:1:q#0
+In MVCC readers usually do not block writers.
+@@ b6-2|ex:1:e#0
+A reader sees the old version belonging to its own snapshot.
+@@ b6-2|ex:2:q#0
+Which measure prevents deadlock effectively?
+@@ b6-2|ex:2:e#0
+A fixed order makes a circular wait impossible.
+@@ b6-2|ex:2:o:0#0
+Locking resources in one fixed global order
+@@ b6-2|ex:2:o:1#0
+Increasing the buffer-pool size
+@@ b6-2|ex:2:o:2#0
+Dropping indexes
+@@ b6-2|ex:2:o:3#0
+Longer transactions
+@@ b6-2|ex:3:q#0
+Show an implementation of "decrement the item's stock" in a pessimistic and an optimistic way and say under which conditions each is preferred.
+@@ b6-2|ex:3:a#0
+Pessimistic: <code>BEGIN; SELECT stock FROM products WHERE id=7 FOR UPDATE; UPDATE products SET stock=stock-1 WHERE id=7; COMMIT;</code> ; optimistic: <code>UPDATE products SET stock=stock-1 WHERE id=7 AND stock>0</code> (one atomic statement) or with a version column and retry. For a best-selling item with intense competition the atomic UPDATE or a short lock is suitable; for low contention (a user editing their profile) the optimistic method (without holding a lock during the user's thinking time) is better.
+@@ b7-1|body#0
+1. Scalability
+@@ b7-1|body#1
+<b>Vertical scaling (scale-up)</b> a stronger machine; simple but with a ceiling. <b>Horizontal scaling (scale-out)</b> adding machines; complex (data distribution, consistency) but almost unlimited. Three tools: replication (for availability and read scaling), partitioning/sharding (for write scaling and volume), and caching.
+@@ b7-1|body#2
+2. Replication
+@@ b7-1|body#3
+<b>Leader–follower (primary–replica):</b> all writes go to the leader and the log is sent to the followers; reads can go to the followers.
+@@ b7-1|body#4
+<b>Synchronous:</b> the leader waits for the replica's acknowledgement ⇒ stronger durability and consistency, more latency and lower availability. <b>Asynchronous:</b> fast but with <b>replication lag</b> (reading a stale value, losing the latest writes when the leader fails). <b>Semi-sync:</b> at least one synchronous replica.
+@@ b7-1|body#5
+<b>Multi-leader / leaderless (Dynamo, Cassandra):</b> writes to several nodes, needing conflict resolution (last-write-wins, CRDTs, vector clocks) and quorums: $R+W>N$ to read the latest write.
+@@ b7-1|body#6
+Issues: automatic <b>failover</b> (electing a new leader, split brain), <b>read-your-writes</b> after a write.
+@@ b7-1|body#7
+3. Partitioning and sharding
+@@ b7-1|body#8
+<b>Partitioning:</b> splitting a big table into smaller pieces (usually on one server) for manageability and query pruning: <i>range</i> (by date), <i>list</i>, <i>hash</i>. <b>Sharding:</b> horizontal partitioning across several independent servers; the shard key decides where each row goes. A bad key choice ⇒ a <b>hot shard</b> (for example a timestamp that sends all writes to the last shard). Cross-shard queries, joins and distributed transactions are expensive.
+@@ b7-1|body#9
+With <code>hash(key) mod N</code>, changing $N$ moves almost all keys. <b>Consistent hashing</b> places keys and nodes on a hash ring and each key goes to the first node clockwise; when a node is added/removed only a fraction $\approx1/N$ of the keys moves. Virtual nodes (vnodes) even out the distribution.
+@@ b7-1|body#10
+mod N versus consistent hashing when the number of shards changes
+@@ b7-1|body#11
+4. The CAP theorem and consistency models
+@@ b7-1|body#12
+In a distributed system during a network <b>partition</b> (which is unavoidable) you must choose between <b>consistency</b> (every read sees the latest write — linearizability) and <b>availability</b> (every request gets a non-error response). "CAP" is often wrongly stated as "choose 2 of 3"; more precisely: <i>if a partition occurs, either C or A</i>. <b>PACELC</b> adds: even without a partition (else) there is a trade-off between <b>latency</b> and <b>consistency</b>.
+@@ b7-1|body#13
+CAP simulator with three replicas
+@@ b7-1|body#14
+Consistency models
+@@ b7-1|body#15
+Model
+@@ b7-1|body#16
+Guarantee
+@@ b7-1|body#17
+Every operation appears to happen at a single instant; reads always return the latest value
+@@ b7-1|body#18
+Everyone sees the same order of operations (not necessarily real time)
+@@ b7-1|body#19
+Causally related operations are seen in order
+@@ b7-1|body#20
+Each user sees their own writes / time does not go backwards
+@@ b7-1|body#21
+In the absence of new writes all replicas eventually converge
+@@ b7-1|obj:0#0
+Compare the types of replication (synchronous/asynchronous, leader–follower).
+@@ b7-1|obj:1#0
+Distinguish sharding and partitioning and explain consistent hashing.
+@@ b7-1|obj:2#0
+Interpret the CAP theorem, PACELC and the consistency models with examples.
+@@ b7-1|mis:0#0
+"CAP means choose two of three." ← Partition is not a choice; the choice is between C and A during a partition.
+@@ b7-1|mis:1#0
+"A replica is a backup." ← A replica also replicates logical errors (an accidental DELETE); a backup is separate.
+@@ b7-1|mis:2#0
+"Sharding always improves performance." ← Cross-shard queries and distributed transactions are complex and slow.
+@@ b7-1|sum:0#0
+Replication for availability and read scaling; sharding for write scaling and volume.
+@@ b7-1|sum:1#0
+Consistent hashing reduces data movement when nodes change.
+@@ b7-1|sum:2#0
+CAP: C versus A during a partition; PACELC: latency versus consistency without a partition.
+@@ b7-1|ex:0:q#0
+What is the risk in asynchronous replication?
+@@ b7-1|ex:0:o:0#0
+Reading a stale value from a follower and losing the latest writes if the leader fails
+@@ b7-1|ex:0:o:1#0
+Reads are never possible
+@@ b7-1|ex:0:o:2#0
+The index gets corrupted
+@@ b7-1|ex:0:o:3#0
+Transactions are not atomic
+@@ b7-1|ex:1:q#0
+In a quorum system with $N=5$ and $W=3$, what is the minimum $R$ to guarantee reading the latest write? ($R+W>N$)
+@@ b7-1|ex:2:q#0
+With consistent hashing, adding a new node moves only a small fraction of the keys.
+@@ b7-1|ex:2:e#0
+About $1/N$ of the keys.
+@@ b7-1|ex:3:q#0
+You chose the shard key as "creation timestamp" and most writes are for new data. What problem arises?
+@@ b7-1|ex:3:e#0
+A monotonically increasing key concentrates the load on one shard; use a hash of the key or a composite key (tenant + hash).
+@@ b7-1|ex:3:o:0#0
+A hot shard: all writes go to the last shard
+@@ b7-1|ex:3:o:1#0
+No problem
+@@ b7-1|ex:3:o:2#0
+The table gets locked
+@@ b7-1|ex:3:o:3#0
+Joins become impossible
+@@ b7-1|ex:4:q#0
+A social network's like system and a bank's funds-transfer system: which side of CAP does each lean toward, and why?
+@@ b7-1|ex:4:a#0
+Likes: AP/eventual; a momentarily stale counter is unimportant but availability and low latency matter (a CRDT or an aggregated counter). Funds transfer: CP/strong; double spending and inconsistent balances are unacceptable, and during a partition requests can be rejected (reduced availability) to preserve correctness.

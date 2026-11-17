@@ -1,0 +1,416 @@
+@@ b3-3|body#0
+1. The path of a query
+@@ b3-3|body#1
+<b>Parse:</b> syntactic analysis and building the AST, checking that tables/columns exist in the catalog.
+@@ b3-3|body#2
+<b>Rewrite:</b> expanding views, simplifying expressions.
+@@ b3-3|body#3
+<b>Optimize:</b> generating and evaluating equivalent plans and choosing the cheapest.
+@@ b3-3|body#4
+<b>Execute:</b> running the operators (usually the iterator/Volcano model: each operator has <code>next()</code> and pulls row by row).
+@@ b3-3|body#5
+A query is first translated to <b>relational algebra</b>: $\sigma$ (row selection), $\pi$ (column selection), $\bowtie$ (join), $\gamma$ (aggregation). For example:
+@@ b3-3|body#6
+This is a <b>logical plan</b>; the optimizer turns it into a <b>physical plan</b> by choosing the real algorithms.
+@@ b3-3|body#7
+2. Optimization
+@@ b3-3|body#8
+<b>Algebraic rewrites:</b> <i>predicate pushdown</i> (apply the filter as early as possible, before the join), <i>projection pushdown</i> (only the needed columns).
+@@ b3-3|body#9
+<b>The cost model:</b> an estimate of I/O + CPU of each plan based on <b>statistics</b> (row counts, distinct values, histograms). <b>Selectivity</b> is the fraction of rows that satisfy a condition; a wrong estimate (for example because of correlated columns or stale statistics) is the most common reason for a bad plan. The <code>ANALYZE</code> command refreshes the statistics.
+@@ b3-3|body#10
+<b>Join order:</b> the number of orders for $n$ tables grows factorially; optimizers use DP over subsets (System R) or heuristics.
+@@ b3-3|body#11
+Join algorithms
+@@ b3-3|body#12
+Algorithm
+@@ b3-3|body#13
+Idea
+@@ b3-3|body#14
+Approximate cost
+@@ b3-3|body#15
+Suited to
+@@ b3-3|body#16
+For every outer row, examine/search all inner rows
+@@ b3-3|body#17
+$O(nm)$; with an index on the inner $O(n\log m)$
+@@ b3-3|body#18
+A small outer table, non-equality conditions
+@@ b3-3|body#19
+Put the small table into a hash table and probe it with the big table
+@@ b3-3|body#20
+$O(n+m)$ + the hash memory
+@@ b3-3|body#21
+Equality joins on large unindexed tables
+@@ b3-3|body#22
+Sort both on the key and merge
+@@ b3-3|body#23
+$O(n\log n+m\log m)$ (or $O(n+m)$ if already sorted)
+@@ b3-3|body#24
+Already sorted inputs, range joins
+@@ b3-3|body#25
+Comparing "scanned rows": a join with a condition versus a Cartesian product
+@@ b3-3|body#26
+In this book's teaching engine, "scanned rows" is the number of rows read from the base tables; a correlated subquery rescans the table for every outer row (the nested-loop idea). Real DBMSs often rewrite (decorrelate) such subqueries into joins.
+@@ b3-3|body#27
+3. Reading an execution plan (EXPLAIN)
+@@ b3-3|body#28
+Sample output (PostgreSQL, simplified):
+@@ b3-3|body#29
+Reading tips: read from the <b>leaves</b> to the root; <i>Seq Scan</i> is a full scan, <i>Index Scan/Index Only Scan</i> uses an index; comparing the estimated <code>rows</code> with the actual ones (in ANALYZE) reveals the cause of a bad plan.
+@@ b3-3|body#30
+<b class="t">Practical notes</b>A function on an indexed column (<code>WHERE LOWER(name)=...</code>), <code>LIKE '%x'</code> with a leading wildcard and implicit type conversion prevent index use (non-sargable). Write the needed columns instead of <code>SELECT *</code>.
+@@ b3-3|obj:0#0
+Explain the stages of query processing (parse to execute).
+@@ b3-3|obj:1#0
+Compare the join algorithms (nested loop, hash, merge) by cost.
+@@ b3-3|obj:2#0
+Know the role of statistics, selectivity and join order in choosing a plan.
+@@ b3-3|mis:0#0
+"The optimizer always finds the best plan." ← It works from estimates; wrong statistics = a bad plan.
+@@ b3-3|mis:1#0
+"The order in which joins are written in SQL is the execution order." ← The optimizer changes it (except for sensitive outer joins).
+@@ b3-3|mis:2#0
+"An index is always used." ← If selectivity is low (a large percentage of rows) a full scan is cheaper.
+@@ b3-3|sum:0#0
+Stages: parse ← rewrite ← optimize ← execute; the logical plan becomes a physical plan.
+@@ b3-3|sum:1#0
+Optimization is based on cost and statistics; a wrong estimate → a bad plan.
+@@ b3-3|sum:2#0
+Nested loop, hash and sort-merge are the three main join algorithms with different uses.
+@@ b3-3|ex:0:q#0
+What does predicate pushdown mean?
+@@ b3-3|ex:0:e#0
+The earlier unneeded rows are removed, the less work the later operators do.
+@@ b3-3|ex:0:o:0#0
+Applying filters earlier, before the join, to reduce the data volume
+@@ b3-3|ex:0:o:1#0
+Removing the join
+@@ b3-3|ex:0:o:2#0
+Using a hash index
+@@ b3-3|ex:0:o:3#0
+Sorting the result
+@@ b3-3|ex:1:q#0
+For an equality join on two large unindexed tables, which algorithm is usually the most suitable?
+@@ b3-3|ex:1:e#0
+Hash join with $O(n+m)$ time; a plain nested loop is $O(nm)$.
+@@ b3-3|ex:1:o:0#0
+A plain nested loop
+@@ b3-3|ex:1:o:2#0
+None
+@@ b3-3|ex:2:q#0
+In a nested-loop join, if the inner table has an index on the join key the cost drops dramatically.
+@@ b3-3|ex:2:e#0
+Each lookup becomes $O(\log m)$ and the total $O(n\log m)$.
+@@ b3-3|ex:3:q#0
+How many join-condition comparisons does a plain nested-loop join between a table of 1000 rows and a table of 500 rows perform?
+@@ b3-3|ex:4:q#0
+A query switches from an index plan to a full scan after the table grows. Write two possible reasons.
+@@ b3-3|ex:4:a#0
+1) The statistics became stale or inconsistent and the optimizer misestimated the selectivity (ANALYZE is needed). 2) The condition now covers many rows (low selectivity); random index reads + data page accesses become more expensive than a sequential scan. Other reasons: changed parameters in a prepared statement, a changed join order/type, a function on a column that defeats the index.
+@@ b4-1|body#0
+1. Conceptual design with ER
+@@ b4-1|body#1
+Database design starts from the requirements and proceeds in three stages: <b>conceptual (ER)</b> ← <b>logical (tables and constraints)</b> ← <b>physical (indexes, partitioning)</b>. In the <b>entity–relationship model</b>: an <b>entity</b> (an identifiable thing such as Employee), an <b>attribute</b> (a property), a <b>relationship</b> (an association between entities), <b>cardinality</b> ($1{:}1$, $1{:}N$, $N{:}M$) and <b>participation</b> (total or partial).
+@@ b4-1|body#2
+ER diagram of the sample tables (notation 1 and N)
+@@ b4-1|body#3
+Mapping ER to tables
+@@ b4-1|body#4
+Each strong entity ← a table with a primary key.
+@@ b4-1|body#5
+A $1{:}N$ relationship ← a foreign key on the N side.
+@@ b4-1|body#6
+An $N{:}M$ relationship ← a junction table (with the relationship's own attributes, such as <code>hours</code>).
+@@ b4-1|body#7
+A multivalued attribute ← a separate table; a weak entity ← a composite key with the parent key.
+@@ b4-1|body#8
+2. Anomalies: why normalization?
+@@ b4-1|body#9
+Consider the badly designed table <code>Enrollment(student, student_name, course, instructor, instructor_office)</code> in which student and instructor information is repeated in every row:
+@@ b4-1|body#10
+<b>Update anomaly:</b> changing an instructor's office must be applied in many rows; forgetting ⇒ inconsistency.
+@@ b4-1|body#11
+<b>Insert anomaly:</b> an instructor who has no course yet cannot be recorded (the key would be incomplete).
+@@ b4-1|body#12
+<b>Delete anomaly:</b> deleting the last enrollment of a course also destroys the instructor's information.
+@@ b4-1|body#13
+3. Functional dependencies (FD)
+@@ b4-1|body#14
+$X\to Y$ means any two rows with the same $X$ value have the same $Y$ value (for example <code>student_id → student_name</code>). FDs come from the "meaning of the data", not from the current data. The <b>attribute closure</b> $X^+$ is all the attributes inferable from $X$ (by repeatedly expanding with the FDs). $X$ is a superkey if $X^+$ is all the attributes; if it is also minimal, a candidate key.
+@@ b4-1|body#15
+<b>Armstrong's axioms:</b> reflexivity ($Y\subseteq X\Rightarrow X\to Y$), augmentation ($X\to Y\Rightarrow XZ\to YZ$) and transitivity ($X\to Y,\ Y\to Z\Rightarrow X\to Z$), from which union, decomposition and so on follow.
+@@ b4-1|body#16
+Calculator for attribute closure and candidate keys (and the normal form)
+@@ b4-1|body#17
+Example: $R(A,B,C,D)$ with $A\to B,\ B\to C,\ AD\to C$ ← $\{A,D\}^+=\{A,B,C,D\}$ and no proper subset gives all the attributes ⇒ the only candidate key is $\{A,D\}$.
+@@ b4-1|obj:0#0
+Build an ER model (entity, attribute, relationship, cardinality) and map it to relational tables.
+@@ b4-1|obj:1#0
+Identify insert, update and delete anomalies.
+@@ b4-1|obj:2#0
+Compute functional dependencies, attribute closure and candidate keys.
+@@ b4-1|mis:0#0
+"Normalization means more tables." ← It means removing redundancy caused by unsuitable FDs.
+@@ b4-1|mis:1#0
+"We derive FDs from the current data." ← An FD is a semantic constraint; the current data can only refute it, not prove it.
+@@ b4-1|mis:2#0
+"ER is the same as a table." ← ER is conceptual and needs a mapping.
+@@ b4-1|sum:0#0
+We map the conceptual ER to tables and FKs; N:M ⇒ a junction table.
+@@ b4-1|sum:1#0
+FDs (and closure) are the basis for detecting redundancy and keys.
+@@ b4-1|sum:2#0
+Insert/delete/update anomalies motivate normalization.
+@@ b4-1|ex:0:q#0
+How is the relationship "a student enrolls in several courses and each course has several students" implemented?
+@@ b4-1|ex:0:e#0
+N:M with a junction table and two FKs.
+@@ b4-1|ex:0:o:0#0
+One FK in Student
+@@ b4-1|ex:0:o:1#0
+One FK in Course
+@@ b4-1|ex:0:o:2#0
+A junction table Enrollment
+@@ b4-1|ex:0:o:3#0
+A list column
+@@ b4-1|ex:1:q#0
+In the relation $R(A,B,C)$ with FDs $A\to B$ and $B\to C$, what is the closure $\{A\}^+$?
+@@ b4-1|ex:1:e#0
+$A\to B$ then $B\to C$ (transitivity) ⇒ $\{A,B,C\}$; so $A$ is a key.
+@@ b4-1|ex:2:q#0
+An insert anomaly means being unable to record some information without other unrelated information existing.
+@@ b4-1|ex:2:e#0
+Example: recording a new instructor with no course.
+@@ b4-1|ex:3:q#0
+For the relation $R(S,C,I)$ with FDs $SC\to I$ and $I\to C$, find the candidate keys.
+@@ b4-1|ex:3:a#0
+$\{S,C\}^+=\{S,C,I\}$ so $SC$ is a key. $\{S,I\}^+$: from $I\to C$ ⇒ $\{S,I,C\}$ so $SI$ is also a candidate key. Both are minimal. Hence the keys: $\{S,C\}$ and $\{S,I\}$. Interesting: this relation is in 3NF (all attributes are prime) but not in BCNF because $I\to C$ has $I$ not a superkey.
+@@ b4-2|body#0
+Normal forms
+@@ b4-2|body#1
+Form
+@@ b4-2|body#2
+Condition
+@@ b4-2|body#3
+Removes
+@@ b4-2|body#4
+All values atomic; no repeating groups
+@@ b4-2|body#5
+Lists and multivalued columns
+@@ b4-2|body#6
+1NF + no non-key attribute depends on <b>part</b> of a composite key
+@@ b4-2|body#7
+Partial dependency
+@@ b4-2|body#8
+2NF + no <b>transitive</b> dependency of a non-key attribute on the key; or for every $X\to A$: $X$ is a superkey or $A$ is a prime attribute
+@@ b4-2|body#9
+Transitive dependency
+@@ b4-2|body#10
+For every non-trivial FD $X\to Y$, $X$ is a superkey
+@@ b4-2|body#11
+The remaining anomalies caused by overlapping candidate keys
+@@ b4-2|body#12
+A lasting summary for 3NF: "every non-key attribute depends on <i>the key, the whole key and nothing but the key</i>." BCNF is stronger than 3NF: $\text{BCNF}\subset\text{3NF}\subset\text{2NF}\subset\text{1NF}$.
+@@ b4-2|body#13
+A step-by-step example
+@@ b4-2|body#14
+Normalizing the enrollment table: from 0NF to 3NF
+@@ b4-2|body#15
+A correct decomposition
+@@ b4-2|body#16
+<b>Lossless join:</b> the join of the decompositions must give exactly the original relation (no spurious rows). The condition for a decomposition into $R_1,R_2$: $(R_1\cap R_2)\to R_1$ or $(R_1\cap R_2)\to R_2$ (the common part is a key of one side).
+@@ b4-2|body#17
+<b>Dependency preserving:</b> the FDs can be checked without a join. A decomposition into 3NF always guarantees both; a decomposition into BCNF is always lossless but may not preserve some FDs (for example the example $SC\to I,\ I\to C$).
+@@ b4-2|body#18
+Experiment: determine the normal form for different FDs
+@@ b4-2|body#19
+Denormalization
+@@ b4-2|body#20
+Sometimes we deliberately add redundancy to make <b>reads</b> faster: storing the order total in the order table, copying the customer name into the invoice table (to keep history!), summary tables (materialized views), star-schema tables in a data warehouse. Costs: <b>more complex writes</b>, risk of inconsistency, more memory. The right use: design normalized first and measure; denormalize only the real read bottlenecks with control (triggers, materialized views, or the application layer).
+@@ b4-2|body#21
+Normalized
+@@ b4-2|body#22
+Reads
+@@ b4-2|body#23
+Joins needed
+@@ b4-2|body#24
+Faster (fewer joins)
+@@ b4-2|body#25
+Writes
+@@ b4-2|body#26
+Simple and without redundancy
+@@ b4-2|body#27
+Must be updated in several places
+@@ b4-2|body#28
+Inconsistency
+@@ b4-2|body#29
+Low
+@@ b4-2|body#30
+High risk
+@@ b4-2|body#31
+Memory
+@@ b4-2|body#32
+Less
+@@ b4-2|body#33
+More
+@@ b4-2|body#34
+Suitable for
+@@ b4-2|body#35
+OLAP, reporting, read-heavy
+@@ b4-2|obj:0#0
+State the conditions of 1NF, 2NF, 3NF and BCNF and normalize tables step by step.
+@@ b4-2|obj:1#0
+Know the lossless-join decomposition and dependency preservation.
+@@ b4-2|obj:2#0
+Analyse the right uses of denormalization and its trade-off.
+@@ b4-2|mis:0#0
+"Always normalize to BCNF." ← Sometimes 3NF (to preserve FDs) or denormalization is more practical.
+@@ b4-2|mis:1#0
+"Denormalization means bad design." ← It is a conscious decision with a trade-off.
+@@ b4-2|mis:2#0
+"2NF can be violated on a table with a single-column key." ← No; a partial dependency exists only for a composite key.
+@@ b4-2|sum:0#0
+1NF atomic, 2NF no partial dependency, 3NF no transitive dependency, BCNF: every determinant is a superkey.
+@@ b4-2|sum:1#0
+A decomposition must be lossless and preferably preserve the FDs.
+@@ b4-2|sum:2#0
+Denormalization trades fast reads for write complexity/inconsistency and is done after measuring.
+@@ b4-2|ex:0:q#0
+The table <code>Order(order_id, product_id, qty, product_name)</code> with key (order_id, product_id) and FD <code>product_id → product_name</code> violates which form?
+@@ b4-2|ex:0:e#0
+<code>product_name</code> depends only on part of the key (product_id) ⇒ partial dependency ⇒ a 2NF violation.
+@@ b4-2|ex:1:q#0
+The table <code>Emp(id, dept, dept_head)</code> with <code>id→dept</code> and <code>dept→dept_head</code> violates which?
+@@ b4-2|ex:1:e#0
+<code>dept_head</code> depends transitively on <code>id</code> ⇒ a 3NF violation.
+@@ b4-2|ex:1:o:3#0
+None
+@@ b4-2|ex:2:q#0
+Every relation in BCNF is necessarily in 3NF too.
+@@ b4-2|ex:2:e#0
+BCNF is the stronger condition: every determinant is a superkey.
+@@ b4-2|ex:3:q#0
+Decomposing any relation into BCNF always preserves dependencies too.
+@@ b4-2|ex:3:e#0
+No; for example for $R(S,C,I)$ with $SC\to I,\ I\to C$ the BCNF decomposition ($R_1(I,C)$ and $R_2(S,I)$) leaves the FD $SC\to I$ uncheckable without a join.
+@@ b4-2|ex:4:q#0
+In a sales system we also store the "unit price of the item" in the <code>order_items</code> table (besides the item table). Is this a normalization violation? Explain.
+@@ b4-2|ex:4:a#0
+It looks like redundancy but it is semantically different data: the item's price at the moment of purchase (a historical snapshot). The FD "product_id → price" holds only for the <i>current</i> price, whereas the price recorded in the order depends on <code>(order_id, product_id)</code> and must not change when the item's price changes. So it is not a 3NF violation and is even necessary.
+@@ b5-1|body#0
+1. Why an index?
+@@ b5-1|body#1
+Without an index, finding the rows of <code>WHERE email = ?</code> needs a <b>full scan</b> of the table: $\Theta(n)$ pages are read. An <b>index</b> is a separate auxiliary structure that keeps keys sorted and points to the row location, like a book's back-of-book index. An index is not free: it takes <b>memory</b> and <b>every INSERT/UPDATE/DELETE</b> must update it too.
+@@ b5-1|body#2
+2. The real cost: pages, not rows
+@@ b5-1|body#3
+A disk (and an SSD) reads data in fixed <b>pages</b> (usually 4–16 KB). The dominant cost of a query is the number of pages that must be brought into memory, not the number of comparisons. A balanced binary BST with $10^8$ keys has ≈ 27 levels and each level may be a random read. If each node is a whole page with hundreds of keys (<b>fan-out</b> $F\approx200$), the height $\log_F n\approx4$!
+@@ b5-1|body#4
+Height of a binary BST versus a B+Tree
+@@ b5-1|body#5
+3. B-trees and B+trees
+@@ b5-1|body#6
+A <b>B-tree (of order $m$)</b> is a balanced multiway search tree: each node has at most $m$ children (and $m-1$ keys), each internal (non-root) node at least $\lceil m/2\rceil$ children, and <b>all leaves are at the same depth</b> (unlike a BST it grows not from the "bottom" but by splits and root growth). Height $O(\log_{m/2}n)$.
+@@ b5-1|body#7
+A <b>B+tree</b> (the common type in DBMSs) differs in two ways: (1) <b>data/row pointers live only in the leaves</b> and internal nodes hold only "separator keys", so the fan-out is higher and the height lower; (2) <b>the leaves are linked in a list</b>, so a range query (<code>BETWEEN</code>, <code>ORDER BY</code>) after finding the start is done by walking the leaves linearly.
+@@ b5-1|body#8
+Interactive B+tree: insert, split, search and range scan
+@@ b5-1|body#9
+Operations
+@@ b5-1|body#10
+<b>Search:</b> from the root, at each node choose the right child by comparing the key (binary search within the node); $h$ pages are read: $O(\log_F n)$.
+@@ b5-1|body#11
+<b>Insert:</b> find the right leaf and insert the key. If the leaf overflows (beyond capacity), <b>split</b>: half of the keys move to a new node and a separator key is added to the parent (this may cascade upward and eventually create a new root and increase the height). Result: the tree is always balanced.
+@@ b5-1|body#12
+<b>Delete:</b> after deletion, if a node falls below the minimum, <b>redistribute</b> (borrow from a neighbour) or <b>merge</b>. (Real implementations sometimes delay merging.)
+@@ b5-1|body#13
+4. Clustered and non-clustered indexes
+@@ b5-1|body#14
+Clustered
+@@ b5-1|body#15
+Non-clustered (secondary)
+@@ b5-1|body#16
+Leaves
+@@ b5-1|body#17
+The table rows themselves in key order
+@@ b5-1|body#18
+Index key + a pointer to the row (RID or primary key)
+@@ b5-1|body#19
+Number per table
+@@ b5-1|body#20
+At most one (data has only one order)
+@@ b5-1|body#21
+Several
+@@ b5-1|body#22
+Excellent (physically adjacent rows)
+@@ b5-1|body#23
+Each row may be a separate random access
+@@ b5-1|body#24
+Example
+@@ b5-1|body#25
+InnoDB: the PK is the clustered index; SQL Server
+@@ b5-1|body#26
+InnoDB secondary indexes (the leaf contains the PK)
+@@ b5-1|body#27
+Page cost: full scan versus B+tree (with parameters of your choice)
+@@ b5-1|body#28
+<b class="t">Index costs</b>Each index: (1) storage space, (2) extra write cost (write amplification) and the chance of splits, (3) lock contention. Inserting <b>random</b> keys (like UUID v4) hits random pages and causes many splits and cache misses; <b>increasing</b> keys (auto-increment, UUID v7) are inserted at the end of the tree and are efficient.
+@@ b5-1|body#29
+<b class="t">An index is for reading; but it does not "help" if…</b>your condition has low selectivity (30% of rows), you apply a function to the column, or the table is very small. In these cases a sequential scan is cheaper and the optimizer ignores the index.
+@@ b5-1|obj:0#0
+Explain why databases use B+trees instead of BSTs.
+@@ b5-1|obj:1#0
+Follow node structure, search and insert splits in a B+tree.
+@@ b5-1|obj:2#0
+Compare clustered and non-clustered indexes and the write cost of indexes.
+@@ b5-1|mis:0#0
+"An index always makes search fast." ← Only for specific patterns; it slows writes and consumes memory.
+@@ b5-1|mis:1#0
+"B-tree means binary tree." ← B stands for balanced/Bayer; each node has hundreds of keys.
+@@ b5-1|mis:2#0
+"B+tree deletion is free too." ← Merging/redistribution is needed.
+@@ b5-1|mis:3#0
+"A non-clustered index goes straight to the row." ← One extra hop (to the PK or RID) is needed unless the index is <i>covering</i>.
+@@ b5-1|sum:0#0
+An index is a sorted auxiliary structure to reduce the pages read, at the price of writes/memory.
+@@ b5-1|sum:1#0
+B+tree: data in leaves, linked leaves, high fan-out, height $O(\log_F n)$ and balance through splits.
+@@ b5-1|sum:2#0
+A clustered index determines the physical data order; a non-clustered one has an extra hop.
+@@ b5-1|ex:0:q#0
+How many levels does a B+tree with a fan-out of about 100 and 1,000,000 keys need? (the smallest integer $h$ with $100^h\ge10^6$)
+@@ b5-1|ex:0:e#0
+$100^3=10^6$ ⇒ $h=3$ levels.
+@@ b5-1|ex:1:q#0
+What is the most important advantage of a B+tree for range queries?
+@@ b5-1|ex:1:e#0
+After finding the start of the range we continue through the leaf pointers without returning to the root.
+@@ b5-1|ex:1:o:0#0
+The leaves are linked and traversed in order
+@@ b5-1|ex:1:o:1#0
+The height is zero
+@@ b5-1|ex:1:o:2#0
+It has no splits
+@@ b5-1|ex:1:o:3#0
+It works only on string keys
+@@ b5-1|ex:2:q#0
+A table can have several clustered indexes.
+@@ b5-1|ex:2:e#0
+Data is stored in only one physical order; at most one clustered index.
+@@ b5-1|ex:3:q#0
+After a leaf split in a B+tree, what happens?
+@@ b5-1|ex:3:e#0
+The height grows only when the split reaches the root.
+@@ b5-1|ex:3:o:0#0
+The middle/separator key is added to the parent
+@@ b5-1|ex:3:o:1#0
+The tree is rebuilt from scratch
+@@ b5-1|ex:3:o:2#0
+The height always grows by 1
+@@ b5-1|ex:3:o:3#0
+The leaf is deleted
+@@ b5-1|ex:4:q#0
+Why can using a random UUID as the primary key in a table with a clustered index (like InnoDB) hurt write performance?
+@@ b5-1|ex:4:a#0
+In a clustered index data is stored in PK order. A random key sends each insert to a random page of the tree; that page must be read from disk and (since it is full) split, and pages end up half empty. Result: random I/O, many cache misses, fragmentation and more space. Also, secondary indexes repeat the PK in their leaves and a 16-byte key makes them larger. An increasing key (or a time-ordered UUID) concentrates inserts at the end of the tree.
