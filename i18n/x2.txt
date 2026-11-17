@@ -1,0 +1,292 @@
+@@ x6|body#0
+Linear regression with matrices
+@@ x6|body#1
+$m$ samples with $n$ features: the design matrix $X\in\mathbb{R}^{m\times(n+1)}$ (a column of ones for the intercept), $\mathbf y\in\mathbb{R}^m$ and $\mathbf w\in\mathbb{R}^{n+1}$. Predicting all samples is one matrix–vector product: $\hat{\mathbf y}=X\mathbf w$. The squared cost: $J(\mathbf w)=\|\mathbf y-X\mathbf w\|^2$. Setting the gradient $\nabla J=-2X^T(\mathbf y-X\mathbf w)$ to zero:
+@@ x6|body#2
+<b>Geometric interpretation:</b> $X\mathbf w$ always lies in the <b>column space</b> of $X$; the best $\hat{\mathbf y}$ is the point of that space closest to $\mathbf y$, i.e. the <b>orthogonal projection</b> of $\mathbf y$ onto it; hence the error $\mathbf y-X\mathbf w$ is perpendicular to all columns of $X$ ($X^T(\mathbf y-X\mathbf w)=0$) — the normal equation. (The link to the projection and orthogonality lesson.)
+@@ x6|body#3
+Interactive linear regression: add points and watch w from the normal equation
+@@ x6|body#4
+The dense layer and batches
+@@ x6|body#5
+A fully connected layer with $n_{in}$ inputs and $n_{out}$ outputs: $\mathbf y=W\mathbf x+\mathbf b$ with $W\in\mathbb{R}^{n_{out}\times n_{in}}$. For a batch of $B$ samples: $Y=XW^T+\mathbf b$ ($B\times n_{in}$ times $n_{in}\times n_{out}$). The whole training and inference of an MLP is a chain of matrix multiplications and nonlinear functions. The cost of each layer is $B\cdot n_{in}\cdot n_{out}$ multiplications; GPUs are built exactly for this operation (GEMM).
+@@ x6|body#6
+Practical considerations
+@@ x6|body#7
+Instead of inverting $X^TX$, QR/SVD or gradient descent is used (numerical stability; $\kappa(X^TX)=\kappa(X)^2$).
+@@ x6|body#8
+Collinearity ⇒ $X^TX$ singular ⇒ ridge: $(X^TX+\lambda I)^{-1}X^T\mathbf y$.
+@@ x6|body#9
+PCA (SVD) as preprocessing for dimensionality reduction; LoRA as a low-rank approximation of weight updates.
+@@ x6|obj:0#0
+Write linear regression as a matrix product and the normal equation.
+@@ x6|obj:1#0
+See the dense layer as a matrix–vector product.
+@@ x6|obj:2#0
+Interpret the normal equation geometrically (projection onto the column space).
+@@ x6|mis:0#0
+"Linear regression means a straight-line graph." ← It is linear in the parameters; it can also be applied to polynomial features.
+@@ x6|mis:1#0
+"The normal equation is always the best solving method." ← For large/ill-conditioned dimensions, iterative methods or the SVD are better.
+@@ x6|sum:0#0
+Linear regression: $\mathbf w=(X^TX)^{-1}X^T\mathbf y$ = an orthogonal projection; the dense layer = a matrix product.
+@@ x6|sum:1#0
+Numerical linear algebra (QR/SVD, ridge) is needed for stability.
+@@ x6|ex:0:q#0
+How many multiplications (without bias) does a dense layer with 784 inputs and 128 outputs perform on a batch of 64 samples?
+@@ x6|ex:1:q#0
+In the normal equation, how is the error vector $\mathbf y-X\mathbf w$ related to the columns of $X$?
+@@ x6|ex:1:e#0
+$X^T(\mathbf y-X\mathbf w)=0$ ⇒ the error is perpendicular to the column space (orthogonal projection).
+@@ x6|ex:1:o:0#0
+Parallel
+@@ x6|ex:1:o:1#0
+Perpendicular
+@@ x6|ex:1:o:2#0
+Equal
+@@ x6|ex:1:o:3#0
+Unrelated
+@@ x6|ex:2:q#0
+Why is the matrix $X^TX+\lambda I$ in ridge regression always invertible?
+@@ x6|ex:2:a#0
+$X^TX$ is positive semi-definite: eigenvalues $\mu_i\ge0$. Adding $\lambda I$ turns all eigenvalues into $\mu_i+\lambda\ge\lambda>0$; the matrix is positive definite and hence invertible and has a smaller condition number.
+@@ x7|body#0
+The training loop
+@@ x7|body#1
+<b>Forward:</b> from the input to the output $\hat y$ (matrix-multiplication functions + nonlinearities like tanh/ReLU).
+@@ x7|body#2
+<b>Loss:</b> $J=\frac1n\sum\ell(\hat y,y)$ (for example cross-entropy).
+@@ x7|body#3
+<b>Backward:</b> the chain rule, $\nabla_\theta J$ for all the weights.
+@@ x7|body#4
+<b>Update:</b> $\theta\leftarrow\theta-\eta\nabla J$ (or Adam...).
+@@ x7|body#5
+We repeat these four steps thousands of times. The widget below trains a real 2–$H$–1 network in your browser with exactly these steps. The XOR data set is not separable by any <i>linear</i> model; the hidden layer with the tanh nonlinearity "folds" space until it becomes separable.
+@@ x7|body#6
+Live training of a small neural network with backpropagation
+@@ x7|body#7
+What to look for
+@@ x7|body#8
+Try <b>2 hidden neurons</b> on XOR; then 8 and 16: more capacity ⇒ a more complex boundary.
+@@ x7|body#9
+A large <b>learning rate</b> ⇒ loss oscillation or instability; small ⇒ slow.
+@@ x7|body#10
+The "two clusters" data is separable even without a hidden layer ← an example where a linear model is enough.
+@@ x7|body#11
+Re-running with a different random start may reach a different boundary (non-convexity).
+@@ x7|body#12
+Connection to the concepts
+@@ x7|body#13
+The backward step is exactly the $\delta$s and Jacobian products (the chain-rule lesson); the cross-entropy loss is the MLE (the probability lesson); the update is GD (the optimization lesson); and every layer product is a matmul. There is no magic: four mathematical ideas on one contiguous data structure (the tensor).
+@@ x7|obj:0#0
+Know the training loop (forward, loss, backward, update).
+@@ x7|obj:1#0
+See how gradients shape the decision boundary.
+@@ x7|obj:2#0
+Observe the effect of network capacity and the learning rate.
+@@ x7|mis:0#0
+"A neural network does something complicated that cannot be understood with elementary maths." ← The loop above is implementable with these very tools.
+@@ x7|mis:1#0
+"More neurons is always better." ← Overfitting and cost; tuning and validation are needed.
+@@ x7|sum:0#0
+Training: forward ← loss ← backward (the chain rule) ← update (GD).
+@@ x7|sum:1#0
+The nonlinearity of the layers gives the power to learn complex boundaries (like XOR).
+@@ x7|ex:0:q#0
+Why can a linear model (without a nonlinear hidden layer) not learn XOR?
+@@ x7|ex:0:e#0
+Points of the same class lie on opposite diagonals; no single line separates the two classes.
+@@ x7|ex:0:o:0#0
+There is too little data
+@@ x7|ex:0:o:1#0
+XOR is not separable by one line (hyperplane)
+@@ x7|ex:0:o:2#0
+The learning rate is too low
+@@ x7|ex:0:o:3#0
+The gradient is zero
+@@ x7|ex:1:q#0
+A composition of several fully linear layers (without a nonlinear activation) is equivalent in power to one linear layer.
+@@ x7|ex:1:e#0
+A product of matrices is a matrix: $W_2W_1\mathbf x=(W_2W_1)\mathbf x$.
+@@ x7|ex:2:q#0
+With the widget, compare 2 and 16 hidden neurons on "circles" and relate the difference to the bias–variance concept.
+@@ x7|ex:2:a#0
+With 2 neurons the capacity is low; the boundary barely forms a closed region (high bias, underfitting, higher training loss). With 16 neurons it fits the circular boundary more precisely (lower bias). If the data were noisy, more capacity could also learn the noise (variance↑). We find the balance with validation and regularization.
+@@ x8|body#0
+The confusion matrix
+@@ x8|body#1
+For binary classification four counts: TP, FP, FN, TN. From a probabilistic view:
+@@ x8|body#2
+<b>Precision</b> is the posterior probability $P(y{=}1\mid\hat y{=}1)$ — exactly Bayes' theorem's quantity; so it depends on the <b>prevalence (prior)</b>: with recall and FPR fixed, lowering the prevalence makes precision collapse (the medical-test example). Accuracy is misleading on imbalanced data.
+@@ x8|body#3
+Threshold, ROC and AUC
+@@ x8|body#4
+The model gives a continuous score; the threshold $\tau$ turns it into a label. As $\tau$ changes, the (FPR, TPR) pairs trace the <b>ROC</b> curve. The <b>AUC</b> equals the probability that a random positive sample gets a higher score than a random negative one (a probabilistic interpretation; $0.5$ = random guessing, $1$ = perfect separation). AUC does not depend on the threshold and (roughly) not on the prevalence; but at very low prevalence the precision–recall curve is more informative. In the widget we assume the two classes' scores are two Gaussians with means $0$ and $d'$.
+@@ x8|body#5
+Confusion matrix, precision/recall and ROC with threshold, separation and prevalence
+@@ x8|body#6
+Metric uncertainty
+@@ x8|body#7
+Every metric on test data is an <b>estimate</b>: an accuracy $\hat p$ on $n$ samples has standard error $\sqrt{\hat p(1-\hat p)/n}$. Comparing two models must be done with a statistical test or CI (bootstrap, McNemar's test), not only by numeric difference. And <b>data leakage</b> invalidates the validation.
+@@ x8|obj:0#0
+Define the confusion matrix and the precision, recall, F1 and accuracy metrics and interpret them probabilistically.
+@@ x8|obj:1#0
+See the effect of the threshold and the prevalence (base rate) on the metrics.
+@@ x8|obj:2#0
+Interpret ROC and AUC.
+@@ x8|mis:0#0
+"High accuracy = a good model." ← Meaningless on imbalanced data.
+@@ x8|mis:1#0
+"Precision and recall do not depend on the prevalence." ← Recall does not, precision does.
+@@ x8|mis:2#0
+"AUC = 0.5 means a bad but efficient model." ← It means random guessing.
+@@ x8|mis:3#0
+"A 1% difference in two models' accuracy is surely real." ← The CI/test must be checked.
+@@ x8|sum:0#0
+Precision = the posterior probability of being positive after a positive prediction; it is sensitive to prevalence.
+@@ x8|sum:1#0
+Recall, FPR, ROC and AUC (the probability of correctly ordering a positive/negative pair) relate to the threshold.
+@@ x8|sum:2#0
+Metrics are estimates with uncertainty; CIs and statistical tests are needed.
+@@ x8|ex:0:q#0
+TP=40, FP=10, FN=20, TN=930. What is the precision?
+@@ x8|ex:1:q#0
+For the same data what is the recall?
+@@ x8|ex:2:q#0
+Compute $F_1$ for the same data.
+@@ x8|ex:3:q#0
+With recall and FPR constant, what effect does a sharp drop in the positive-class prevalence have on precision?
+@@ x8|ex:3:e#0
+The number of true positives falls but the FPs (from the large number of negatives) stay constant ⇒ the ratio $TP/(TP+FP)$ decreases.
+@@ x8|ex:3:o:0#0
+Increase
+@@ x8|ex:3:o:1#0
+Decrease
+@@ x8|ex:3:o:2#0
+No change
+@@ x8|ex:3:o:3#0
+Undetermined
+@@ x8|ex:4:q#0
+Write the probabilistic interpretation of AUC and say what AUC=0.9 means in practice.
+@@ x8|ex:4:a#0
+AUC = $P(s(x^+)>s(x^-))$ for an independent random positive and negative sample. AUC=0.9 means that in 90% of (positive, negative) pairs the model gives the positive a higher score. This measure is about overall ranking, not about a specific threshold or the cost of errors; for a practical decision a threshold suited to the cost of FP/FN must be chosen.
+@@ x9|body#0
+What is an embedding?
+@@ x9|body#1
+A computer works with numbers; words, sentences, images and users must be mapped to <b>dense vectors</b> (say 300 to 4096 dimensions) so that <b>semantic similarity = geometric closeness</b>. This mapping (Word2Vec, GloVe, BERT, text-embedding models) is learned from data: words that occur in similar contexts get close vectors ("you shall know a word by the company it keeps").
+@@ x9|body#2
+Similarity measures
+@@ x9|body#3
+<b>The dot product:</b> $\mathbf a\cdot\mathbf b$ (also sensitive to length).
+@@ x9|body#4
+<b>Cosine similarity:</b> $\cos\theta=\frac{\mathbf a\cdot\mathbf b}{\|\mathbf a\|\|\mathbf b\|}$ is sensitive only to direction; the standard for semantic search. If the vectors are normalized ($\|\mathbf a\|=1$) it equals the dot product and a search becomes one matrix product: $\text{scores}=E\,\mathbf q$.
+@@ x9|body#5
+<b>Euclidean distance:</b> $\|\mathbf a-\mathbf b\|$; for unit vectors $\|\mathbf a-\mathbf b\|^2=2-2\cos\theta$ holds.
+@@ x9|body#6
+Vector analogy
+@@ x9|body#7
+In good embeddings "conceptual" directions are roughly linear: $\overrightarrow{king}-\overrightarrow{man}+\overrightarrow{woman}\approx\overrightarrow{queen}$. The widget below uses small hand-made vectors (to understand the mechanism); in real models such analogies are approximate and sometimes wrong and may reflect biases in the training data.
+@@ x9|body#8
+Cosine similarity and vector analogy in a small space
+@@ x9|body#9
+Semantic search and RAG
+@@ x9|body#10
+Convert all documents to vectors once and store them in a <b>vector index</b> (a data structure!).
+@@ x9|body#11
+Convert the query to a vector.
+@@ x9|body#12
+Find the nearest $k$ vectors by cosine similarity (exact search $O(nd)$ or approximate with HNSW/IVF).
+@@ x9|body#13
+(In RAG) give the text of the retrieved documents to a language model.
+@@ x9|body#14
+Here three fields meet: linear algebra (dot product, normalization), data structures/databases (vector index, complexity) and statistics (recall@k, evaluation).
+@@ x9|obj:0#0
+Understand an embedding as a point in a vector space and semantic similarity as distance/angle.
+@@ x9|obj:1#0
+Compute cosine similarity and explain semantic search.
+@@ x9|obj:2#0
+Analyse vector analogy (king − man + woman) and know its limits.
+@@ x9|mis:0#0
+"An embedding is one number per word." ← It is a dense high-dimensional vector.
+@@ x9|mis:1#0
+"A large distance means unrelated." ← In high dimensions the "curse of dimensionality" compresses distances; cosine is usually better.
+@@ x9|mis:2#0
+"Vector analogy is a law." ← It is an approximate phenomenon.
+@@ x9|sum:0#0
+Embedding: mapping data to dense vectors with semantic similarity = geometric closeness.
+@@ x9|sum:1#0
+Cosine similarity = the dot product of normalized vectors; semantic search is a matrix product + a vector index.
+@@ x9|ex:0:q#0
+What is the cosine similarity of $\mathbf a=(1,0)$ and $\mathbf b=(0,1)$?
+@@ x9|ex:0:e#0
+They are perpendicular: $\mathbf a\cdot\mathbf b=0$ ⇒ $\cos=0$.
+@@ x9|ex:1:q#0
+Find the cosine similarity of $\mathbf a=(3,4)$ and $\mathbf b=(6,8)$.
+@@ x9|ex:1:e#0
+$\mathbf b=2\mathbf a$ in the same direction ⇒ $\cos=1$ (magnitude does not matter).
+@@ x9|ex:2:q#0
+For normalized vectors, ranking by cosine similarity is the same as ranking by Euclidean distance.
+@@ x9|ex:2:e#0
+$\|\mathbf a-\mathbf b\|^2=2-2\cos\theta$ is a decreasing function of $\cos\theta$.
+@@ x9|ex:3:q#0
+Why is an approximate index (ANN) usually used for semantic search over billions of documents? What is the exact cost?
+@@ x9|ex:3:a#0
+Exact search costs $O(nd)$ per query; for $n=10^9$ and $d=768$ that is about $10^{12}$ operations per query — impossible for millisecond latency. Approximate indexes (HNSW: a navigable graph, IVF: clustering) examine only a small fraction of the vectors: sublinear time (say $O(\log n)$ to $O(\sqrt n)$) with a small loss of recall; a trade-off of accuracy/speed/memory.
+@@ x10|body#0
+From embedding to attention
+@@ x10|body#1
+The input of a transformer is a matrix $X\in\mathbb{R}^{n\times d}$: $n$ tokens, each a $d$-dimensional embedding vector. The goal of attention: each token "retrieves" relevant information from the other tokens. Three learned linear transformations:
+@@ x10|body#2
+<b>Intuition:</b> "query" = "what am I looking for?", "key" = "what do I have?", "value" = "what I give if you select me". The similarity of each token's query with the keys of all tokens (the dot product, the same similarity concept!) builds the attention weights:
+@@ x10|body#3
+$S=QK^T$ is the $n\times n$ matrix of dot products: $S_{ij}=\mathbf q_i\cdot\mathbf k_j$.
+@@ x10|body#4
+Dividing by $\sqrt{d_k}$: if the components are independent with variance 1, $\mathrm{Var}(\mathbf q\cdot\mathbf k)=d_k$; dividing keeps the variance at 1 and prevents softmax saturation (vanishing gradient).
+@@ x10|body#5
+Row-wise softmax: each row a probability distribution (sum 1) over the tokens.
+@@ x10|body#6
+$O=AV$: a linear combination of the rows of $V$ with the attention weights.
+@@ x10|body#7
+Attention with real matrices: scaling, causal mask and weights
+@@ x10|body#8
+The causal mask and multi-head
+@@ x10|body#9
+In autoregressive language models (GPT) a token must not see the future: before the softmax, $-\infty$ is added to the entries above the diagonal (weight 0). <b>Multi-head:</b> $h$ independent sets $(W_Q,W_K,W_V)$ run in parallel and the outputs are concatenated and combined with $W_O$; each head learns a different pattern (syntax, reference, ...).
+@@ x10|body#10
+Cost
+@@ x10|body#11
+The products $XW_Q$ and so on cost $O(nd^2)$, and $QK^T$ and $AV$ cost $O(n^2d)$ with $O(n^2)$ memory. So doubling the text length ≈ quadruples the attention cost (the reason for context-window limits) and motivates methods like FlashAttention (reducing memory I/O), sparse/linear attention and the KV cache at inference. The rest of the transformer (the feed-forward network) is also a few big matrix products; so the whole model is mainly a chain of GEMMs on a GPU.
+@@ x10|body#12
+<b class="t">Where the three subjects meet</b>Matrix multiplication (linear algebra) + softmax/probability distribution (probability) + differentiability for training (calculus) + tensor memory layout and the cache (data structures): the transformer has all of these in one place.
+@@ x10|obj:0#0
+Write self-attention as a chain of matrix products and softmax.
+@@ x10|obj:1#0
+Explain the roles of Q, K, V, the $1/\sqrt{d_k}$ scaling and the causal mask.
+@@ x10|obj:2#0
+Understand the $O(n^2d)$ cost and its consequence for text length.
+@@ x10|mis:0#0
+"Attention means the model pays attention like a human." ← It is a learned weighted average.
+@@ x10|mis:1#0
+"softmax(QKᵀ) makes no difference without scaling." ← With a large $d_k$ it saturates.
+@@ x10|mis:2#0
+"Attention has linear cost." ← It is quadratic in the sequence length.
+@@ x10|sum:0#0
+Attention = softmax(QKᵀ/√d_k)·V; all matrix products and softmax.
+@@ x10|sum:1#0
+The causal mask hides the future; multi-head learns several patterns in parallel.
+@@ x10|sum:2#0
+The $O(n^2d)$ cost limits the text length.
+@@ x10|ex:0:q#0
+What is the shape of the score matrix $S=QK^T$ for $n=10$ tokens and $d_k=64$?
+@@ x10|ex:0:e#0
+$Q:(10\times64)$ and $K^T:(64\times10)$ ⇒ $S:(10\times10)$.
+@@ x10|ex:1:q#0
+If the sequence length goes from 1024 to 4096, by what factor does the $O(n^2)$ cost of the score part grow?
+@@ x10|ex:2:q#0
+In the row-wise softmax of the attention matrix, each row sums to 1.
+@@ x10|ex:2:e#0
+Each row is a probability distribution over the tokens.
+@@ x10|ex:3:q#0
+Show that if $\mathbf q,\mathbf k$ have independent components with mean 0 and variance 1 then $\mathrm{Var}(\mathbf q\cdot\mathbf k)=d_k$, and what this implies for the scaling.
+@@ x10|ex:3:a#0
+$\mathbf q\cdot\mathbf k=\sum_{i=1}^{d_k}q_ik_i$. Each term has $E[q_ik_i]=0$ and $\mathrm{Var}(q_ik_i)=E[q_i^2]E[k_i^2]=1$ (independence); the terms are independent so $\mathrm{Var}(\mathbf q\cdot\mathbf k)=d_k$ and the standard deviation is $\sqrt{d_k}$. Without division the scores grow with $d_k$ and the softmax becomes nearly one-hot (negligible gradient); dividing by $\sqrt{d_k}$ keeps the score variance at 1.

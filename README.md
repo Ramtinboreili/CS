@@ -7,7 +7,7 @@ A self-contained, **bilingual** (فارسی RTL / English LTR) interactive cours
 | **A · Data Structures & Algorithms** | Complexity, linear and non-linear structures, sorting/searching, graphs, DP/greedy/backtracking, trade-offs |
 | **B · Database Systems** | Relational model, SQL (real in-browser engine), design & normalization, indexes & B+Trees, transactions, architecture, internals |
 | **C · Mathematics for AI** | Linear algebra, calculus & backprop, probability, statistics, optimization |
-| **D · Machine Learning** | *(in progress)* supervised learning, classification, unsupervised learning, evaluation, neural networks |
+| **D · Machine Learning** | regression & generalization, classification, k-means & PCA, cross-validation & metrics, MLP & CNN (10 lessons, 8 widgets) |
 | **X · Connecting the Foundations** | 10 cross-subject connections (arrays→tensors, B+Tree→index, gradient→training, attention→matrix multiply …) |
 
 ## What you get
@@ -36,6 +36,9 @@ python3 tests/run.py           # headless-Firefox self-test: every lesson and la
 Source lives in `src/parts/` (see `CLAUDE.md` for the layout, the bilingual rules and the lab-authoring rules). `index.html` is generated; edit the parts.
 
 ## Status
+
+- 64 lessons and 34 visual labs, all in Persian and English.
+- **Not yet bilingual:** the UI strings inside the ~60 older interactive widgets (modules A–C, X) are still Persian; lab and ML widgets are bilingual.
 
 See the checklist in `CLAUDE.md` and the git history. Honest limits:
 

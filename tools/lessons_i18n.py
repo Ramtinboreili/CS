@@ -80,6 +80,7 @@ def sig_ok(src,en):
         if m in b: b.remove(m)
         else: return False
     return sorted(TAG.findall(MATH.sub('',src)))==sorted(TAG.findall(MATH.sub('',en)))
+DATA_O={'هر کدام را جداگانه اجرا کنید':'run each one separately','نقض FK: دپارتمان ۹ وجود ندارد':'FK violation: department 9 does not exist','نقض PK: شناسه‌ی تکراری':'PK violation: duplicate id','نقض NOT NULL: نام خالی':'NOT NULL violation: empty name','درج معتبر':'valid insert','حذف دپارتمان دارای کارمند (RESTRICT)':'delete a department that has employees (RESTRICT)','حذف دپارتمان بدون کارمند':'delete a department without employees','رتبه‌بندی با RANK':'ranking with RANK','سه‌نفر اول هر دپارتمان با CTE':'top three of each department with a CTE','اختلاف با نفر بالاتر (LAG)':'difference from the next higher earner (LAG)','با شرط':'with a condition','ضرب دکارتی + فیلتر در WHERE (نتیجه‌ی یکسان، کار بیشتر)':'Cartesian product + a filter in WHERE (same result, more work)','زیرپرسش هم‌بسته (اسکن تکراری)':'correlated subquery (repeated scan)'}
 if __name__=='__main__':
     cmd=sys.argv[1];data=json.load(open(sys.argv[2],encoding='utf-8'))
     if cmd=='units':
@@ -121,6 +122,7 @@ if __name__=='__main__':
                     else: res+=t
                 return res
             ov['body']=rebuild('body',l['body'])
+            for a_,b_ in DATA_O.items(): ov['body']=ov['body'].replace(a_,b_)
             ov['obj']=[rebuild('obj:%d'%i,x) for i,x in enumerate(l['obj'])]
             if any(FA.search(x) for x in l['pre']): ov['pre']=[rebuild('pre:%d'%i,x) if FA.search(x) else x for i,x in enumerate(l['pre'])]
             ov['mis']=[rebuild('mis:%d'%i,x) for i,x in enumerate(l['mis'])]

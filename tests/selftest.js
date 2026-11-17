@@ -24,7 +24,7 @@ for(const lang of ['fa','en']){
   v.querySelectorAll('.fb.no').forEach(f=>{if(!ALLOW_FB.has(l.id))R.widgetErr.push(lang+' '+l.id+': '+f.textContent.slice(0,80))});
   const X=LX(l);schema(l,X,lang);
   if(lang==='en'&&!X.tr)R.untranslated.push(l.id);
-  if(lang==='en'&&X.tr){const faRe=/[؀-ۿ]/;const bad=[X.body,...X.obj,...X.sum].filter(s=>faRe.test(String(s).replace(/<pre[\s\S]*?<\/pre>/g,'')));if(bad.length)R.notes.push('en '+l.id+' still has Persian chars in '+bad.length+' block(s)')}}
+  if(lang==='en'&&X.tr){const faRe=/[؀-ۿ]/;const exs=[];X.ex.forEach(e=>{exs.push(e.q,e.e,e.hint,typeof e.a==='string'?e.a:'');(e.o||[]).forEach(o=>exs.push(o))});const bad=[X.body,...X.obj,...X.sum,...X.mis,...exs].filter(s=>s&&faRe.test(String(s).replace(/<pre[\s\S]*?<\/pre>/g,'')));if(bad.length)R.notes.push('en '+l.id+' still has Persian chars in '+bad.length+' block(s)')}}
  for(const b of LABS){go('#/lab/'+b.id);await tick(8);R.labs++;
   const L=window._lab;if(!L||L.b!==b){R.notes.push(lang+' lab '+b.id+' did not mount');continue}
   const btns=[...document.querySelectorAll('.lstep .btn')];

@@ -15,7 +15,8 @@ src/parts/
   p04b_lab.js          lab runner (LAB(), pageLab, pageLabs)
   p05..p08_w*.js       widgets W.* for modules A, B, C, X
   c_*.js               lesson content (Persian base): LESSONS.push({...})
-  e_*.js               English overlays: addEN(id,{obj,pre,body,mis,ex:[{q,o,e,hint,init}],sum})
+  e_D.js               hand-written English overlay for the ML lessons: addEN(id,{obj,pre,body,mis,ex:[{q,o,e,hint,init}],sum})
+  e_gen.js             GENERATED English overlay for lessons in modules A, B, C, X (do not edit; see "Translation pipeline")
   l_*.js               labs (LAB({...}))
   p99_tail.html        boot(); </script></body></html>   <- boot() must run AFTER every content/lab part
 build.py               concatenates parts in ORDER -> index.html   (python3 build.py)
@@ -77,3 +78,19 @@ Source of truth: `.claude/skills/interactive-educator/SKILL.md` and `references/
 ## Before you finish any change
 
 `python3 build.py && python3 tools_check.py && python3 tests/run.py` — then look at one screenshot per new lab at desktop width and ~390px.
+
+## Translation pipeline (modules A, B, C, X)
+
+English text lives in `i18n/*.txt` as blocks `@@ <lessonId>|<unitKey>` followed by the English text. Units are prose pieces extracted from the
+evaluated Persian lessons; math, tags and code are preserved and verified. To regenerate after changing Persian content:
+
+```bash
+python3 tests/dump_lessons.py /tmp/lessons_fa.json
+python3 tools/lessons_i18n.py units /tmp/lessons_fa.json <ids>     # print units to translate
+python3 tools/lessons_i18n.py build /tmp/lessons_fa.json "i18n/*.txt" src/parts/e_gen.js
+```
+`build` reports missing units, tag/math mismatches and leftover Persian. Widget option JSON (`data-o`) strings are mapped in `DATA_O` inside the tool.
+
+## Known gaps
+
+- Widget UI strings (labels/messages inside `p05`–`p08` widgets) are still Persian only; only `p03_lib.js`, `p09_wD.js` and all labs are bilingual.
