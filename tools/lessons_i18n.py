@@ -7,7 +7,7 @@ Prose units keep inline tags and $math$ literally; the translation must keep the
 import re,sys,json
 FA=re.compile(r'[؀-ۿ]')
 BLOCK=r'(?:p|li|ul|ol|h[1-6]|td|th|tr|table|thead|tbody|div|br|hr|section|pre|blockquote)'
-TAG=re.compile(r'<[^>]+>')
+TAG=re.compile(r'</?[a-zA-Z][^>]*>')
 MATH=re.compile(r'\$\$[\s\S]+?\$\$|\$[^$\n]+?\$')
 ATTR=re.compile(r'''(data-t|title|placeholder|alt|aria-label)="([^"]*)"''')
 def is_block(tag):
@@ -29,10 +29,10 @@ def seg(s):
             if buf:
                 out.append(('T',buf) if FA.search(MATH.sub('',buf)) or FA.search(buf) else ('R',buf));buf=''
         # tokenise: tags, math, text
-        tok=re.compile(r'<[^>]+>|\$\$[\s\S]+?\$\$|\$[^$\n]+?\$|[^<$]+|[<$]')
+        tok=re.compile(r'</?[a-zA-Z][^>]*>|\$\$[\s\S]+?\$\$|\$[^$\n]+?\$|[^<$]+|[<$]')
         for m in tok.finditer(part):
             t=m.group(0)
-            if t.startswith('<') and t.endswith('>') and len(t)>2:
+            if re.fullmatch(r'</?[a-zA-Z][^>]*>',t):
                 if is_block(t):
                     flush()
                     # attributes with persian text
@@ -113,7 +113,9 @@ if __name__=='__main__':
                         en=m.get('%s#%d'%(key,n));n+=1
                         if en is None: print('MISSING',l['id'],key,n-1);bad+=1;res+=t
                         else:
-                            if not sig_ok(t,en): print('SIG MISMATCH',l['id'],key,n-1,'| missing in en:',[m for m in sig(t) if m not in sig(en)],'| extra in en:',[m for m in sig(en) if m not in sig(t)]);bad+=1
+                            if not sig_ok(t,en):
+                                from collections import Counter
+                                c1=Counter(sig(t));c2=Counter(sig(en));print('SIG MISMATCH',l['id'],key,n-1,'| missing in en:',list((c1-c2).elements()),'| extra in en:',list((c2-c1).elements()));bad+=1
                             if FA.search(en): print('PERSIAN LEFT',l['id'],key,n-1,en[:50]);bad+=1
                             res+=en
                     else: res+=t
