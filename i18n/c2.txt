@@ -1,0 +1,240 @@
+@@ c2-1|body#0
+1. Function and limit
+@@ c2-1|body#1
+A function $f:\mathbb{R}\to\mathbb{R}$ maps each input to one output. The <b>limit</b> $\lim_{x\to a}f(x)=L$ means that as $x$ approaches $a$, $f(x)$ approaches $L$ (the ε–δ definition: for every $\varepsilon>0$ there is a $\delta>0$ such that $0<|x-a|<\delta\Rightarrow|f(x)-L|<\varepsilon$). Continuity means $\lim_{x\to a}f(x)=f(a)$.
+@@ c2-1|body#2
+2. The derivative
+@@ c2-1|body#3
+<b>Intuition:</b> the derivative is the "instantaneous rate of change" or the slope of the tangent line. The slope of the secant between $x$ and $x+h$ is $\frac{f(x+h)-f(x)}{h}$; as $h\to0$ it tends to the tangent slope:
+@@ c2-1|body#4
+<b>Derivation:</b> for $f(x)=x^2$: $\frac{(x+h)^2-x^2}{h}=\frac{2xh+h^2}{h}=2x+h\to2x$. Likewise: $(x^n)'=nx^{n-1}$, $(e^x)'=e^x$, $(\ln x)'=1/x$, $(\sin x)'=\cos x$, and the sum, product $(fg)'=f'g+fg'$ and quotient rules. At "corner" points (like $|x|$ at 0) the derivative does not exist.
+@@ c2-1|body#5
+The secant and tangent lines; make the step $h$ small
+@@ c2-1|body#6
+In ML we use the derivative to find the direction that improves the parameters: if $f'(w)>0$, decreasing $w$ lowers the loss. The <b>numerical derivative</b> (central difference) $\frac{f(x+h)-f(x-h)}{2h}$ with error $O(h^2)$ is a tool for <b>gradient checking</b>.
+@@ c2-1|body#7
+3. Partial derivatives and the gradient
+@@ c2-1|body#8
+For $f:\mathbb{R}^n\to\mathbb{R}$ (for example a loss with $n$ parameters), the <b>partial derivative</b> with respect to $x_i$ is the derivative holding the other variables fixed. The <b>gradient</b> is the vector of all partial derivatives:
+@@ c2-1|body#9
+<b>Example:</b> $f(x,y)=x^2+3xy+y^2$ ⇒ $\partial_xf=2x+3y$, $\partial_yf=3x+2y$; at $(1,2)$: $\nabla f=(8,7)$.
+@@ c2-1|body#10
+Why is $-\nabla f$ the direction of steepest descent?
+@@ c2-1|body#11
+The <b>directional derivative</b> along the unit vector $\mathbf u$: $D_{\mathbf u}f=\nabla f\cdot\mathbf u=\|\nabla f\|\cos\theta$ (first-order approximation: $f(\mathbf x+t\mathbf u)\approx f(\mathbf x)+t\,\nabla f\cdot\mathbf u$). This is maximal for $\theta=0$ (along the gradient, $+\|\nabla f\|$) and minimal for $\theta=\pi$ (against the gradient, $-\|\nabla f\|$). So $\nabla f$ is the direction of steepest increase and $-\nabla f$ the direction of steepest decrease (steepest descent). The gradient is also perpendicular to the <b>level curves</b> ($f=\text{constant}$) because along a tangent to a level curve $D_{\mathbf u}f=0$.
+@@ c2-1|body#12
+The gradient on a contour map: click on the map
+@@ c2-1|body#13
+The <b>gradient descent algorithm</b> follows from this: $\mathbf x\leftarrow\mathbf x-\eta\nabla f(\mathbf x)$ (in the optimization lessons).
+@@ c2-1|body#14
+<b class="t">Use in ML</b>The loss $L(\mathbf w)$ is a function of millions of parameters; the gradient $\nabla_{\mathbf w}L$ says in which direction and by how much to change each weight to reduce the loss. Backpropagation is an efficient way to compute exactly this gradient.
+@@ c2-1|obj:0#0
+State function, limit and derivative conceptually and with the precise definition.
+@@ c2-1|obj:1#0
+Compute and geometrically interpret partial derivatives and the gradient vector.
+@@ c2-1|obj:2#0
+Show why $-\nabla f$ is the direction of steepest descent.
+@@ c2-1|mis:0#0
+"A zero derivative means a minimum." ← It can be a maximum or a saddle point (the second-derivative/Hessian test is needed).
+@@ c2-1|mis:1#0
+"The gradient is a scalar." ← It is a vector with the same dimension as the input.
+@@ c2-1|mis:2#0
+"The gradient generally points to the global minimum." ← It is only the direction of steepest <i>local</i> descent.
+@@ c2-1|mis:3#0
+"Differentiability = continuity." ← Differentiable ⇒ continuous, but not vice versa (like $|x|$).
+@@ c2-1|sum:0#0
+Derivative = tangent slope = the limit of secant slopes; partial derivative holds the other variables fixed.
+@@ c2-1|sum:1#0
+The gradient is the vector of partial derivatives; the direction of steepest increase and perpendicular to level curves.
+@@ c2-1|sum:2#0
+$-\nabla f$ is the direction of steepest local descent and the basis of gradient descent.
+@@ c2-1|ex:0:q#0
+What is the derivative of $f(x)=3x^2-5x+2$ at $x=2$?
+@@ c2-1|ex:1:q#0
+For $f(x,y)=x^2y+y^3$ find $\partial f/\partial y$ at the point $(2,1)$.
+@@ c2-1|ex:2:q#0
+What is the gradient norm of $f(x,y)=x^2+y^2$ at the point $(3,4)$?
+@@ c2-1|ex:2:e#0
+$\nabla f=(2x,2y)=(6,8)$ and $\|\nabla f\|=\sqrt{36+64}=10$.
+@@ c2-1|ex:3:q#0
+How is the gradient of $f$ at a point related to the level curve through that point?
+@@ c2-1|ex:3:e#0
+Along the tangent to the level curve the function value is constant ⇒ $D_{\mathbf u}f=\nabla f\cdot\mathbf u=0$ ⇒ perpendicular.
+@@ c2-1|ex:3:o:0#0
+Parallel
+@@ c2-1|ex:3:o:1#0
+Perpendicular
+@@ c2-1|ex:3:o:2#0
+No relation
+@@ c2-1|ex:3:o:3#0
+45 degrees
+@@ c2-1|ex:4:q#0
+Using $D_{\mathbf u}f=\|\nabla f\|\cos\theta$, prove that the greatest rate of increase of $f$ is $\|\nabla f\|$ and is in the direction of $\nabla f$. Why is the assumption that $\mathbf u$ is a unit vector necessary?
+@@ c2-1|ex:4:a#0
+$D_{\mathbf u}f=\nabla f\cdot\mathbf u=\|\nabla f\|\|\mathbf u\|\cos\theta$ and with $\|\mathbf u\|=1$ it equals $\|\nabla f\|\cos\theta$, whose maximum occurs at $\cos\theta=1$, i.e. $\theta=0$ (the direction of $\nabla f$), with the value $\|\nabla f\|$. If $\mathbf u$ were not a unit vector we could make the directional derivative arbitrarily large by lengthening it and "rate per unit displacement" would be meaningless; so only the direction is compared.
+@@ c2-2|body#0
+1. The chain rule
+@@ c2-2|body#1
+If $y=f(g(x))$, with $u=g(x)$: $\frac{dy}{dx}=\frac{dy}{du}\cdot\frac{du}{dx}$. Intuition: the rate of change of $y$ with respect to $x$ is the product of the successive rates. Example: $y=\sin(x^2)$ ⇒ $y'=\cos(x^2)\cdot2x$. <b>The multivariable case:</b> if $L=L(y_1,\dots,y_k)$ and each $y_j=y_j(x)$, then by <b>summing over all paths</b>:
+@@ c2-2|body#2
+2. The Jacobian matrix
+@@ c2-2|body#3
+For $\mathbf f:\mathbb{R}^n\to\mathbb{R}^m$ the <b>Jacobian</b> is the $m\times n$ matrix of all partial derivatives: $J_{ij}=\frac{\partial f_i}{\partial x_j}$. The best linear approximation of the function near a point: $\mathbf f(\mathbf x+\boldsymbol\delta)\approx\mathbf f(\mathbf x)+J\boldsymbol\delta$. <b>The matrix chain rule:</b> for the composition $\mathbf h=\mathbf f\circ\mathbf g$: $J_{\mathbf h}=J_{\mathbf f}\,J_{\mathbf g}$ (matrix multiplication). For a scalar loss $L$ and a linear layer $\mathbf y=W\mathbf x$: $\frac{\partial L}{\partial\mathbf x}=W^T\frac{\partial L}{\partial\mathbf y}$ and $\frac{\partial L}{\partial W}=\frac{\partial L}{\partial\mathbf y}\mathbf x^T$.
+@@ c2-2|body#4
+3. Backpropagation
+@@ c2-2|body#5
+A neural network is a deep composition of simple functions: $L=\ell(f_k(\cdots f_2(f_1(\mathbf x))))$. Computing $\nabla_\theta L$ efficiently needs two passes: <b>forward</b> (storing the intermediate values) and <b>backward</b> (applying the chain rule from output to input). Since the cost of the backward pass is of the same order as the forward pass, the gradient of all parameters is obtained at about the cost of running the network twice (reverse-mode autodiff). A one-hidden-unit example: $z_1=w_1x+b_1,\ h=\sigma(z_1),\ z_2=w_2h+b_2,\ \hat y=\sigma(z_2),\ L=\tfrac12(\hat y-t)^2$:
+@@ c2-2|body#6
+Here $\delta_l=\partial L/\partial z_l$ is the "error of layer $l$" propagated backward from the next layer. The widget below shows all the steps and the check against the numerical gradient:
+@@ c2-2|body#7
+Backpropagation step by step on a small network
+@@ c2-2|body#8
+<b>Observation:</b> $\sigma'(z)=\sigma(z)(1-\sigma(z))\le0.25$. In a deep network, multiplying many of these small factors drives the gradient toward zero: the <b>vanishing gradient</b> (and, with large factors, exploding). That is why ReLU, residual connections, normalization and good initialization matter.
+@@ c2-2|body#9
+4. The Hessian and curvature
+@@ c2-2|body#10
+The <b>Hessian</b> is the $n\times n$ matrix of second-order partial derivatives: $H_{ij}=\frac{\partial^2f}{\partial x_i\partial x_j}$ (symmetric for smooth functions). At a critical point ($\nabla f=0$) the eigenvalues of $H$ identify the type of point:
+@@ c2-2|body#11
+Eigenvalues of $H$
+@@ c2-2|body#12
+Nature of the point
+@@ c2-2|body#13
+All $>0$ (positive definite)
+@@ c2-2|body#14
+Local minimum
+@@ c2-2|body#15
+All $<0$ (negative definite)
+@@ c2-2|body#16
+Local maximum
+@@ c2-2|body#17
+Mixed signs
+@@ c2-2|body#18
+Saddle point
+@@ c2-2|body#19
+Some zero
+@@ c2-2|body#20
+Inconclusive (more analysis needed)
+@@ c2-2|body#21
+The second-order Taylor approximation: $f(\mathbf x+\boldsymbol\delta)\approx f+\nabla f^T\boldsymbol\delta+\tfrac12\boldsymbol\delta^TH\boldsymbol\delta$. If $H$ is positive definite everywhere the function is <b>convex</b>. Newton's method $\mathbf x\leftarrow\mathbf x-H^{-1}\nabla f$ uses curvature but in high dimensions computing $H$ ($n^2$ entries) and its inverse is impractical; so ML uses first-order methods (Adam, ...). In deep networks <b>saddle points</b> are more problematic than bad local minima.
+@@ c2-2|body#22
+See the Hessian and the point type for different functions (try the saddle function x²−y²)
+@@ c2-2|obj:0#0
+Apply the chain rule to composite and multivariable functions.
+@@ c2-2|obj:1#0
+Define and interpret the Jacobian and Hessian matrices.
+@@ c2-2|obj:2#0
+Understand backpropagation as the systematic use of the chain rule on a computation graph.
+@@ c2-2|mis:0#0
+"Backprop is a learning algorithm." ← It is only a way to compute the gradient; the optimizer (SGD/Adam) does the learning.
+@@ c2-2|mis:1#0
+"We must run the network separately for each parameter." ← Reverse mode gives all of them in one pass.
+@@ c2-2|mis:2#0
+"The Hessian is always positive definite." ← Only for convex functions.
+@@ c2-2|mis:3#0
+"A zero gradient means a minimum." ← It can be a saddle or a maximum.
+@@ c2-2|sum:0#0
+Chain rule: the derivative of a composition = the product of the derivatives (summed over paths); in matrix form, a product of Jacobians.
+@@ c2-2|sum:1#0
+Backprop = reverse-mode autodiff: forward (store) + backward ($\delta$s); cost ≈ $O(\text{forward})$.
+@@ c2-2|sum:2#0
+The Hessian gives curvature; its eigenvalues identify minimum/maximum/saddle.
+@@ c2-2|ex:0:q#0
+What is the derivative of $y=(3x+1)^4$ at $x=0$?
+@@ c2-2|ex:0:e#0
+$y'=4(3x+1)^3\cdot3=12(3x+1)^3$; at $x=0$: $12\cdot1=12$.
+@@ c2-2|ex:1:q#0
+For $f(x,y)=x^2y$, what is the entry $\partial^2f/\partial x\partial y$ at $(2,5)$?
+@@ c2-2|ex:2:q#0
+One neuron: $z=wx+b$ with $w=0,\ b=0,\ x=1$, output $\hat y=\sigma(z)$ and loss $L=\tfrac12(\hat y-t)^2$ with target $t=1$. Find $\partial L/\partial w$.
+@@ c2-2|ex:2:e#0
+$z=0\Rightarrow\hat y=\sigma(0)=0.5$. $\partial L/\partial\hat y=\hat y-t=-0.5$; $\sigma'(0)=\hat y(1-\hat y)=0.25$; $\partial z/\partial w=x=1$. So $\partial L/\partial w=(-0.5)(0.25)(1)=-0.125$. The negative sign: increasing $w$ lowers the loss.
+@@ c2-2|ex:3:q#0
+If at a critical point the Hessian has eigenvalues $+2$ and $-1$, what is the point?
+@@ c2-2|ex:3:e#0
+The signs are mixed: it goes up in one direction and down in the other ⇒ a saddle point.
+@@ c2-2|ex:3:o:0#0
+A minimum
+@@ c2-2|ex:3:o:1#0
+A maximum
+@@ c2-2|ex:3:o:2#0
+A saddle
+@@ c2-2|ex:3:o:3#0
+Inconclusive
+@@ c2-2|ex:4:q#0
+Why is backpropagation (reverse mode) better suited than forward mode for a network with millions of parameters and one scalar loss?
+@@ c2-2|ex:4:a#0
+Forward mode needs a separate pass for each input/parameter (cost ∝ the number of parameters) and builds the Jacobian column by column. Reverse mode, for one scalar output, obtains the whole gradient with respect to all inputs in one backward pass (vector–Jacobian products); the cost ≈ a constant × the forward cost, independent of the number of parameters. The price is storing the forward intermediate values (memory), which is mitigated with gradient checkpointing.
+@@ c3-1|body#0
+1. Foundations
+@@ c3-1|body#1
+The <b>sample space</b> $\Omega$ is the set of all possible outcomes; an <b>event</b> is $A\subseteq\Omega$. The probability function $P$ satisfies Kolmogorov's axioms: (1) $P(A)\ge0$; (2) $P(\Omega)=1$; (3) for mutually exclusive events $P(\cup A_i)=\sum P(A_i)$. Consequences: $P(A^c)=1-P(A)$ and $P(A\cup B)=P(A)+P(B)-P(A\cap B)$. In the equally likely case: $P(A)=|A|/|\Omega|$ (for example the sum of two dice equal to 7 ⇒ $6/36=1/6$).
+@@ c3-1|body#2
+2. Conditional probability and independence
+@@ c3-1|body#3
+$P(A\mid B)$ is the probability of $A$ knowing that $B$ occurred:
+@@ c3-1|body#4
+Intuition: we restrict the sample space to $B$ and renormalize. <b>The product rule:</b> $P(A\cap B)=P(A\mid B)P(B)$ and for chains: $P(A_1\cap\dots\cap A_n)=\prod P(A_i\mid A_1,\dots,A_{i-1})$ (the basis of autoregressive language models). <b>Independence:</b> $A,B$ are independent if $P(A\cap B)=P(A)P(B)$; equivalently $P(A\mid B)=P(A)$ (knowing $B$ says nothing about $A$). "Mutually exclusive" differs from "independent": two mutually exclusive events with positive probability are never independent. <b>Conditional independence</b> ($A\perp B\mid C$) is the key assumption of naive Bayes.
+@@ c3-1|body#5
+3. Total probability and Bayes' theorem
+@@ c3-1|body#6
+If $\{B_i\}$ is a partition of $\Omega$: <b>total probability</b> $P(A)=\sum_iP(A\mid B_i)P(B_i)$. Combining the conditional definition and the product rule ($P(A\cap B)=P(B\mid A)P(A)=P(A\mid B)P(B)$):
+@@ c3-1|body#7
+Bayes says how to update an initial belief (prior) with new evidence. <b>The classic example (a medical test):</b> disease prevalence 1%, sensitivity 90% ($P(+|D)=0.9$), specificity 90% ($P(-|\neg D)=0.9$). The probability of being sick given a positive test:
+@@ c3-1|body#8
+The <b>natural-frequency</b> intuition: of 1000 people, 10 are sick (9 positive) and 990 healthy (99 false positives); of 108 positives only 9 are sick. This is the "<b>base rate fallacy</b>": ignoring the prior.
+@@ c3-1|body#9
+Bayes' theorem with a population of 1000: change the prevalence, sensitivity and specificity
+@@ c3-1|body#10
+4. Joint and marginal distributions
+@@ c3-1|body#11
+Joint table: marginal, conditional, independence and covariance
+@@ c3-1|body#12
+5. Use in ML
+@@ c3-1|body#13
+<b>Naive Bayes:</b> $P(c\mid\mathbf x)\propto P(c)\prod_jP(x_j\mid c)$ assuming conditional independence of the features (for example spam classification).
+@@ c3-1|body#14
+<b>Bayesian learning:</b> a prior over the parameters, a posterior after seeing the data; the basis of regularization (Gaussian prior ⇒ L2).
+@@ c3-1|body#15
+<b>Generative models:</b> $P(\mathbf x,y)=P(y)P(\mathbf x\mid y)$ versus discriminative models $P(y\mid\mathbf x)$.
+@@ c3-1|obj:0#0
+Know the sample space, events and Kolmogorov's axioms.
+@@ c3-1|obj:1#0
+Apply conditional probability, the product rule and total probability.
+@@ c3-1|obj:2#0
+Write Bayes' theorem, verify it and use it in diagnosis/classification problems.
+@@ c3-1|pre:0#0
+Familiarity with sets
+@@ c3-1|mis:0#0
+"$P(A|B)=P(B|A)$." ← Generally false (the inverse-conditional fallacy); they are related through Bayes and the prior.
+@@ c3-1|mis:1#0
+"Mutually exclusive means independent." ← Mutually exclusive with positive probability ⇒ dependent.
+@@ c3-1|mis:2#0
+"A 99% accurate test means a 99% chance of being sick on a positive result." ← Forgetting the base rate.
+@@ c3-1|mis:3#0
+"Probability means only long-run frequency." ← The Bayesian interpretation: a degree of belief.
+@@ c3-1|sum:0#0
+Conditional probability $P(A|B)=P(A\cap B)/P(B)$; independence $P(A\cap B)=P(A)P(B)$.
+@@ c3-1|sum:1#0
+Total probability + the product rule ⇒ Bayes' theorem: posterior ∝ likelihood × prior.
+@@ c3-1|sum:2#0
+Never ignore the base rate; naive Bayes and Bayesian learning rest on this.
+@@ c3-1|ex:0:q#0
+We roll two fair dice. Write the probability of a sum of 7 as a decimal rounded to 4 digits.
+@@ c3-1|ex:0:e#0
+Combinations with sum 7: (1,6),(2,5),(3,4),(4,3),(5,2),(6,1) ⇒ $6/36=1/6\approx0.1667$.
+@@ c3-1|ex:1:q#0
+$P(A)=0.4$, $P(B)=0.5$ and $A,B$ are independent. What is $P(A\cup B)$?
+@@ c3-1|ex:2:q#0
+In a factory machine A makes 60% and B 40% of the parts; the defect rate of A is 2% and of B 5%. What is the total probability that a random part is defective?
+@@ c3-1|ex:2:e#0
+Total probability: $0.6\cdot0.02+0.4\cdot0.05=0.012+0.02=0.032$.
+@@ c3-1|ex:3:q#0
+In the previous problem, if a part is defective, what is the probability it came from machine B?
+@@ c3-1|ex:3:e#0
+Bayes: $P(B|\text{defective})=\frac{0.05\cdot0.4}{0.032}=\frac{0.02}{0.032}=0.625$.
+@@ c3-1|ex:4:q#0
+Which expression is Bayes' theorem?
+@@ c3-1|ex:5:q#0
+A spam filter flags 95% of spam emails and also wrongly flags 2% of ordinary emails as spam. If 10% of emails are spam, what is the probability that a flagged email is spam?
+@@ c3-1|ex:5:a#0
+$P(S|\text{flag})=\frac{0.95\cdot0.10}{0.95\cdot0.10+0.02\cdot0.90}=\frac{0.095}{0.095+0.018}=\frac{0.095}{0.113}\approx0.841$. That is about 84%. If the spam prevalence were 1%: $\frac{0.0095}{0.0095+0.0198}\approx32\%$; this shows that the strength of a flag depends on the prior.
