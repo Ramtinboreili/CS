@@ -1,0 +1,216 @@
+@@ c3-2|body#0
+1. The random variable
+@@ c3-2|body#1
+A <b>random variable</b> is a function that maps each outcome of a random experiment to a number: $X:\Omega\to\mathbb{R}$. <b>Discrete:</b> countably many values; with a <b>probability mass function</b> $p(x)=P(X=x)$ where $\sum p(x)=1$. <b>Continuous:</b> with a <b>probability density function</b> $f(x)\ge0$ and $\int f=1$; the probability of an interval is the area under the density: $P(a\le X\le b)=\int_a^bf(x)dx$ and for any single point $P(X=x)=0$ (a density can exceed 1!). The <b>cumulative distribution function (CDF)</b>: $F(x)=P(X\le x)$, non-decreasing with limits 0 and 1.
+@@ c3-2|body#2
+2. Expectation and variance
+@@ c3-2|body#3
+
+$$E[X]=\sum_xx\,p(x)\quad\Big(\text{or}\ \int xf(x)dx\Big),\qquad \mathrm{Var}(X)=E\big[(X-\mu)^2\big]=E[X^2]-\mu^2,\qquad \sigma=\sqrt{\mathrm{Var}(X)}$$
+
+@@ c3-2|body#4
+<b>Deriving the shortcut formula:</b> $E[(X-\mu)^2]=E[X^2-2\mu X+\mu^2]=E[X^2]-2\mu E[X]+\mu^2=E[X^2]-\mu^2$. <b>Linearity of expectation:</b> $E[aX+bY+c]=aE[X]+bE[Y]+c$ (even without independence!). Variance: $\mathrm{Var}(aX+c)=a^2\mathrm{Var}(X)$ and for independent variables $\mathrm{Var}(X+Y)=\mathrm{Var}(X)+\mathrm{Var}(Y)$. <b>Example:</b> a fair die: $E[X]=3.5$; $E[X^2]=\frac{91}{6}$; $\mathrm{Var}=\frac{91}{6}-3.5^2\approx2.917$.
+@@ c3-2|body#5
+3. Covariance and correlation
+@@ c3-2|body#6
+$\mathrm{Cov}>0$: when $X$ gets bigger, $Y$ usually does too. Independent ⇒ $\mathrm{Cov}=0$ but not the other way round (example: $Y=X^2$ with $X$ symmetric about zero). For a random vector, the <b>covariance matrix</b> $\Sigma_{ij}=\mathrm{Cov}(X_i,X_j)$ is symmetric and positive semi-definite — the very matrix whose eigenvalues PCA takes.
+@@ c3-2|body#7
+4. Key distributions
+@@ c3-2|body#8
+Bernoulli
+@@ c3-2|body#9
+$X\in\{0,1\}$ with $P(X=1)=p$. $E=p$, $\mathrm{Var}=p(1-p)$. The model of one binary label; the sigmoid output in binary classification is the parameter $p$.
+@@ c3-2|body#10
+Binomial
+@@ c3-2|body#11
+The number of successes in $n$ independent Bernoulli trials: $P(K=k)=\binom nk p^k(1-p)^{n-k}$; $E=np$ and $\mathrm{Var}=np(1-p)$ (because it is a sum of $n$ independent Bernoullis and the variances add).
+@@ c3-2|body#12
+Gaussian (normal)
+@@ c3-2|body#13
+Bell-shaped and symmetric about $\mu$; determined by two parameters $\mu,\sigma$. The 68–95–99.7 rule: $P(|X-\mu|<k\sigma)\approx0.683,\ 0.954,\ 0.997$ for $k=1,2,3$. <b>Standardization:</b> $Z=\frac{X-\mu}{\sigma}\sim\mathcal{N}(0,1)$. Why it is everywhere: the <b>central limit theorem</b> (a sum/mean of independent variables tends to normal) and it has the maximum entropy for a given mean and variance. In ML: weight initialization, noise in regression (which leads to MSE), VAE, diffusion.
+@@ c3-2|body#14
+Displaying the distributions and computing interval probabilities (try the three distributions)
+@@ c3-2|body#15
+5. Use in ML
+@@ c3-2|body#16
+<b>The loss function as an expectation:</b> the risk $E_{(x,y)\sim D}[\ell(f(x),y)]$ estimated by the empirical mean.
+@@ c3-2|body#17
+<b>Dropout/noise:</b> the expectation and variance of activations (the basis of batch norm: the mean and variance of each batch).
+@@ c3-2|body#18
+<b>The softmax output</b> is a categorical distribution.
+@@ c3-2|obj:0#0
+Distinguish discrete and continuous random variables and the PMF, PDF and CDF.
+@@ c3-2|obj:1#0
+Compute expectation, variance and covariance and apply the linearity properties.
+@@ c3-2|obj:2#0
+Know the Bernoulli, binomial and Gaussian distributions with their parameters and uses.
+@@ c3-2|mis:0#0
+"Probability density means probability." ← Probability = area; a density can be > 1.
+@@ c3-2|mis:1#0
+"Cov = 0 means independence." ← It holds only for jointly Gaussian variables.
+@@ c3-2|mis:2#0
+"The variance of a sum is always the sum of the variances." ← Only for uncorrelated variables; otherwise there is a $2\mathrm{Cov}$ term too.
+@@ c3-2|mis:3#0
+"$E[XY]=E[X]E[Y]$ always." ← Only if uncorrelated.
+@@ c3-2|sum:0#0
+PMF/PDF/CDF; continuous probability = the area under the density.
+@@ c3-2|sum:1#0
+$E$ is linear; $\mathrm{Var}=E[X^2]-\mu^2$; Cov and $\rho$ measure linear co-movement.
+@@ c3-2|sum:2#0
+Bernoulli ($p$), binomial ($np$, $np(1-p)$) and Gaussian ($\mu,\sigma^2$) are the foundation of modelling in ML.
+@@ c3-2|ex:0:q#0
+We toss a coin with $P(\text{heads})=0.3$ 20 times. What is the expected number of heads?
+@@ c3-2|ex:1:q#0
+What is the variance of the same binomial variable ($n=20,p=0.3$)?
+@@ c3-2|ex:2:q#0
+$X\sim\mathcal{N}(100,15^2)$. Find the $z$-value for $X=130$.
+@@ c3-2|ex:2:e#0
+$z=\frac{130-100}{15}=2$ ⇒ two standard deviations above the mean (about 97.7% below).
+@@ c3-2|ex:3:q#0
+If $\mathrm{Var}(X)=4$, what is $\mathrm{Var}(3X+5)$?
+@@ c3-2|ex:3:e#0
+$\mathrm{Var}(aX+c)=a^2\mathrm{Var}(X)=9\cdot4=36$; shifting by a constant does not change the variance.
+@@ c3-2|ex:4:q#0
+Which expression is equivalent to $\mathrm{Var}(X)$?
+@@ c3-2|ex:4:e#0
+$\mathrm{Var}(X)=E[X^2]-(E[X])^2$ (always non-negative).
+@@ c3-2|ex:5:q#0
+Give an example where $\mathrm{Cov}(X,Y)=0$ but $X$ and $Y$ are not independent.
+@@ c3-2|ex:5:a#0
+Take $X$ uniform on $\{-1,0,1\}$ and $Y=X^2$. $E[X]=0$; $E[XY]=E[X^3]=0$ so $\mathrm{Cov}=E[XY]-E[X]E[Y]=0$. But $Y$ is completely determined by $X$ (for example $P(Y=1|X=1)=1\neq P(Y=1)=2/3$), so they are not independent. Covariance measures only linear dependence.
+@@ c3-3|body#0
+The idea
+@@ c3-3|body#1
+You have a probabilistic model with parameter $\theta$ and observed data $\mathcal{D}=\{x_1,\dots,x_n\}$. Which $\theta$ makes the data "more probable"? The <b>likelihood</b> is a function of $\theta$ for the fixed data: for independent and identically distributed (i.i.d.) samples
+@@ c3-3|body#2
+A subtle difference: $p(x\mid\theta)$ for a fixed $\theta$ is a distribution over $x$ (sum/integral 1); $L(\theta)$ for a fixed $x$ is a function of $\theta$ and not necessarily a distribution. Because the product becomes extremely small (underflow) and differentiating a product is hard, we use the <b>logarithm</b> (an increasing function that does not move the maximum): $\ell(\theta)=\sum_i\ln p(x_i\mid\theta)$.
+@@ c3-3|body#3
+Example 1: Bernoulli (a coin)
+@@ c3-3|body#4
+Data: $k$ heads in $n$ tosses. $L(p)=p^k(1-p)^{n-k}$ ⇒ $\ell(p)=k\ln p+(n-k)\ln(1-p)$. Derivative:
+@@ c3-3|body#5
+(The second derivative is negative ⇒ a maximum.) That is, the MLE is the observed proportion. <b>Warning:</b> with 3 tosses and 3 heads, $\hat p=1$, which is unreasonable; the MLE has no prior and exaggerates for small samples. (MAP with a prior or Laplace smoothing fixes this.)
+@@ c3-3|body#6
+The Bernoulli likelihood function and the Gaussian estimate; change n and k
+@@ c3-3|body#7
+Example 2: Gaussian
+@@ c3-3|body#8
+$x_i\sim\mathcal{N}(\mu,\sigma^2)$: $\ell(\mu,\sigma^2)=-\frac n2\ln(2\pi\sigma^2)-\frac{1}{2\sigma^2}\sum_i(x_i-\mu)^2$. Derivative with respect to $\mu$: $\frac{1}{\sigma^2}\sum(x_i-\mu)=0\Rightarrow\hat\mu=\bar x$. Derivative with respect to $\sigma^2$: $-\frac{n}{2\sigma^2}+\frac{1}{2\sigma^4}\sum(x_i-\mu)^2=0\Rightarrow\hat\sigma^2=\frac1n\sum(x_i-\bar x)^2$. This variance estimate is <b>biased</b> ($E[\hat\sigma^2]=\frac{n-1}{n}\sigma^2$); the unbiased version divides by $n-1$.
+@@ c3-3|body#9
+Relation to ML loss functions
+@@ c3-3|body#10
+<b>Regression with Gaussian noise:</b> $y=f_\theta(x)+\varepsilon,\ \varepsilon\sim\mathcal{N}(0,\sigma^2)$ ⇒ $-\ell(\theta)=\frac{1}{2\sigma^2}\sum(y_i-f_\theta(x_i))^2+\text{const}$ ⇒ <b>maximizing the likelihood = minimizing the MSE</b>.
+@@ c3-3|body#11
+<b>Binary classification:</b> $P(y=1|x)=\sigma(f_\theta(x))$ ⇒ $-\ell=-\sum\big[y\ln\hat p+(1-y)\ln(1-\hat p)\big]$ = <b>binary cross-entropy</b>. For multiclass with softmax: categorical cross-entropy.
+@@ c3-3|body#12
+The <b>negative log-likelihood (NLL)</b> is the standard loss; the training error of language models (perplexity = $e^{\text{NLL}}$) is the same.
+@@ c3-3|body#13
+Properties of the MLE
+@@ c3-3|body#14
+Under regularity assumptions: <b>consistent</b> (it tends to the true $\theta$ as $n\to\infty$), <b>asymptotically normal</b> and <b>asymptotically efficient</b>; but for small $n$ it may be biased or overfit. Adding a prior (MAP): $\hat\theta_{MAP}=\arg\max[\ell(\theta)+\ln p(\theta)]$ — a Gaussian prior ⇒ an L2 penalty, a Laplace prior ⇒ L1.
+@@ c3-3|obj:0#0
+Define likelihood and log-likelihood and state how it differs from probability.
+@@ c3-3|obj:1#0
+Derive the MLE completely for the Bernoulli and the Gaussian.
+@@ c3-3|obj:2#0
+Explain the relation of the MLE to cross-entropy and MSE in ML.
+@@ c3-3|mis:0#0
+"The likelihood is the probability of the parameter." ← It is the probability of the observed data given the parameter; a function of $\theta$, not a distribution over it.
+@@ c3-3|mis:1#0
+"The MLE is not always biased." ← The Gaussian variance MLE is biased.
+@@ c3-3|mis:2#0
+"The MLE is no different from MAP." ← MAP has a prior.
+@@ c3-3|sum:0#0
+MLE: $\hat\theta=\arg\max\prod p(x_i|\theta)$; the logarithm turns it into a sum.
+@@ c3-3|sum:1#0
+Coin: $\hat p=k/n$; Gaussian: $\hat\mu=\bar x$ and $\hat\sigma^2=\frac1n\sum(x_i-\bar x)^2$ (biased).
+@@ c3-3|sum:2#0
+MSE ≡ Gaussian MLE; cross-entropy ≡ categorical/Bernoulli MLE.
+@@ c3-3|ex:0:q#0
+In 40 coin tosses heads came up 28 times. What is the MLE of the probability of heads?
+@@ c3-3|ex:1:q#0
+Data of 5 samples: 2, 4, 4, 4, 6. Find the MLE of the variance (dividing by $n$).
+@@ c3-3|ex:1:e#0
+$\bar x=4$; squared deviations: $4+0+0+0+4=8$; $\hat\sigma^2=8/5=1.6$. (Unbiased: $8/4=2$.)
+@@ c3-3|ex:2:q#0
+Minimizing the MSE in regression with Gaussian noise is equivalent to which?
+@@ c3-3|ex:2:e#0
+The Gaussian NLL with a fixed σ is proportional to the sum of squared errors; so MLE = minimizing the MSE.
+@@ c3-3|ex:2:o:1#0
+Only a MAP estimate with a uniform prior
+@@ c3-3|ex:3:q#0
+Derive why minimizing cross-entropy is the same as the MLE for the Bernoulli model.
+@@ c3-3|ex:3:a#0
+For each sample $P(y|x)=\hat p^{\,y}(1-\hat p)^{1-y}$ with $\hat p=\sigma(f_\theta(x))$. The total likelihood is $\prod_i\hat p_i^{y_i}(1-\hat p_i)^{1-y_i}$ and its negative logarithm is $-\sum_i[y_i\ln\hat p_i+(1-y_i)\ln(1-\hat p_i)]$, which is exactly binary cross-entropy. Since the logarithm is monotone and the minus sign turns a maximum into a minimum, $\arg\max L=\arg\min\text{BCE}$.
+@@ c4-1|body#0
+1. Descriptive statistics
+@@ c4-1|body#1
+The <b>mean</b> $\bar x=\frac1n\sum x_i$ (sensitive to outliers), the <b>median</b> (the middle value; robust), the <b>mode</b> (the most frequent).
+@@ c4-1|body#2
+The <b>sample variance</b> $s^2=\frac{1}{n-1}\sum(x_i-\bar x)^2$ and the standard deviation $s$. Dividing by $n-1$ (<b>Bessel's correction</b>) makes the estimate unbiased because $\bar x$ itself is estimated from this data and has used up one degree of freedom.
+@@ c4-1|body#3
+<b>Quartiles and the IQR:</b> $Q_3-Q_1$; the outlier rule: outside $[Q_1-1.5\,IQR,\ Q_3+1.5\,IQR]$.
+@@ c4-1|body#4
+<b>Skewness and kurtosis:</b> the shape of the distribution.
+@@ c4-1|body#5
+<b>Example:</b> the data 2, 4, 4, 4, 5, 5, 7, 9: mean $5$, median $4.5$, mode 4; $s^2=\frac{9+1+1+1+0+0+4+16}{7}=4.57$, $s\approx2.14$. Adding the outlier 90 makes the mean jump to ≈13.3 but the median only reaches 5.
+@@ c4-1|body#6
+2. Population and sample
+@@ c4-1|body#7
+A <b>population</b> is the set of all units with fixed parameters ($\mu,\sigma$); a <b>sample</b> is the subset we measure and the <b>statistics</b> ($\bar x,s$) estimate the parameters. Sampling must be <b>random and representative</b>; <b>sampling bias</b> (selection bias, survivorship bias) is not cured by increasing the sample size. In ML: the training set is a sample of the true distribution; if the test distribution differs (distribution shift) performance drops.
+@@ c4-1|body#8
+3. The central limit theorem and the standard error
+@@ c4-1|body#9
+If $X_1,\dots,X_n$ are i.i.d. with mean $\mu$ and variance $\sigma^2$, then for large $n$ $\bar X\approx\mathcal{N}(\mu,\sigma^2/n)$ <b>regardless of the original distribution</b>. The <b>standard error</b> is the standard deviation of the sample mean: $SE=\sigma/\sqrt n$. To double the precision, four times the data is needed (the $1/\sqrt n$ law).
+@@ c4-1|body#10
+The central limit theorem: the distribution of the sample mean for different populations
+@@ c4-1|body#11
+4. The confidence interval (CI)
+@@ c4-1|body#12
+For the mean with known $\sigma$: $\bar x\pm z_{\alpha/2}\dfrac{\sigma}{\sqrt n}$ ($z=1.96$ for 95%). With unknown $\sigma$ use $s$ and the $t$ distribution with $n-1$ degrees of freedom: $\bar x\pm t_{n-1,\alpha/2}\dfrac{s}{\sqrt n}$ (for small $n$ the $t$ has heavier tails). <b>Example:</b> $n=100,\ \bar x=52,\ s=10$: $SE=1$; the 95% CI ≈ $52\pm1.96=[50.04,\,53.96]$.
+@@ c4-1|body#13
+<b>The correct interpretation:</b> "a method that, 95% of the time, builds an interval that covers μ". μ is fixed and the interval is random; once a specific interval is built you cannot say "with 95% probability μ is in it".
+@@ c4-1|body#14
+Simulating 50 confidence intervals and the actual coverage
+@@ c4-1|body#15
+5. Use in ML
+@@ c4-1|body#16
+Reporting model accuracy without uncertainty is misleading: with 90% accuracy on 100 test samples, $SE=\sqrt{0.9\cdot0.1/100}=0.03$ and the 95% CI ≈ $[84\%,96\%]$. Comparing two models that differ by 1% may be within the noise. <b>Bootstrap</b> methods (resampling the data with replacement) give a CI without assuming a distribution.
+@@ c4-1|obj:0#0
+Compute the measures of centre and spread and know the difference between mean and median.
+@@ c4-1|obj:1#0
+Explain population and sample, an unbiased sample and the standard error.
+@@ c4-1|obj:2#0
+Apply the central limit theorem and interpret the confidence interval correctly.
+@@ c4-1|mis:0#0
+"The mean is always the best measure of centre." ← For skewed data or outliers, the median.
+@@ c4-1|mis:1#0
+"A 95% CI means 95% of the data lie in the interval." ← It is about the parameter, not the data (that is a "prediction/spread interval").
+@@ c4-1|mis:2#0
+"The CLT means the data become normal." ← The sample mean tends to normal, not the data themselves.
+@@ c4-1|mis:3#0
+"A large sample removes bias." ← No.
+@@ c4-1|sum:0#0
+The mean is sensitive to outliers; the median is robust; the sample variance uses $n-1$.
+@@ c4-1|sum:1#0
+CLT: the sample mean ≈ normal with $SE=\sigma/\sqrt n$.
+@@ c4-1|sum:2#0
+A CI is a method that covers the parameter with probability $1-\alpha$; its correct interpretation matters.
+@@ c4-1|ex:0:q#0
+Find the median of the data 3, 9, 1, 7, 5, 11.
+@@ c4-1|ex:0:e#0
+Sorted: 1,3,5,7,9,11 ⇒ the median = the mean of the two middle elements $(5+7)/2=6$.
+@@ c4-1|ex:1:q#0
+Find the sample variance (with $n-1$) of the data 2, 4, 6.
+@@ c4-1|ex:1:e#0
+$\bar x=4$; $\sum(x-\bar x)^2=4+0+4=8$; $s^2=8/2=4$.
+@@ c4-1|ex:2:q#0
+$\sigma=12$ and $n=36$. The standard error of the mean?
+@@ c4-1|ex:3:q#0
+$\bar x=80,\ \sigma=10,\ n=100$. What is the upper limit of the 95% confidence interval with $z=1.96$?
+@@ c4-1|ex:3:e#0
+$SE=10/10=1$; $80+1.96\times1=81.96$ (and the lower limit 78.04).
+@@ c4-1|ex:4:q#0
+To halve the width of a confidence interval, by what factor must the sample size increase and why?
+@@ c4-1|ex:4:a#0
+The CI width is proportional to $\sigma/\sqrt n$. For it to halve, $\sqrt n$ must double; that is, $n$ must grow 4×. This is the diminishing return of sampling and is also seen in ML (for example the precision of estimating a metric with test data).
