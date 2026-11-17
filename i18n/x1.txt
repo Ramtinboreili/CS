@@ -1,0 +1,302 @@
+@@ x1|body#0
+One array, two worlds
+@@ x1|body#1
+In the data-structures lessons we saw that an array is a contiguous block of memory with $O(1)$ access. In linear algebra, vectors, matrices and tensors are mathematical objects with operations (multiplication, transpose). <b>The link:</b> libraries like NumPy, PyTorch and TensorFlow store every tensor as <b>one contiguous 1D array</b> and put a "multi-dimensional view" on it defined by two pieces of data: the <b>shape</b> (the dimensions) and the <b>strides</b> (how many elements to skip to move one unit along each dimension).
+@@ x1|body#2
+The addressing formula (row-major)
+@@ x1|body#3
+For a tensor of shape $(d_1,d_2,d_3)$ in row-major (C-order) layout: $\text{strides}=(d_2d_3,\ d_3,\ 1)$ and
+@@ x1|body#4
+This generalizes the $base+i\cdot s$ of a 1D array. (In column-major layouts like Fortran/MATLAB the strides are reversed.) As a result access to any tensor element is $O(1)$ with a small multiply–add.
+@@ x1|body#5
+Shape, strides and offset explorer
+@@ x1|body#6
+View versus copy
+@@ x1|body#7
+<code>reshape</code> (when the data is contiguous) only changes the shape/strides: <b>no copy</b>, $O(1)$.
+@@ x1|body#8
+<code>transpose</code> only swaps the strides: a <b>view</b> without copying; but the result is no longer contiguous and later operations (such as <code>view</code> in PyTorch) may need <code>.contiguous()</code> (a real copy).
+@@ x1|body#9
+Slicing is also a view and shares memory with the original array; changing one changes the other (a source of subtle bugs).
+@@ x1|body#10
+(2,3,4)  (96, 32, 8)  ← bytes; int64 = 8 bytes
+@@ x1|body#11
+a view: the strides were swapped
+@@ x1|body#12
+a real copy, contiguous
+@@ x1|body#13
+Why does it matter?
+@@ x1|body#14
+Matrix multiplication and convolution on GPU/CPU are fast when memory is contiguous and aligned (cache/coalesced); the same principle of "cache locality" from the array and linked-list lesson. Packing a batch into one big tensor gives the same. A sparse representation (CSR/COO) for large matrices with many zero entries is again a data structure: only the non-zeros and their indices.
+@@ x1|obj:0#0
+Show that a vector, matrix and tensor are the same contiguous memory array with a shape and strides.
+@@ x1|obj:1#0
+Compute multi-dimensional addressing with the offset formula.
+@@ x1|obj:2#0
+Understand the difference between a view and a copy and the effect of contiguity on performance.
+@@ x1|mis:0#0
+"A tensor is a nested Python list." ← In numerical libraries it is one contiguous block; a nested list has scattered pointers.
+@@ x1|mis:1#0
+"transpose moves the data." ← It only swaps the strides (a view).
+@@ x1|mis:2#0
+"reshape is always copy-free." ← Only for data compatible with the strides; otherwise it copies.
+@@ x1|sum:0#0
+Tensor = a contiguous array + shape + strides; the offset comes from a multiply–add.
+@@ x1|sum:1#0
+reshape/transpose/slice are views, not copies; contiguity affects performance.
+@@ x1|sum:2#0
+The cache-locality principles of data structures directly affect the performance of matrix multiplication and model training.
+@@ x1|ex:0:q#0
+For a tensor of shape (2,3,4) in row-major layout, what is the offset of element (1,2,3)?
+@@ x1|ex:0:e#0
+$1\cdot12+2\cdot4+3=12+8+3=23$ (the last of the 24 elements).
+@@ x1|ex:1:q#0
+What are the strides (in number of elements) for shape = (5,4) in row-major layout?
+@@ x1|ex:1:e#0
+To go to the next row we skip 4 elements (the row length) and to the next column 1 element.
+@@ x1|ex:2:q#0
+Transposing a large matrix in NumPy is usually done without copying the data.
+@@ x1|ex:2:e#0
+Only the strides are swapped and a view is created.
+@@ x1|ex:3:q#0
+Why is traversing a row-major matrix with a "column first, then row" loop slower than "row first, then column"?
+@@ x1|ex:3:a#0
+In row-major layout the elements of a row are adjacent in memory. Traversing row by row makes the accesses contiguous (cache hits and prefetching). Traversing by column jumps by the row length in memory at each step (a large stride) ⇒ for large matrices almost every access is a cache miss and it becomes several times slower. The asymptotic complexity is the same ($O(mn)$) but the constants differ.
+@@ x2|body#0
+Algorithm + data structure = program
+@@ x2|body#1
+The complexity of an algorithm depends not only on the "idea" but on the operations of the underlying data structure. Take Dijkstra: the core of the algorithm is "pick the closest unfinalized vertex" ($V$ times) and "decrease-key" (at most $E$ times).
+@@ x2|body#2
+Priority-queue data structure
+@@ x2|body#3
+Whole Dijkstra
+@@ x2|body#4
+Plain array
+@@ x2|body#5
+Binary heap
+@@ x2|body#6
+Fibonacci heap
+@@ x2|body#7
+$O(\log V)$ amortized
+@@ x2|body#8
+$O(1)$ amortized
+@@ x2|body#9
+For a sparse graph ($E\approx V$) the heap gives $O(V\log V)$ versus the array's $O(V^2)$; for a complete graph ($E\approx V^2$) the heap becomes $O(V^2\log V)$ and the plain array is better! That is, the "best" data structure depends on the <b>input pattern</b> (the density).
+@@ x2|body#10
+Dijkstra's cost: array versus heap as the number of edges changes
+@@ x2|body#11
+Other examples
+@@ x2|body#12
+<b>Top-K:</b> sorting $O(n\log n)$ versus a heap of size $k$: $O(n\log k)$.
+@@ x2|body#13
+<b>Union-find:</b> with path compression makes Kruskal about $O(E\log E)$ (sorting dominates).
+@@ x2|body#14
+<b>A database join:</b> nested loop $O(nm)$ versus hash join $O(n+m)$ — the same idea with a hash table.
+@@ x2|body#15
+<b>Searching static data:</b> a sorted array + binary search versus a hash table; but for ranges an array/tree.
+@@ x2|body#16
+<b class="t">A practical rule</b>First ask "which operations, and how many times?" then choose the data structure that makes those operations cheap. The list of critical operations = the criterion for choosing a data structure.
+@@ x2|obj:0#0
+Show that one algorithm with different data structures has different complexity.
+@@ x2|obj:1#0
+Compare Dijkstra with an array and a heap and analyse the crossover point.
+@@ x2|mis:0#0
+"A heap is always better than an array." ← Not on a dense graph.
+@@ x2|mis:1#0
+"The complexity of an algorithm is a fixed number." ← It depends on the data structure and the input properties.
+@@ x2|sum:0#0
+Algorithm cost = number of operations × the cost of each operation in the data structure.
+@@ x2|sum:1#0
+Dijkstra: array $O(V^2)$ versus heap $O((V+E)\log V)$; the winner depends on graph density.
+@@ x2|ex:0:q#0
+For a sparse graph with $V=10^5,E=3\times10^5$ which Dijkstra implementation is better?
+@@ x2|ex:0:e#0
+The heap: about $4\times10^5\times17\approx7\times10^6$ versus $10^{10}$.
+@@ x2|ex:0:o:0#0
+The array ($V^2=10^{10}$)
+@@ x2|ex:0:o:1#0
+The binary heap ($\approx(V+E)\log V\approx7\times10^6$)
+@@ x2|ex:0:o:2#0
+Both equal
+@@ x2|ex:0:o:3#0
+It does not matter
+@@ x2|ex:1:q#0
+On a complete graph, Dijkstra with a plain array can be faster than the heap version.
+@@ x2|ex:1:e#0
+$E\approx V^2$ ⇒ the heap is $O(V^2\log V)$ versus the array $O(V^2)$.
+@@ x2|ex:2:q#0
+Write one sentence that explains the relationship between an algorithm's "complexity" and the "chosen data structure" with the top-K example.
+@@ x2|ex:2:a#0
+The algorithm "find the $k$ largest" costs $O(n\log n)$ with a full sort, but only $O(n\log k)$ with a min-heap of size $k$; for $k\ll n$ it is almost linear. The same problem, a different data structure, a different complexity.
+@@ x3|body#0
+From the BST to the index
+@@ x3|body#1
+A database index is a <b>search tree</b> over the keys that points to <b>disk pages</b> instead of memory nodes. If we put a balanced binary BST on disk, every comparison reads a page: $\log_2 n$ accesses. For $n=10^8$ that is about 27 random I/Os (≈ 2.7 ms on an SSD) — far too many. If we make each node a whole page (8–16 KB with hundreds of keys), the fan-out $F$ rises and the height becomes $\log_F n$; the result is the <b>B-tree/B+tree</b>.
+@@ x3|body#2
+$h_{BST}=\lceil\log_2n\rceil$ versus $h_{B^+}=\lceil\log_F n\rceil$. For $F=200$ and $n=10^8$: $h\approx\lceil 8/2.3\rceil=4$. Most of the time the root and second level are in the buffer pool, so a point query may need only 1–2 real I/Os.
+@@ x3|body#3
+Height of a BST versus a B+tree for different key counts
+@@ x3|body#4
+The bridge between two lessons
+@@ x3|body#5
+Data-structure concept
+@@ x3|body#6
+Equivalent in an index
+@@ x3|body#7
+BST/AVL (balanced by rotations)
+@@ x3|body#8
+B-tree (balanced by page split/merge)
+@@ x3|body#9
+Height $O(\log n)$
+@@ x3|body#10
+Height $O(\log_F n)$ with a large $F$
+@@ x3|body#11
+Inorder = sorted
+@@ x3|body#12
+Walking the linked leaves = ORDER BY / range scan
+@@ x3|body#13
+A node = a few bytes in RAM
+@@ x3|body#14
+A node = one disk page
+@@ x3|body#15
+A trie for prefixes
+@@ x3|body#16
+Prefix index/GIN for text
+@@ x3|body#17
+Hash index and hash join
+@@ x3|body#18
+So when you write <code>CREATE INDEX</code> in SQL you are really building a B+tree, and when the optimizer sees a <code>WHERE</code> it picks a "binary search in the tree" instead of a full scan. The tree's limits (order, leftmost prefix, the cost of splits on insert) translate directly into index behaviour.
+@@ x3|body#19
+<b class="t">Learn more</b>See the details of splits and node structure in the next lesson (B-trees and B+trees from the inside) with the interactive widget.
+@@ x3|obj:0#0
+Explain why an index uses a multiway tree instead of a BST.
+@@ x3|obj:1#0
+Compute the tree height from the fan-out and know its implication for I/O.
+@@ x3|mis:0#0
+"An index is a hash table." ← Most indexes are B+trees (sorted); a hash index is only for equality.
+@@ x3|mis:1#0
+"A BST is the index." ← An index uses a page-oriented multiway tree.
+@@ x3|sum:0#0
+Index = a page-oriented multiway tree; high fan-out ⇒ low height ⇒ little I/O.
+@@ x3|sum:1#0
+BST concepts (order, balance) are reflected in the B+tree as splits/merges and linked leaves.
+@@ x3|ex:0:q#0
+The approximate height of a B+tree with fan-out 500 and $n=2\times10^7$ keys: the smallest $h$ with $500^h\ge n$.
+@@ x3|ex:1:q#0
+Which data-structure property makes a range scan cheap in a B+tree?
+@@ x3|ex:1:e#0
+After finding the start of the range, the leaves are traversed in order.
+@@ x3|ex:1:o:0#0
+Low height
+@@ x3|ex:1:o:1#0
+The links between leaf nodes
+@@ x3|ex:1:o:2#0
+Hashing the keys
+@@ x3|ex:1:o:3#0
+Colouring the nodes
+@@ x3|ex:2:q#0
+Why is an AVL tree excellent in RAM but unsuitable for a disk index?
+@@ x3|ex:2:a#0
+An AVL tree makes each node a small entity with two pointers; its height is $\approx1.44\log_2n$ and each hop is a separate random access (a cache miss or an I/O). On disk the dominant cost is the number of pages read and a B+tree with a fan-out of hundreds reduces it greatly and uses every page fully.
+@@ x4|body#0
+Node rules (capacity $m$ keys)
+@@ x4|body#1
+Leaf: at most $m$ keys; linked to the next leaf. Internal node: $k$ separator keys and $k+1$ children.
+@@ x4|body#2
+Search: in each internal node choose child $i$ with $key_{i-1}\le x<key_i$.
+@@ x4|body#3
+<b>Leaf split:</b> after an overflow ($m+1$ keys), the right half goes to a new leaf and the <i>smallest key of the new leaf</i> is copied up to the parent (the key stays in the leaf too).
+@@ x4|body#4
+<b>Internal-node split:</b> the middle key is <i>moved</i> to the parent (not repeated in the internal node).
+@@ x4|body#5
+If the root splits, a new root is created with one key and the height increases by 1. <b>All leaves are always at the same depth.</b>
+@@ x4|body#6
+Experiment
+@@ x4|body#7
+Set the capacity to 3 and insert 10, 20, 30, 40 — where does the first split occur?
+@@ x4|body#8
+Press "insert 1 to 15 (sorted)": how does the tree grow and how full do the leaves get? (Sorted insertion leaves leaves half full; many DBMSs have a "bulk load" that fills leaves.)
+@@ x4|body#9
+Run the range [20..45] and see the number of leaves read.
+@@ x4|body#10
+Interactive B+tree
+@@ x4|body#11
+Write cost
+@@ x4|body#12
+An insert without a split changes one page, but with a split at least 3 pages (the old leaf, the new leaf, the parent) and sometimes up to the root. That is why every extra index creates <b>write amplification</b>, and random keys (UUID) cause more splits than increasing ones. After many deletions pages become half empty (fragmentation) and <code>REINDEX/VACUUM</code> is needed.
+@@ x4|obj:0#0
+Follow successive key insertions in a B+tree and predict the splits.
+@@ x4|obj:1#0
+Show the search path and range scan in the tree.
+@@ x4|mis:0#0
+"In a leaf split the separator key is removed from the leaf." ← In a B+tree the key stays in the leaf (not in the classical B-tree).
+@@ x4|mis:1#0
+"A B+tree's height grows with every insert." ← Only when a split reaches the root.
+@@ x4|sum:0#0
+A leaf split copies the key and an internal split moves it; if the root splits the height grows.
+@@ x4|sum:1#0
+Range scan through linked leaves; a point lookup = the height of the tree in pages.
+@@ x4|ex:0:q#0
+In a B+tree with a capacity of 3 keys per leaf, after inserting the 4 keys 10, 20, 30, 40 how many leaves are there?
+@@ x4|ex:0:e#0
+The first leaf overflows with 4 keys and is split into two leaves [10,20] and [30,40]; a new root with key 30.
+@@ x4|ex:1:q#0
+When an internal node splits, what happens to the middle key?
+@@ x4|ex:1:e#0
+Unlike a leaf, the middle key of an internal node remains only in the parent.
+@@ x4|ex:1:o:0#0
+It stays in both nodes
+@@ x4|ex:1:o:1#0
+It moves to the parent
+@@ x4|ex:1:o:2#0
+It is deleted
+@@ x4|ex:1:o:3#0
+It goes to a leaf
+@@ x4|ex:2:q#0
+With the widget, build a scenario where inserting one key increases the height and explain why the tree is still balanced.
+@@ x4|ex:2:a#0
+With capacity 3 and sorted insertion 3, 6, …, 45, at the moment when the internal root also becomes full, the split reaches the root and a new root with one key and two children is created; all leaves go one level down. Because the height grows only from the top (with the new root) and every path becomes one longer, the distance of all leaves from the root stays equal.
+@@ x5|body#0
+Estimating orders of magnitude
+@@ x5|body#1
+A modern CPU performs about $10^8$–$10^9$ simple operations per second. Knowing $n$ and the complexity we can tell without running whether a program takes "seconds", "hours" or is "impossible". Rule: $n\le10^4$ means $O(n^2)$ is acceptable; $n\le10^6$ means $O(n\log n)$; $n\ge10^8$ means in practice only $O(n)$ or less (and that with I/O).
+@@ x5|body#2
+Which algorithm is practical for which data size?
+@@ x5|body#3
+A few lessons for working with data
+@@ x5|body#4
+<b>Nested loops on big data:</b> comparing all pairs (like computing an $n\times n$ similarity matrix or brute-force nearest-neighbour search) for $n=10^6$ is $10^{12}$ operations. Remedies: approximate indexes (HNSW/IVF), sampling, blocking.
+@@ x5|body#5
+<b>Join:</b> a nested loop $O(nm)$ in a database is a disaster on large tables; a hash join is linear.
+@@ x5|body#6
+<b>Sort-based versus hash-based:</b> removing duplicates by sorting $O(n\log n)$ or by hashing $O(n)$.
+@@ x5|body#7
+<b>I/O dominates:</b> for data larger than memory the number of passes over the disk matters more than the CPU (external merge sort, MapReduce).
+@@ x5|body#8
+<b>Distribution and parallelism</b> reduce the constant, not the growth order: even 1000 machines do not make $O(n^2)$ practical for $n=10^{10}$.
+@@ x5|body#9
+<b class="t">The hidden-constants trap</b>Binary search on data on disk, if each step is an I/O, is slower than a sequential scan of small data. Always measure with a profiler.
+@@ x5|obj:0#0
+Judge the feasibility of an algorithm for a given data size by estimating orders of magnitude.
+@@ x5|obj:1#0
+Show why $O(n^2)$ becomes impossible at big-data scale.
+@@ x5|mis:0#0
+"Stronger hardware solves bad complexity." ← Exponential/high-degree growth outpaces hardware.
+@@ x5|mis:1#0
+"$O(n\log n)$ and $O(n)$ make no difference for big data." ← $\log n\approx20$–$30$ times at billion scale.
+@@ x5|sum:0#0
+Order-of-magnitude estimates with $10^8$–$10^9$ operations per second give a quick feasibility check.
+@@ x5|sum:1#0
+$O(n^2)$ is impractical at big-data scale; change the algorithm and the data structure.
+@@ x5|ex:0:q#0
+If $10^9$ operations are performed per second, about how many seconds does an $O(n^2)$ algorithm with $n=10^6$ take? (each operation a unit)
+@@ x5|ex:0:e#0
+$n^2=10^{12}$; $10^{12}/10^9=1000$ seconds ≈ 16.7 minutes.
+@@ x5|ex:1:q#0
+For $n=10^8$ which complexity is still roughly in the "seconds" range?
+@@ x5|ex:1:e#0
+$n\log n\approx2.7\times10^9$ ⇒ a few seconds; the rest are impossible.
+@@ x5|ex:2:q#0
+To find the embedding vector nearest to a query vector among $10^7$ vectors of dimension 768, what is the brute-force cost and the remedies?
+@@ x5|ex:2:a#0
+Brute force: $n\cdot d=10^7\times768\approx7.7\times10^9$ multiply–adds per query (several seconds on a CPU, little on a GPU). Remedies: an approximate index (HNSW graph, IVF clustering + searching the nearest clusters), dimension reduction/quantization (PQ), normalization and batched matrix multiplication on a GPU. The trade-off: accuracy (recall) versus latency and memory.
