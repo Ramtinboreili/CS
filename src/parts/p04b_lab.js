@@ -11,7 +11,7 @@ function pageLabs(){setCrumb([{t:t2('داشبورد','Dashboard'),href:'#/'},{t:
  for(const m in MODS){const M=MODS[m],ls=LABS.filter(b=>b.mod===m);if(!ls.length)continue;
   v.append(h('h2',{},M.ic+' '+mt(M)+' · '+ls.filter(b=>S.labs[b.id]).length+'/'+ls.length),h('div',{class:'grid g2'},ls.map(labCard)))}}
 
-function pageLab(id){const b=LABS.find(x=>x.id===id);if(!b)return pageLabs();const M=MODS[b.mod];
+function pageLab(id,start){const b=LABS.find(x=>x.id===id);if(!b)return pageLabs();const M=MODS[b.mod];
  setCrumb([{t:t2('داشبورد','Dashboard'),href:'#/'},{t:t2('آزمایشگاه‌ها','Labs'),href:'#/labs'},{t:lt(b.t)}]);
  const v=view();v.innerHTML='';const st=b.st();let scr=0;const names=LABNAMES();
  const idx=LABS.indexOf(b),nextLab=LABS[idx+1];
@@ -46,4 +46,5 @@ function pageLab(id){const b=LABS.find(x=>x.id===id);if(!b)return pageLabs();con
   if(n<3)nav.append(btn(t2('بعدی ←','Next →'),()=>show(n+1),'pri'));
   else{(b.lessons||[]).forEach(id=>{const l=byId(id);if(l)nav.append(h('a',{class:'btn',href:'#/l/'+id,style:{textDecoration:'none'}},'📖 '+ttl(l)))});if(nextLab)nav.append(h('a',{class:'btn pri',href:'#/lab/'+nextLab.id,style:{textDecoration:'none'}},lt(nextLab.t)+(LANG==='en'?' →':' ←')))}
   panel.append(nav);renderMath(panel);A.upd();window.scrollTo({top:Math.max(0,v.offsetTop-10)})}
- show(0)}
+ show(Math.max(0,Math.min(3,(+start||1)-1)));
+ if(/[?&]solve=1/.test(location.search)&&b.sol){Object.assign(st,b.sol);A.upd()}}

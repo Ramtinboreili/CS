@@ -257,7 +257,7 @@ function pageSQL(){setCrumb([{t:t2('داشبورد','Dashboard'),href:'#/'},{t:'
 /* ---- router ---- */
 function route(){T.clear();const hsh=location.hash||'#/';const p=hsh.split('/');document.body.classList.remove('nav');
  if(p[1]==='l'){pageLesson(p[2]);return}
- if(p[1]==='lab'&&window.pageLab){buildNav(null);pageLab(p[2]);return}
+ if(p[1]==='lab'&&window.pageLab){buildNav(null);pageLab(p[2],p[3]);return}
  buildNav(null);
  if(p[1]==='m')pageModule(p[2]);else if(p[1]==='labs'&&window.pageLabs)pageLabs();else if(p[1]==='p')pageProgress();else if(p[1]==='sql')pageSQL();else pageHome();window.scrollTo(0,0)}
 
